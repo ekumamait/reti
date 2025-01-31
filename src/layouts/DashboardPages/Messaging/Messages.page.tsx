@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import Layout, { Content } from "antd/es/layout/layout";
 import MessagingChats from "./MessagesChats";
 import MessagingChatDetails from "./MessageChatDetails";
-import MessagingItemDetails from "./MessageItemDetails";
 import Header from "../../../components/secondary/Header";
 import CustomDashboardLayout from "../../../components/secondary/CustomDashboardPagesLayout";
 import io from "socket.io-client";
@@ -11,7 +10,7 @@ import { ConversationType } from "../../../services/types";
 import { loginDetails } from "../../../utils";
 
 const MessagesPage = () => {
-  const [conversations, setConversations] = useState<ConversationType[]>([]);
+  const [conversations, setConversations] = useState<any>([]);
   const [selectedConversation, setSelectedConversation] =
     useState<ConversationType | null>(null);
   const [socket, setSocket] = useState<any>(null);
@@ -40,7 +39,6 @@ const MessagesPage = () => {
       });
     });
     setSocket(socket);
-
     if (data) {
       setConversations(data?.data);
     }
@@ -69,8 +67,9 @@ const MessagesPage = () => {
                 conversation={selectedConversation}
                 socket={socket}
                 userId={userId}
-                online={online}
-              />
+                online={online} 
+                receiverId={undefined}              
+                />
               {/* <MessagingItemDetails /> */}
             </div>
           </Content>

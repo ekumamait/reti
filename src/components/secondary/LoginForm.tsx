@@ -2,7 +2,6 @@ import { useEffect, useState } from "react"
 import { Form, Input, Button, Tag } from 'antd';
 import { useLoginMutation } from "../../services/users.ts";
 import { Link, useNavigate } from "react-router-dom";
-import { loginDetails } from "../../utils.ts";
 import { QuestionCircleOutlined } from "@ant-design/icons";
 import { toast } from 'react-toastify';
 import HelpandsupportForm from "../../layouts/DashboardPages/Forms/HelpAndSupportForm.tsx";

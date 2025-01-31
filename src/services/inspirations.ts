@@ -42,7 +42,7 @@ export const inspirationApi = createApi({
             }),
             invalidatesTags: ['Inspirations'],
         }),
-        likeInspiration: mutation<void,number>({
+        likeInspiration: mutation<any, number>({
             query: (id) => ({
                 url: `inspirations/${id}/like`,
                 method: 'PUT',

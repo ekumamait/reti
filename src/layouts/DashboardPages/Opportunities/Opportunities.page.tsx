@@ -38,7 +38,8 @@ const OpportunitiesPage = () => {
                                 onCancel={handleCancel}
                                 open={open}
                                 loading={false}
-                                isEdit={false}
+                                isEdit={false} 
+                                initialData={undefined}                            
                             />
                         </div>
                     </div>

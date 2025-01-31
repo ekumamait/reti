@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Button, Modal, Form, Input, InputNumber, DatePicker, Tag } from "antd";
+import { useState } from "react";
+import { Button, Modal, Form, Input, InputNumber, Tag } from "antd";
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 
 const Projects = () => {
@@ -69,7 +69,7 @@ const Projects = () => {
             <div className="flex items-center justify-between border-b py-4">
 
                 <h1 className="text-2xl font-semibold mb-4">Projects</h1>
-                <Button type="text" icon={<EditOutlined />} className="text-red-500 mt-2" onClick={() => openEditModal("skills")}>
+                <Button type="text" icon={<EditOutlined />} className="text-red-500 mt-2" onClick={() => openEditModal(1)}>
                     Edit
                 </Button>
 

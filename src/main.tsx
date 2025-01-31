@@ -28,7 +28,6 @@ import OpportunitiesDetailsPage from "./layouts/DashboardPages/Opportunities/Opp
 import UsersPage from "./layouts/DashboardPages/Users/UsersTable.tsx";
 import ProductsPage from "./layouts/DashboardPages/Products/Products.page.tsx";
 import ProductDetailsPage from "./layouts/DashboardPages/Products/ProductDetails.page.tsx";
-import UsersDetailsPage from "./layouts/DashboardPages/Users/UsersDetails.tsx";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ProfileSettings from "./layouts/DashboardPages/Settings/Profile.tsx";

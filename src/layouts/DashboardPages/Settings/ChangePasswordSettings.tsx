@@ -1,13 +1,10 @@
-import { Button, Col, Form, Input, Layout, Row } from "antd";
+import { Button, Form, Input, Layout } from "antd";
 
 import { Content } from "antd/es/layout/layout";
 
 
 const ChangePasswordSettings = () => {
     const [form] = Form.useForm();
-    const handleFinish = (values) => {
-        console.log(values, 'values')
-    }
 
     return (
         <div className="mt-2 w-full">

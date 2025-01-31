@@ -1,5 +1,5 @@
-import {createApi, fetchBaseQuery, BaseQueryFn, FetchArgs} from "@reduxjs/toolkit/query/react"
-import {customError, LoginResponseType, ProfileResponseType} from "./types.ts";
+import {createApi, fetchBaseQuery} from "@reduxjs/toolkit/query/react"
+import {LoginResponseType, ProfileResponseType} from "./types.ts";
 import {getAccessToken, getRefreshToken, updateTokens, handleLogout, getHeaders} from "../utils.ts";
 
 interface User {
@@ -11,6 +11,7 @@ interface User {
     role?: string;
     aboutMe?: string;
     profilePicture?: string;
+    password: any;
 }
 
 const baseQuery = fetchBaseQuery({
@@ -24,7 +25,7 @@ const baseQuery = fetchBaseQuery({
     },
 });
 
-const baseQueryWithReauth: BaseQueryFn<string | FetchArgs, unknown, customError> = async (args, api, extraOptions) => {
+const baseQueryWithReauth = async (args, api, extraOptions) => {
     let result = await baseQuery(args, api, extraOptions);
 
     if (result.error && result.error.status === 401) {
@@ -65,7 +66,7 @@ export const userApi = createApi({
     baseQuery: baseQueryWithReauth,
     tagTypes: ['Users'],
     endpoints: ({mutation, query}) => ({
-        login: mutation<LoginResponseType, void>({
+        login: mutation<LoginResponseType, { phoneNumber: string, password: string }>({
             query: (data) => ({
                 url: 'auth/login',
                 method: 'POST',
@@ -87,7 +88,7 @@ export const userApi = createApi({
                 response
             ) => response,
         }),
-        getAllUsers: query<ProfileResponseType, void>({
+        getAllUsers: query<any, void>({
             query: () => ({
                 url: `/users/`,
                 method: "GET",

@@ -1,12 +1,29 @@
 import { Form, Input, Modal, Button } from 'antd';
 import { useAddInspirationMutation, useUpdateInspirationMutation } from '../../../services/inspirations';
 import { toast } from 'react-toastify';
-import dayjs from 'dayjs';
 import { useEffect } from 'react';
 
 const { TextArea } = Input;
 
-const AddInspirationsForm = ({ onOk, onCancel, open, loading, initialData, isEdit = false }) => {
+type FormProps = 
+  | { 
+      isEdit: true;
+      initialData: { id: number; title: string; content: string };
+      onOk: () => void;
+      onCancel: () => void;
+      open: boolean;
+      loading: boolean;
+    }
+  | {
+      isEdit?: false;
+      initialData?: never;
+      onOk: () => void;
+      onCancel: () => void;
+      open: boolean;
+      loading: boolean;
+    };
+
+const AddInspirationsForm = ({ onOk, onCancel, open, loading, initialData, isEdit = false }: FormProps) => {
     const [form] = Form.useForm();
     const [addInspiration] = useAddInspirationMutation();
     const [updateInspiration] = useUpdateInspirationMutation();
