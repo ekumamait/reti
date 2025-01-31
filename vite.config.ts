@@ -7,6 +7,7 @@ export default defineConfig({
   server: {
     allowedHosts: [
       "reti.onrender.com",
+      "reti-dev.up.railway.app",
       "localhost"
     ],
     port: 3000,
