@@ -3,9 +3,6 @@ import {
   Avatar,
   Tag,
   Button,
-  Select,
-  Input,
-  DatePicker,
   Dropdown,
   Menu,
 } from "antd";
@@ -16,7 +13,6 @@ import {
   LikeOutlined,
   UserOutlined,
   EditOutlined,
-  DeleteOutlined,
   DownOutlined,
   LikeFilled,
 } from "@ant-design/icons";
@@ -48,7 +44,7 @@ const YouthDashboardPage = () => {
   const [editingInspiration, setEditingInspiration] = useState(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [filters, setFilters] = useState({
+  const [filters] = useState({
     searchText: "",
     mentor: "",
     dateRange: null,

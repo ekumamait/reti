@@ -5,6 +5,8 @@ export interface customError {
     status: number;
 }
 export interface User {
+  dateOfBirth: any;
+  skills: any;
   bio: any;
   gender: any;
   phoneNumber: any;
@@ -14,10 +16,11 @@ export interface User {
   lastName: string;
   email: string;
   role: string;
-  password: string;
+  password?: string;
   createdAt: string;
   isOnboarded: boolean;
   profileImage: any;
+  location: any;
 }
 
 export interface UserDataType {
@@ -110,6 +113,8 @@ export interface OpportunitiesType {
 }
 
 export interface InspirationsType {
+    likesCount: number;
+    isLiked: any;
     id: number,
     title: string,
     content: string,
@@ -162,7 +167,7 @@ export interface MessagesResponseType {
 }
 
 export interface ProductDto {
-  id: number;
+  id: any;
   name: string;
   category: string;
   description: string;
@@ -263,3 +268,12 @@ export interface MentorshipSessionsResponse {
   status: string;
   data: MentorshipSession[];
 }
+
+
+export interface RegisterUserDto {
+  phoneNumber: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+}
+

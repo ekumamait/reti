@@ -19,7 +19,7 @@ export const opportunityApi = createApi({
     ) as BaseQueryFn<string | FetchArgs, unknown, customError>,
     tagTypes: ['Opportunities'],
     endpoints: ({mutation, query}) => ({
-        addOpportunity: mutation<LoginResponseType, User>({
+        addOpportunity: mutation<LoginResponseType, any>({
             query: (data) => ({
                 url: 'jobs',
                 method: 'POST',

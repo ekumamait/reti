@@ -44,8 +44,8 @@ export const conversationApi = createApi({
     }),
 
     // Get user conversations
-    getUserConversations: query<ConversationDetailsResponseType, number>({
-        query: (userId) => ({
+    getUserConversations: query<any, void>({
+        query: () => ({
           url: `conversations/user`,
           method: "GET",
           headers: getHeaders(),

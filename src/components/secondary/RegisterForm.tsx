@@ -1,37 +1,37 @@
 import { EyeInvisibleOutlined, EyeOutlined } from "@ant-design/icons";
-import { Button, Input, Form, Typography } from "antd";
+import { Button, Input, Form } from "antd";
 import { useEffect, useState } from "react";
 import { useRegisterMutation } from "../../services/users.ts";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { RegisterUserDto } from "../../services/types.ts"
 
 const RegisterForm = () => {
     const [passwordVisible, setPasswordVisible] = useState(false);
     const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
-    const [registerUser, { isLoading, isSuccess, data, isError }] = useRegisterMutation()
+    const [registerUser, { isLoading, isSuccess, data }] = useRegisterMutation()
     const [form] = Form.useForm();
 
     const navigate = useNavigate();
 
-    const onFinish = async (values: never) => {
+    const onFinish = async (values: any) => {
         try {
             const fullPhoneNumber = `+256${values.phoneNumber.replace(/^0/, '')}`;
-            await registerUser({ phoneNumber: fullPhoneNumber, password: values.password, firstName: values.firstName, lastName: values.lastName }).unwrap()
+            await registerUser(
+                { 
+                    phoneNumber: fullPhoneNumber, 
+                    password: values.password, 
+                    firstName: values.firstName, 
+                    lastName: values.lastName 
+                } as RegisterUserDto).unwrap();
         } catch (e) {
-            let message = 'Try again'
-            if (typeof e.data.message === "string") {
-                message = e.data.message
-            } else {
-                message = e.data.message[0]
+            if (e) {
+                toast.error('Something went wrong');
             }
-            toast.error('Something went wrong');
         }
     }
-    const onFinishFailed = (errorInfo: never) => {
-        notification['error']({
-            message: errorInfo,
-            description: "Something went wrong"
-        })
+    const onFinishFailed = (error: any) => {
+        toast.error("Something went wrong", error)
     };
 
     useEffect(() => {

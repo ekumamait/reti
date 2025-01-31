@@ -33,13 +33,9 @@ export const formatDistanceToNow = (date) => {
   return `${Math.floor(seconds)} seconds ago`;
 };
 
-export const loginDetails = () => {
-  return JSON.parse(localStorage.getItem("loginDetails"));
-};
+export const loginDetails = () => JSON.parse(localStorage.getItem("loginDetails") || 'null');
 
-export const userDetails = () => {
-  return JSON.parse(localStorage.getItem("userDetails"));
-};
+export const userDetails = () => JSON.parse(localStorage.getItem("userDetails") || 'null');
 
 export const getAccessToken = () => {
   const details = loginDetails();
@@ -106,7 +102,7 @@ export const handleDownloadData = (data: any) => {
   const margin = 10;
   let currentY = 20; // Start position for content
 
-  const addText = (text: string, x: number, y: number, fontStyle = "normal", fontSize = 12) => {
+  const addText = (text: string, x: number, _y: number, fontStyle = "normal", fontSize = 12) => {
     doc.setFont("helvetica", fontStyle);
     doc.setFontSize(fontSize);
 

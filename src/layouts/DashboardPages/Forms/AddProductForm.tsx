@@ -147,14 +147,17 @@ const AddProductForm = ({
             label="Price"
             rules={[{ required: true, message: "Please enter price" }]}
           >
-            <InputNumber
+            <InputNumber<number>
               min={0}
               precision={2}
               style={{ width: "100%" }}
               formatter={(value) =>
-                `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                value?.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
               }
-              parser={(value) => value!.replace(/\$\s?|(,*)/g, "")}
+              parser={(value) => {
+                const numericValue = Number(value?.replace(/[^0-9.]/g, "") || 0);
+                return isNaN(numericValue) ? 0 : numericValue;
+              }}
             />
           </Form.Item>
 
@@ -197,7 +200,7 @@ const AddProductForm = ({
                     accept="image/*"
                     style={{ display: 'none' }}
                   />
-                  <Button 
+                  <Button
                     icon={<UploadOutlined />}
                     onClick={() => fileInputRef.current?.click()}
                   >

@@ -7,7 +7,6 @@ import {
 } from "../../../services/profiles.ts";
 import { loginDetails } from "../../../utils.ts";
 import { useEffect, useRef, useState } from "react";
-import moment from "moment";
 import Dragger from "antd/es/upload/Dragger";
 import { uploadImage, validateFile } from "../../../utils/uploadImage.ts";
 import { toast } from "react-toastify";
@@ -19,7 +18,7 @@ const PersonalDetailsSettings = () => {
   const [updateUser, { isSuccess }] = useUpdateProfileMutation();
   const [form] = Form.useForm();
 
-  const [uploadedImages, setUploadedImages] = useState<string[]>([]);
+  const [, setUploadedImages] = useState<string[]>([]);
   const [avatarUrl, setAvatarUrl] = useState<string>("");
   const fileInputRef = useRef<HTMLInputElement>(null);
   useEffect(() => {
@@ -31,7 +30,7 @@ const PersonalDetailsSettings = () => {
   const handleFinish = async (values) => {
     try {
       await updateUser({
-        data: { ...values, profileImage: avatarUrl },
+        profile: { ...values, profileImage: avatarUrl },
         profileId: loginDetails()?.user.id,
       }).unwrap();
 
@@ -56,7 +55,7 @@ const PersonalDetailsSettings = () => {
       } else {
         message = e.data.message[0];
       }
-      toast.error("Something went wrong");
+      toast.error(`Something went wrong ${message}`);
     }
   };
 
@@ -118,7 +117,7 @@ const PersonalDetailsSettings = () => {
               phoneNumber: data?.data.user.phoneNumber,
               gender: data?.data.gender,
               bio: data?.data.bio,
-              dateOfBirth: moment(data?.data.dateOfBirth),
+              dateOfBirth: data?.data.dateOfBirth,
               prefix: "256",
             }}
             onFinish={handleFinish}

@@ -27,10 +27,10 @@ export const mentorshipApi = createApi({
             invalidatesTags: ['Mentorship'],
         }),
         updateMentorshipSession: builder.mutation<any, { sessionId: number; body: any }>({
-            query: ({sessionId, data}) => ({
+            query: ({sessionId, body}) => ({
                 url: `mentorship-sessions/${sessionId}`,
                 method: 'PATCH',
-                body: data,
+                body: body,
                 headers: getHeaders(),
             }),
             invalidatesTags: ['Mentorship'],

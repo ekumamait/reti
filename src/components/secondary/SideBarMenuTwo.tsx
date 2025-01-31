@@ -26,7 +26,7 @@ interface MenuItem {
 
 const { Sider } = Layout;
 
-const SiderTwo: React.FC<{ closeDrawer: () => void }> = ({ closeDrawer }) => {
+const SiderTwo = ({ closeDrawer }) => {
   const [selectedKey, setSelectedKey] = useState("home");
   const user = loginDetails();
   const { data: userProfile } = useGetUserProfileQuery(user?.user?.id);
@@ -35,12 +35,11 @@ const SiderTwo: React.FC<{ closeDrawer: () => void }> = ({ closeDrawer }) => {
     setSelectedKey(e.key); // Update the selected key when an item is clicked
   };
 
-  const [loading, setLoading] = useState(false);
+  const [loading ] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const showModal = () => {
     setIsModalOpen(true);
-    closeDrawer(); // Optional: close drawer when modal is triggered
   };
 
   const handleOk = () => {

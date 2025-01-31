@@ -13,7 +13,7 @@ import { useProfiles } from "../../hooks/useProfiles";
 import { useEffect, useState } from "react";
 import Loader from "../../layouts/loader";
 
-export default function Chat({ receiverId }) {
+export default function Chat({ receiverId}: { receiverId?: number }) {
   const user = loginDetails();
   const userId = user.user.id;
   const { data } = useGetUserConversationsQuery(userId);
@@ -43,7 +43,9 @@ export default function Chat({ receiverId }) {
       });
 
       setSocket(newSocket);
-      return () => newSocket.disconnect();
+      return () => {
+        newSocket.disconnect();
+      };
     }
   }, [data, isChatsVisible, user.access_token, userId]);
 

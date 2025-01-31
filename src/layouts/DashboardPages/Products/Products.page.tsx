@@ -1,25 +1,15 @@
-import React, { useState } from 'react';
-import { useGetProductsQuery, useDeleteProductMutation } from '../../../services/products';
+import { useState } from 'react';
 import { Button, Layout } from 'antd';
-import { DeleteOutlined, EditOutlined, ClockCircleOutlined } from '@ant-design/icons';
-import { useNavigate } from 'react-router-dom';
 import Header from '../../../components/secondary/Header';
 import CustomDashboardLayout from '../../../components/secondary/CustomDashboardPagesLayout';
 import AddProductForm from '../Forms/AddProductForm';
-import DeletePopconfirm from '../../../components/secondary/CustomDeletePopUp';
-import DateCheckComponent from '../../../components/primary/dataChecker';
-import Loader from '../../loader.tsx';
 import { loginDetails } from '../../../utils';
-import { toast } from 'react-toastify';
 import AllProductsPage from './AllProducts.tsx';
 import Chat from '../../../components/secondary/Chat.tsx';
 
 const ProductsPage = () => {
-    const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const [open, setOpen] = useState(false);
-
-    const [deleteProduct] = useDeleteProductMutation();
 
     const showModal = () => {
         setOpen(true);
@@ -35,15 +25,6 @@ const ProductsPage = () => {
 
     const handleCancel = () => {
         setOpen(false);
-    };
-
-    const handleDeleteProduct = async (productId: string) => {
-        try {
-            await deleteProduct(productId).unwrap();
-            toast.success('Product deleted successfully.');
-        } catch (error) {
-            toast.error('Failed to delete product');
-        }
     };
 
     return (

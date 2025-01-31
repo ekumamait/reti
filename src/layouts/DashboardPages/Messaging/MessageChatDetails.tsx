@@ -1,6 +1,4 @@
-"use client";
-
-import { CaretRightOutlined, FileAddOutlined } from "@ant-design/icons";
+import { CaretRightOutlined } from "@ant-design/icons";
 import { Button } from "antd";
 import TextArea from "antd/es/input/TextArea";
 import { useEffect, useState } from "react";

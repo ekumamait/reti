@@ -16,7 +16,7 @@ export const profileApi = createApi({
     }) as BaseQueryFn<string | FetchArgs, unknown, customError>,
     tagTypes: ['Profiles'],
     endpoints: ({query, mutation}) => ({
-        getUserProfile: query<ProfileResponseType, number>({
+        getUserProfile: query<any, number>({
             query: (profileId) => ({
                 url: `profiles/${profileId}`,
                 method: "GET",
@@ -24,11 +24,11 @@ export const profileApi = createApi({
             }),
             transformResponse: (response: ProfileResponseType) => response,
         }),
-        updateProfile: mutation<LoginResponseType, { data: User; profileId: string }>({
-            query: ({ data, profileId }) => ({
+        updateProfile: mutation<LoginResponseType,  { profile: Partial<User>; profileId: string }>({
+            query: ({ profile, profileId }) => ({
                 url: `profiles/${profileId}`,
                 method: 'PATCH',
-                body: data,
+                body: profile,
                 headers: getHeaders(),
             }),
             invalidatesTags: ['Profiles'],

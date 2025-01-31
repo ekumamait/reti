@@ -1,11 +1,10 @@
 import {
   DownloadOutlined,
-  EditOutlined,
   EnvironmentOutlined,
   ShoppingOutlined,
   UserOutlined,
 } from "@ant-design/icons";
-import { Avatar, Button, notification, Space } from "antd";
+import { Avatar, Button, Space } from "antd";
 
 import { Content } from "antd/es/layout/layout";
 import { useGetUserProfileQuery } from "../../../services/profiles.ts";

@@ -34,7 +34,7 @@ const UsersPage = () => {
     navigate(`/users/${userId}`);
   };
 
-  const handleDeleteUser = async (userId: number) => {
+  const handleDeleteUser = async (userId: any) => {
     try {
       await deleteUser(userId).unwrap();
       toast.success('User deleted successfully');

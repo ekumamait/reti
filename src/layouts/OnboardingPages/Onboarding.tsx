@@ -67,11 +67,11 @@ const Onboarding: React.FC = () => {
     const progressPercentage = ((current + 1) / steps.length) * 100;
     const handleFinish = async ()=> {
         try {
-            await updateUser({data:{
+            await updateUser({profile:{
                     ...informData,
                     ...additionalData,
                     role:sectionsData,
-                }, user_id: userDetails().data.id}).unwrap()
+                }, profileId: userDetails().data.id}).unwrap()
         } catch (e) {
             let message = 'Try again'
             if (typeof e.data.message === "string") {

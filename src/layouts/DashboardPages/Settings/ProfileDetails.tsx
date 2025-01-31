@@ -1,9 +1,7 @@
-import React, { useEffect, useState } from "react";
-import { Tag, Button, Modal, Form, Input, Select } from "antd";
+import { useEffect, useState } from "react";
+import { Modal, Form, Input } from "antd";
 import { EditOutlined, UserOutlined, EnvironmentOutlined, TeamOutlined, ToolOutlined } from "@ant-design/icons";
 import { loginDetails } from "../../../utils";
-
-const { Option } = Select;
 
 const ProfileDetails = ({ profileData }) => {
 
