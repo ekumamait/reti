@@ -113,7 +113,7 @@ const LoginForm = () => {
                     </Link>
                 </p>
 
-                <div className="flex justify-center mt-24">
+                <div className="flex justify-center mt-6">
                     <Tag color="red" onClick={showModal} className="cursor-pointer">
                         <QuestionCircleOutlined /> Help and Support
                     </Tag>
