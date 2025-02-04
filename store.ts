@@ -8,6 +8,7 @@ import { conversationApi } from './src/services/conversations.ts'
 import { inspirationApi } from './src/services/inspirations.ts'
 import { productApi } from './src/services/products.ts'
 import { mentorshipApi } from './src/services/mentorship.ts'
+import { supportApi } from './src/services/support.ts'
 
 export const store = configureStore({
     reducer: {
@@ -18,7 +19,8 @@ export const store = configureStore({
         [conversationApi.reducerPath]: conversationApi.reducer,
         [inspirationApi.reducerPath]: inspirationApi.reducer,
         [productApi.reducerPath]: productApi.reducer,
-        [mentorshipApi.reducerPath]: mentorshipApi.reducer
+        [mentorshipApi.reducerPath]: mentorshipApi.reducer,
+        [supportApi.reducerPath]: supportApi.reducer
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware().concat(
@@ -29,7 +31,8 @@ export const store = configureStore({
             conversationApi.middleware,
             inspirationApi.middleware,
             productApi.middleware,
-            mentorshipApi.middleware
+            mentorshipApi.middleware,
+            supportApi.middleware
         ),
 })
 

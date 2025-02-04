@@ -5,23 +5,24 @@ import moment from "moment";
 const InformationPage = ({setInformData}) => {
     const [form] = Form.useForm();
     const userDetailsData = userDetails();
-    const user = userDetailsData?.data || {};
-    const {Option} = Select;
-    const prefixSelector = (
-        <Form.Item name="prefix" noStyle>
-            <Select style={{width: 80}} defaultValue="256">
-                <Option value="256">+256</Option>
-            </Select>
-        </Form.Item>
-    );
+    const user = userDetailsData?.user || {};
+
+    // console.log(user, '>>>>');
+    
+    // const {Option} = Select;
+    // const prefixSelector = (
+    //     <Form.Item name="prefix" noStyle>
+    //         <Select style={{width: 80}} defaultValue="256">
+    //             <Option value="256">+256</Option>
+    //         </Select>
+    //     </Form.Item>
+    // );
     const validateDOB = (_, value) => {
         if (!value) {
             return Promise.reject(new Error('Date of Birth is required'));
         }
         const today = moment();
-        console.log(value.$d);
         const age = today.diff(moment(value.$d), 'years');
-        console.log(age)
         if (age < 18) {
             return Promise.reject(new Error('You must be at least 18 years old'));
         }
@@ -78,7 +79,6 @@ const InformationPage = ({setInformData}) => {
                         <Select size="large" defaultValue="other">
                             <Select.Option value="male">Male</Select.Option>
                             <Select.Option value="female">Female</Select.Option>
-                            <Select.Option value="other">Other</Select.Option>
                         </Select>
                     </Form.Item>
                 </Form.Item>
@@ -95,7 +95,7 @@ const InformationPage = ({setInformData}) => {
                     <Form.Item
                         style={{display: 'inline-block', width: 'calc(50% - 8px)', margin: '0 0 0 8px'}}
                         label="Phone number" name="phoneNumber">
-                        <Input size="large" addonBefore={prefixSelector} disabled/>
+                        <Input size="large" disabled/>
                     </Form.Item>
                 </Form.Item>
                 <Form.Item className="my-24">
@@ -107,7 +107,7 @@ const InformationPage = ({setInformData}) => {
                             "gender": values.gender,
                             "phoneNumber": `${values.prefix}${values.phoneNumber}`,
                             values});
-                    }}>Save</Button>
+                    }}>Next</Button>
                 </Form.Item>
             </Form>
         </>
