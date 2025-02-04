@@ -48,39 +48,39 @@ const ProductsPage = () => {
     <>
       <Header pageTitle="Products" />
       <CustomDashboardLayout>
-        {loginDetails().user.role === "youth" && (
-          <div className="flex items-center justify-end mb-4">
-            <div>
-              <Button type="primary" onClick={showModal}>
-                Add New Product
-              </Button>
-              <AddProductForm
-                onOk={handleOk}
-                onCancel={handleCancel}
-                open={open}
-                loading={loading}
-                initialData={undefined}
-              />
-            </div>
+        <div className="mb-4 flex flex-col sm:flex-row gap-4">
+          <div className="flex flex-1 gap-4">
+            <Search
+              placeholder="Search by name or description"
+              onChange={(e) => setSearchText(e.target.value)}
+              style={{ width: 300 }}
+              prefix={<SearchOutlined />}
+            />
+            <Select
+              defaultValue="all"
+              style={{ width: 120 }}
+              onChange={setStockFilter}
+            >
+              <Option value="all">Show All</Option>
+              <Option value="inStock">In Stock</Option>
+              <Option value="outOfStock">Out of Stock</Option>
+            </Select>
           </div>
-        )}
-        <div className="mb-4 flex gap-4">
-          <Search
-            placeholder="Search by name or description"
-            onChange={(e) => setSearchText(e.target.value)}
-            style={{ width: 300 }}
-            prefix={<SearchOutlined />}
-          />
-          <Select
-            defaultValue="all"
-            style={{ width: 120 }}
-            onChange={setStockFilter}
-          >
-            <Option value="all">All Stock</Option>
-            <Option value="inStock">In Stock</Option>
-            <Option value="outOfStock">Out of Stock</Option>
-          </Select>
+          
+          {loginDetails().user.role === "youth" && (
+            <Button type="primary" onClick={showModal} className="ml-auto">
+              Add New Product
+            </Button>
+          )}
         </div>
+
+        <AddProductForm
+          onOk={handleOk}
+          onCancel={handleCancel}
+          open={open}
+          loading={loading}
+          initialData={undefined}
+        />
         <Layout>
           <AllProductsPage
             currentPage={productPage}

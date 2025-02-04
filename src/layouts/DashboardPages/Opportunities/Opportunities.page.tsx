@@ -45,39 +45,34 @@ const OpportunitiesPage = () => {
     <>
       <Header pageTitle="Opportunities" />
       <CustomDashboardLayout>
-        {loginDetails().user.role === "employer" && (
-          <div className="flex items-center justify-end mb-4">
-            <div>
-              <Button type="primary" onClick={showModal}>
-                Create a job
-              </Button>
-              <AddOpportunitiesForm
-                onOk={handleOk}
-                onCancel={handleCancel}
-                open={open}
-                loading={false}
-                isEdit={false}
-                initialData={undefined}
-              />
-            </div>
+        <div className="mb-4 flex flex-col sm:flex-row gap-4">
+          <div className="flex flex-1 gap-4">
+            <Search
+              placeholder="Search by title or company"
+              onChange={(e) => setSearchText(e.target.value)}
+              style={{ width: 300 }}
+              prefix={<SearchOutlined />}
+            />
+            <Select
+              defaultValue="all"
+              style={{ width: 120 }}
+              onChange={setStatusFilter}
+            >
+              <Option value="all">Show All</Option>
+              <Option value="active">Active</Option>
+              <Option value="inactive">Inactive</Option>
+            </Select>
           </div>
-        )}
-        <div className="mb-4 flex gap-4">
-          <Search
-            placeholder="Search by title or company"
-            onChange={(e) => setSearchText(e.target.value)}
-            style={{ width: 300 }}
-            prefix={<SearchOutlined />}
-          />
-          <Select
-            defaultValue="all"
-            style={{ width: 120 }}
-            onChange={setStatusFilter}
-          >
-            <Option value="all">All Statuses</Option>
-            <Option value="active">Active</Option>
-            <Option value="inactive">Inactive</Option>
-          </Select>
+
+          {loginDetails().user.role === "employer" && (
+            <Button
+              type="primary"
+              onClick={showModal}
+              className="ml-auto"
+            >
+              Create a job
+            </Button>
+          )}
         </div>
         <Layout>
           <AllOpportunitiesPage
