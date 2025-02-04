@@ -1,4 +1,4 @@
-import { Form, Input, Button, Modal, message } from 'antd';
+import { Form, Input, Button, Modal } from 'antd';
 import 'antd/dist/reset.css';
 import { useSendSupportRequestMutation } from "../../../services/support"
 import { toast } from 'react-toastify';
@@ -15,7 +15,6 @@ const HelpandsupportForm = ({ onOk, onCancel, open, loading }) => {
                 contact: values.contact,
                 description: values.description
             }).unwrap();
-            console.log(response);
             toast.success(response.message);
             onOk();
         } catch (err) {

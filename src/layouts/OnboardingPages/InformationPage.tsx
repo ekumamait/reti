@@ -7,16 +7,6 @@ const InformationPage = ({setInformData}) => {
     const userDetailsData = userDetails();
     const user = userDetailsData?.user || {};
 
-    // console.log(user, '>>>>');
-    
-    // const {Option} = Select;
-    // const prefixSelector = (
-    //     <Form.Item name="prefix" noStyle>
-    //         <Select style={{width: 80}} defaultValue="256">
-    //             <Option value="256">+256</Option>
-    //         </Select>
-    //     </Form.Item>
-    // );
     const validateDOB = (_, value) => {
         if (!value) {
             return Promise.reject(new Error('Date of Birth is required'));

@@ -18,7 +18,6 @@ export const supportApi = createApi({
     endpoints: ({mutation}) => ({
         sendSupportRequest: mutation<LoginResponseType, { contact: string; description: string }>({
             query: (requestBody) => {
-                console.log('[Support Request] Sending payload:', requestBody);
                 return {
                     url: `support`,
                     method: 'POST',
