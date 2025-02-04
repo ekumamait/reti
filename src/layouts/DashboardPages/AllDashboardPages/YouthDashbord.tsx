@@ -54,10 +54,9 @@ const YouthDashboardPage = () => {
   const [selectedMentor, setSelectedMentor] = useState<string | null>(null);
   const [isMentorDropdownVisible, setIsMentorDropdownVisible] = useState(false);
 
-  const reversedNotifications = notificationsData?.data?.slice().reverse();
   const handleNotificationClick = async (notification: any) => {
     try {
-      if (!notification.isRead) {
+      if (!notification?.isRead) {
         const notificationId = notification.id;
         const response = await markAsRead(notificationId).unwrap();
         const message = response.message;
@@ -220,7 +219,7 @@ const YouthDashboardPage = () => {
                 <Loader />
               ) : (
                 <ul className="space-y-4">
-                  {reversedNotifications?.map((notification) => (
+                  {notificationsData?.data?.map((notification) => (
                     <li
                       key={notification.id}
                       className={`p-3 rounded-lg transition-all cursor-pointer ${
