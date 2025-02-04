@@ -1,11 +1,4 @@
-import {
-  Card,
-  Avatar,
-  Tag,
-  Button,
-  Dropdown,
-  Menu,
-} from "antd";
+import { Card, Avatar, Tag, Button, Dropdown, Menu } from "antd";
 import { useEffect, useState } from "react";
 import "tailwindcss/tailwind.css";
 import {
@@ -23,7 +16,11 @@ import {
 } from "../../../services/notifications";
 import { loginDetails, formatRelativeTime } from "../../../utils";
 import { InspirationsType } from "../../../services/types";
-import { useGetInspirationsQuery, useDeleteInspirationMutation, useLikeInspirationMutation } from "../../../services/inspirations";
+import {
+  useGetInspirationsQuery,
+  useDeleteInspirationMutation,
+  useLikeInspirationMutation,
+} from "../../../services/inspirations";
 import Loader from "../../loader";
 import { useGetUserProfileQuery } from "../../../services/profiles";
 import Chat from "../../../components/secondary/Chat";
@@ -75,16 +72,19 @@ const YouthDashboardPage = () => {
 
   const handleInspirationLike = async (inspirationId: number) => {
     try {
-      const updatedInspirations = inspirations.map(inspiration =>
-        inspiration.id === inspirationId ? {
-          ...inspiration,
-          isLiked: !inspiration.isLiked,
-          likesCount: inspiration.isLiked ? inspiration.likesCount - 1 : inspiration.likesCount + 1
-        } : inspiration
+      const updatedInspirations = inspirations.map((inspiration) =>
+        inspiration.id === inspirationId
+          ? {
+              ...inspiration,
+              isLiked: !inspiration.isLiked,
+              likesCount: inspiration.isLiked
+                ? inspiration.likesCount - 1
+                : inspiration.likesCount + 1,
+            }
+          : inspiration
       );
       setInspirations(updatedInspirations);
-      const data = await likeInspiration(
-        inspirationId).unwrap();
+      const data = await likeInspiration(inspirationId).unwrap();
       toast.success(data.message);
     } catch (error) {
       setInspirations([...inspirations]);
@@ -293,17 +293,20 @@ const YouthDashboardPage = () => {
                 </ul>
               )}
             </div>
-            {reversedNotifications && reversedNotifications.length > notificationPageSize && (
-              <div className="mt-4">
-                <Pagination
-                  currentPage={notificationPage}
-                  totalPages={Math.ceil(reversedNotifications.length / notificationPageSize)}
-                  pageSize={notificationPageSize}
-                  onPageChange={handleNotificationPageChange}
-                  onPageSizeChange={handleNotificationPageSizeChange}
-                />
-              </div>
-            )}
+            {reversedNotifications &&
+              reversedNotifications.length > notificationPageSize && (
+                <div className="mt-4">
+                  <Pagination
+                    currentPage={notificationPage}
+                    totalPages={Math.ceil(
+                      reversedNotifications.length / notificationPageSize
+                    )}
+                    pageSize={notificationPageSize}
+                    onPageChange={handleNotificationPageChange}
+                    onPageSizeChange={handleNotificationPageSizeChange}
+                  />
+                </div>
+              )}
           </Card>
           <div className="flex justify-between mb-4">
             <Dropdown

@@ -11,11 +11,25 @@ const AllProductsPage = ({
 	pageSize,
 	onPageChange,
 	onPageSizeChange,
+	searchText,
+	stockFilter,
 }) => {
 	const navigate = useNavigate();
 	const { data: products, isLoading } = useGetProductsQuery();
 
-	const paginatedProducts = products?.data?.slice(
+	const filteredProducts = products?.data?.filter((product) => {
+		const matchesSearch =
+			product.name.toLowerCase().includes(searchText.toLowerCase()) ||
+			product.description.toLowerCase().includes(searchText.toLowerCase());
+
+		const matchesStock = stockFilter === 'all' || 
+			(stockFilter === 'inStock' && product.stockQuantity > 0) ||
+			(stockFilter === 'outOfStock' && product.stockQuantity === 0);
+
+		return matchesSearch && matchesStock;
+	});
+
+	const paginatedProducts = filteredProducts?.slice(
 		(currentPage - 1) * pageSize,
 		currentPage * pageSize
 	);
@@ -29,8 +43,8 @@ const AllProductsPage = ({
 					{paginatedProducts?.map((product) => (
 						<div
 							key={product.id}
-							className="relative flex flex-col p-1 border border-gray-300 rounded-lg bg-white hover:shadow-lg hover:bg-gray-50 cursor-pointer transition-all duration-200"
 							onClick={() => navigate(`/products/${product.id}`)}
+							className="h-34 relative flex flex-col p-1 border border-gray-300 rounded-lg bg-white hover:shadow-lg hover:bg-gray-50 cursor-pointer transition-all duration-200"
 						>
 							<div className="p-4">
 								<div className="text-right mb-1">
@@ -57,12 +71,10 @@ const AllProductsPage = ({
 												</span>
 												{product.price} shs
 											</p>
-											<Tag className={`px-2 py-1 text-sm ${product.stockQuantity > 0 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-												}`}>
+											<Tag className={`px-2 py-1 text-sm ${product.stockQuantity > 0 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
 												{product.stockQuantity > 0 ? 'In Stock' : 'Out of Stock'}
 											</Tag>
 										</div>
-
 									</div>
 								</div>
 							</div>
@@ -70,11 +82,11 @@ const AllProductsPage = ({
 					))}
 				</div>
 			)}
-			{products?.data && products.data.length > pageSize && (
+			{filteredProducts && filteredProducts.length > pageSize && (
 				<div className="mt-4">
 					<Pagination
 						currentPage={currentPage}
-						totalPages={Math.ceil(products.data.length / pageSize)}
+						totalPages={Math.ceil(filteredProducts.length / pageSize)}
 						pageSize={pageSize}
 						onPageChange={onPageChange}
 						onPageSizeChange={onPageSizeChange}

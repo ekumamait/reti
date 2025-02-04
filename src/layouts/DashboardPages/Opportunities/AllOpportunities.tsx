@@ -11,11 +11,23 @@ const AllOpportunitiesPage = ({
   pageSize,
   onPageChange,
   onPageSizeChange,
+  searchText,
+  statusFilter,
 }) => {
   const navigate = useNavigate();
   const { data: opportunities, isLoading } = useGetOpportunitiesQuery();
 
-  const paginatedOpportunities = opportunities?.data?.slice(
+  const filteredOpportunities = opportunities?.data?.filter((opportunity) => {
+    const matchesSearch =
+      opportunity.title.toLowerCase().includes(searchText.toLowerCase()) ||
+      opportunity.companyName.toLowerCase().includes(searchText.toLowerCase());
+
+    const matchesStatus = statusFilter === 'all' || opportunity.status === statusFilter;
+
+    return matchesSearch && matchesStatus;
+  });
+
+  const paginatedOpportunities = filteredOpportunities?.slice(
     (currentPage - 1) * pageSize,
     currentPage * pageSize
   );
@@ -77,11 +89,11 @@ const AllOpportunitiesPage = ({
           ))}
         </div>
       )}
-      {opportunities?.data && opportunities.data.length > pageSize && (
+      {filteredOpportunities && filteredOpportunities.length > pageSize && (
         <div className="mt-4">
           <Pagination
             currentPage={currentPage}
-            totalPages={Math.ceil(opportunities.data.length / pageSize)}
+            totalPages={Math.ceil(filteredOpportunities.length / pageSize)}
             pageSize={pageSize}
             onPageChange={onPageChange}
             onPageSizeChange={onPageSizeChange}

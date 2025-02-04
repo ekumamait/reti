@@ -1,4 +1,4 @@
-import { Button, Select } from 'antd';
+import { Button, Select } from "antd";
 
 interface PaginationProps {
   currentPage: number;
@@ -34,16 +34,6 @@ const Pagination: React.FC<PaginationProps> = ({
           Next
         </Button>
       </div>
-      <Select
-        defaultValue={pageSize}
-        style={{ width: 120 }}
-        onChange={onPageSizeChange}
-        options={[
-          { value: 2, label: '2 per page' },
-          { value: 5, label: '5 per page' },
-          { value: 10, label: '10 per page' },
-        ]}
-      />
     </div>
   );
 };
