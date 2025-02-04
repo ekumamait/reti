@@ -4,71 +4,91 @@ import { Avatar, Tag, Typography } from "antd";
 import { useGetOpportunitiesQuery } from "../../../services/opportunities.ts";
 import Loader from "../../loader.tsx";
 import { formatRelativeTime } from "../../../utils.ts";
+import Pagination from "../../../components/secondary/Pagination";
 
-const AllOpportunitiesPage = () => {
+const AllOpportunitiesPage = ({
+  currentPage,
+  pageSize,
+  onPageChange,
+  onPageSizeChange,
+}) => {
   const navigate = useNavigate();
-  const { data, isLoading } = useGetOpportunitiesQuery();
+  const { data: opportunities, isLoading } = useGetOpportunitiesQuery();
+
+  const paginatedOpportunities = opportunities?.data?.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize
+  );
 
   return (
-    <>
+    <div>
       {isLoading ? (
         <Loader />
       ) : (
         <div className="mt-8 grid grid-cols-1 gap-x-4 gap-y-4 sm:grid-cols-2 lg:grid-cols-3">
-          {data?.data.map((job) => {
-            return (
-              <div
-                key={job.id}
-                onClick={() => navigate(`/opportunities/${job.id}`)}
-                className="h-34 relative flex flex-col p-1 border border-gray-300 rounded-lg bg-white hover:shadow-lg hover:bg-gray-50 cursor-pointer transition-all duration-200"
-              >
-                <div className="p-2">
-                  <div className="space-y-4">
-                    <h3 className="text-lg capitalize truncate  text-gray-700">
-                      {job.title}
-                    </h3>
-                    <p className="text-sm truncate text-gray-500 flex items-center gap-1">
-                      <div className="text-right mb-1">
-                        <ClockCircleOutlined /> {formatRelativeTime(job.createdAt)}
-                      </div>
-                    </p>
+          {paginatedOpportunities?.map((opportunity) => (
+            <div
+              key={opportunity.id}
+              onClick={() => navigate(`/opportunities/${opportunity.id}`)}
+              className="h-34 relative flex flex-col p-1 border border-gray-300 rounded-lg bg-white hover:shadow-lg hover:bg-gray-50 cursor-pointer transition-all duration-200"
+            >
+              <div className="p-2">
+                <div className="space-y-4">
+                  <h3 className="text-lg capitalize truncate  text-gray-700">
+                    {opportunity.title}
+                  </h3>
+                  <p className="text-sm truncate text-gray-500 flex items-center gap-1">
+                    <div className="text-right mb-1">
+                      <ClockCircleOutlined /> {formatRelativeTime(opportunity.createdAt)}
+                    </div>
+                  </p>
 
-                    <div className="mt-4">
-                      <div className="flex items-center justify-between">
-                        <p className="py-2 text-sm font-semibold truncate">
-                          Created By
-                        </p>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-x-2">
-                          <Avatar
-                            style={{ backgroundColor: "rgb(6, 46, 100)" }}
-                          >
-                            {job.companyName[0]}
-                          </Avatar>
-                          <div>
-                            <Typography.Text type="secondary">
-                              {`${job.employer.firstName} ${job.employer.lastName}`}
-                            </Typography.Text>
-                          </div>
+                  <div className="mt-4">
+                    <div className="flex items-center justify-between">
+                      <p className="py-2 text-sm font-semibold truncate">
+                        Created By
+                      </p>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-x-2">
+                        <Avatar
+                          style={{ backgroundColor: "rgb(6, 46, 100)" }}
+                        >
+                          {opportunity.companyName[0]}
+                        </Avatar>
+                        <div>
+                          <Typography.Text type="secondary">
+                            {`${opportunity.employer.firstName} ${opportunity.employer.lastName}`}
+                          </Typography.Text>
                         </div>
                       </div>
-                      <div className="flex items-center gap-1 mt-2">
-                        <Tag
-                          color={job.status === "active" ? "success" : "error"}
-                        >
-                          {job.status}
-                        </Tag>
-                      </div>
+                    </div>
+                    <div className="flex items-center gap-1 mt-2">
+                      <Tag
+                        color={opportunity.status === "active" ? "success" : "error"}
+                      >
+                        {opportunity.status}
+                      </Tag>
                     </div>
                   </div>
                 </div>
               </div>
-            );
-          })}
+            </div>
+          ))}
         </div>
       )}
-    </>
+      {opportunities?.data && opportunities.data.length > pageSize && (
+        <div className="mt-4">
+          <Pagination
+            currentPage={currentPage}
+            totalPages={Math.ceil(opportunities.data.length / pageSize)}
+            pageSize={pageSize}
+            onPageChange={onPageChange}
+            onPageSizeChange={onPageSizeChange}
+          />
+        </div>
+      )}
+    </div>
   );
 };
 

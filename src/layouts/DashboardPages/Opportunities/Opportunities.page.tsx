@@ -10,6 +10,8 @@ import Chat from "../../../components/secondary/Chat";
 
 const OpportunitiesPage = () => {
     const [open, setOpen] = useState(false);
+    const [opportunityPage, setOpportunityPage] = useState(1);
+    const [opportunityPageSize, setOpportunityPageSize] = useState(1);
 
     const showModal = () => {
         setOpen(true);
@@ -21,6 +23,15 @@ const OpportunitiesPage = () => {
 
     const handleCancel = () => {
         setOpen(false);
+    };
+
+    const handleOpportunityPageChange = (page: number) => {
+        setOpportunityPage(page);
+    };
+
+    const handleOpportunityPageSizeChange = (size: number) => {
+        setOpportunityPageSize(size);
+        setOpportunityPage(1);
     };
 
     return (
@@ -46,7 +57,12 @@ const OpportunitiesPage = () => {
                 )}
 
                 <Layout>
-                    <AllOpportunitiesPage />
+                    <AllOpportunitiesPage
+                        currentPage={opportunityPage}
+                        pageSize={opportunityPageSize}
+                        onPageChange={handleOpportunityPageChange}
+                        onPageSizeChange={handleOpportunityPageSizeChange}
+                    />
                 </Layout>
             </CustomDashboardLayout>
             {loginDetails().user.role !== 'admin' && <Chat />}

@@ -4,18 +4,29 @@ import Loader from "../../loader.tsx";
 import { useGetProductsQuery } from "../../../services/products.ts";
 import { formatRelativeTime } from "../../../utils.ts";
 import { Tag } from "antd";
+import  Pagination  from "../../../components/secondary/Pagination";
 
-const AllProductsPage = () => {
+const AllProductsPage = ({
+	currentPage,
+	pageSize,
+	onPageChange,
+	onPageSizeChange,
+}) => {
 	const navigate = useNavigate();
-	const { data: productsResponse, isLoading } = useGetProductsQuery();
+	const { data: products, isLoading } = useGetProductsQuery();
+
+	const paginatedProducts = products?.data?.slice(
+		(currentPage - 1) * pageSize,
+		currentPage * pageSize
+	);
 
 	return (
-		<>
+		<div>
 			{isLoading ? (
 				<Loader />
 			) : (
 				<div className="mt-8 grid grid-cols-1 gap-x-4 gap-y-4 sm:grid-cols-2 lg:grid-cols-3">
-					{productsResponse?.data?.map((product) => (
+					{paginatedProducts?.map((product) => (
 						<div
 							key={product.id}
 							className="relative flex flex-col p-1 border border-gray-300 rounded-lg bg-white hover:shadow-lg hover:bg-gray-50 cursor-pointer transition-all duration-200"
@@ -59,7 +70,18 @@ const AllProductsPage = () => {
 					))}
 				</div>
 			)}
-		</>
+			{products?.data && products.data.length > pageSize && (
+				<div className="mt-4">
+					<Pagination
+						currentPage={currentPage}
+						totalPages={Math.ceil(products.data.length / pageSize)}
+						pageSize={pageSize}
+						onPageChange={onPageChange}
+						onPageSizeChange={onPageSizeChange}
+					/>
+				</div>
+			)}
+		</div>
 	)
 }
 

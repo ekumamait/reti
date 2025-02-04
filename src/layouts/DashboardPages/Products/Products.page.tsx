@@ -10,6 +10,8 @@ import Chat from '../../../components/secondary/Chat.tsx';
 const ProductsPage = () => {
     const [loading, setLoading] = useState(false);
     const [open, setOpen] = useState(false);
+    const [productPage, setProductPage] = useState(1);
+    const [productPageSize, setProductPageSize] = useState(2);
 
     const showModal = () => {
         setOpen(true);
@@ -25,6 +27,15 @@ const ProductsPage = () => {
 
     const handleCancel = () => {
         setOpen(false);
+    };
+
+    const handleProductPageChange = (page: number) => {
+        setProductPage(page);
+    };
+
+    const handleProductPageSizeChange = (size: number) => {
+        setProductPageSize(size);
+        setProductPage(1);
     };
 
     return (
@@ -48,7 +59,12 @@ const ProductsPage = () => {
                 )}
 
                 <Layout>
-                    <AllProductsPage />
+                    <AllProductsPage
+                        currentPage={productPage}
+                        pageSize={productPageSize}
+                        onPageChange={handleProductPageChange}
+                        onPageSizeChange={handleProductPageSizeChange}
+                    />
                 </Layout>
             </CustomDashboardLayout>
             {loginDetails().user.role !== 'admin' && <Chat />}
