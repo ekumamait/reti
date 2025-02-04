@@ -54,7 +54,7 @@ const YouthDashboardPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(4);
   const [notificationPage, setNotificationPage] = useState(1);
-  const [notificationPageSize, setNotificationPageSize] = useState(2);
+  const [notificationPageSize, setNotificationPageSize] = useState(4);
 
   const handleNotificationClick = async (notification: any) => {
     try {
