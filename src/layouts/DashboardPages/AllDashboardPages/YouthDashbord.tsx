@@ -55,9 +55,14 @@ const YouthDashboardPage = () => {
   const [isMentorDropdownVisible, setIsMentorDropdownVisible] = useState(false);
 
   const reversedNotifications = notificationsData?.data?.slice().reverse();
-  const handleNotificationClick = async (notificationId: number) => {
+  const handleNotificationClick = async (notification: any) => {
     try {
-      await markAsRead(notificationId).unwrap();
+      if (!notification.isRead) {
+        const notificationId = notification.id;
+        const response = await markAsRead(notificationId).unwrap();
+        toast.success(response.message);
+      }
+      return;
     } catch (error) {
       toast.error("Failed to mark notification as read:", error);
     }
@@ -171,6 +176,8 @@ const YouthDashboardPage = () => {
     })
   );
 
+  const currentUserId = user?.user?.id;
+
   return (
     <CustomDashboardLayout>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
@@ -215,24 +222,39 @@ const YouthDashboardPage = () => {
                   {reversedNotifications?.map((notification) => (
                     <li
                       key={notification.id}
-                      className="cursor-pointer flex justify-between items-center hover:bg-gray-100 p-2 rounded-md"
-                      onClick={() => handleNotificationClick(notification.id)}
+                      className={`p-3 rounded-lg transition-all cursor-pointer ${
+                        !notification.isRead
+                          ? "bg-blue-50 border-l-4 border-blue-600 font-medium"
+                          : "bg-gray-50 hover:bg-gray-100"
+                      }`}
+                      onClick={() => handleNotificationClick(notification)}
                     >
-                      <div>
-                        <p
-                          className={`font-medium truncate ${!notification.isRead
-                              ? "text-blue-600"
-                              : "text-gray-800"
+                      <div className="flex justify-between items-start">
+                        <div className="flex-1 pr-4">
+                          <p
+                            className={`text-sm ${
+                              !notification.isRead ? "text-blue-900" : "text-gray-700"
                             }`}
-                        >
-                          {notification.title}
-                        </p>
-                        <p className="text-sm text-gray-600 whitespace--normal break-words flex-1 max-w-[80%] overflow-hidden">
-                          {notification.message}
-                        </p>
-                      </div>
-                      <div className="text-xs text-gray-500 whitespace-nowrap">
-                        {formatRelativeTime(notification.createdAt)} <ClockCircleOutlined />
+                          >
+                            {notification.title}
+                          </p>
+                          <p
+                            className={`text-sm mt-1 ${
+                              !notification.isRead ? "text-blue-800" : "text-gray-600"
+                            }`}
+                          >
+                            {notification.message}
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          {!notification.isRead && (
+                            <span className="w-2 h-2 bg-blue-600 rounded-full"></span>
+                          )}
+                          <span className="text-xs text-gray-500 whitespace-nowrap">
+                            <ClockCircleOutlined className="mr-1" />
+                            {formatRelativeTime(notification.createdAt)}
+                          </span>
+                        </div>
                       </div>
                     </li>
                   ))}
@@ -324,12 +346,16 @@ const YouthDashboardPage = () => {
                       className="flex items-center cursor-pointer group"
                       onClick={() => handleInspirationLike(inspiration.id)}
                     >
-                      {inspiration.isLiked ? (
-                        <LikeFilled className="text-red-500 mr-1 transition-colors" />
+                      {inspiration.likedBy.some(user => user.id === currentUserId) ? (
+                        <LikeFilled className="text-red-500 mr-1 transition-colors animate-[bounce_0.4s_ease-in-out]" />
                       ) : (
                         <LikeOutlined className="mr-1 text-gray-500 group-hover:text-red-400 transition-colors" />
                       )}
-                      <span className={`${inspiration.isLiked ? 'text-red-500' : 'text-gray-600'} group-hover:text-red-400`}>
+                      <span className={`${
+                        inspiration.likedBy.some(user => user.id === currentUserId)
+                          ? 'text-red-500 font-semibold' 
+                          : 'text-gray-600 group-hover:text-red-400'
+                      } transition-colors`}>
                         {inspiration.likesCount}
                       </span>
                     </div>

@@ -6,7 +6,6 @@ export default defineConfig({
   plugins: [react()],
   server: {
     allowedHosts: [
-      "reti.onrender.com",
       "reti-dev.up.railway.app",
       "localhost"
     ],

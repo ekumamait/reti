@@ -1,24 +1,25 @@
 import { Form, Input, Button, Modal } from 'antd';
 import 'antd/dist/reset.css';
+import { useSendSupportRequestMutation } from "../../../services/support"
+import { toast } from 'react-toastify';
 
 const { TextArea } = Input;
 
-
-
 const HelpandsupportForm = ({ onOk, onCancel, open, loading }) => {
-
     const [form] = Form.useForm();
-
-    const handleSubmit = () => {
-        form
-            .validateFields() // Validate form fields
-            .then((values) => {
-                console.log('Form Values:', values); // Replace with actual submission logic
-                onOk(); // close modal
-            })
-            .catch((info) => {
-                console.log('Validation Failed:', info);
-            });
+    const [sendSupportRequest] = useSendSupportRequestMutation();
+    const handleSubmit = async () => {
+        try {
+            const values = await form.validateFields();
+            const response = await sendSupportRequest({
+                contact: values.contact,
+                description: values.description
+            }).unwrap();
+            toast.success(response.message);
+            onOk();
+        } catch (err) {
+            toast.error('Support request failed:', err);
+        }
     };
 
     return (
@@ -51,18 +52,18 @@ const HelpandsupportForm = ({ onOk, onCancel, open, loading }) => {
                         layout="vertical"
                     >
                         <Form.Item
-                            label="Contact Email"
-                            name="contactEmail"
-                            rules={[{ required: true, type: 'email', message: 'Please enter a valid email' }]}
+                            label="Contact"
+                            name="contact"
+                            rules={[{ required: true, message: 'Please enter a valid contact' }]}
                         >
-                            <Input placeholder="e.g. john@example.com" size='large' />
+                            <Input placeholder="e.g. 0705999239" size='large' />
                         </Form.Item>
 
                         {/* Job Description */}
                         <Form.Item
                             label="Description"
                             name="description"
-                            rules={[{ required: true, message: 'Please enter the kind of support need' }]}
+                            rules={[{ required: true, message: 'Please describe your issue' }]}
                         >
                             <TextArea rows={4} placeholder="Describe the assistance you need" />
                         </Form.Item>
