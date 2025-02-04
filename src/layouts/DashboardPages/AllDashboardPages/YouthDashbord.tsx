@@ -31,6 +31,7 @@ import { toast } from "react-toastify";
 import MentorshipCalendar from "../../../components/secondary/Calendar";
 import DeletePopconfirm from "../../../components/secondary/CustomDeletePopUp";
 import AddInspirationsForm from "../Forms/AddGuidanceForm";
+import Pagination from "../../../components/secondary/Pagination";
 
 const YouthDashboardPage = () => {
   const { data: notificationsData, isLoading } = useGetNotificationsQuery();
@@ -53,6 +54,10 @@ const YouthDashboardPage = () => {
   const [isSortDropdownVisible, setIsSortDropdownVisible] = useState(false);
   const [selectedMentor, setSelectedMentor] = useState<string | null>(null);
   const [isMentorDropdownVisible, setIsMentorDropdownVisible] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(2);
+  const [notificationPage, setNotificationPage] = useState(1);
+  const [notificationPageSize, setNotificationPageSize] = useState(2);
 
   const handleNotificationClick = async (notification: any) => {
     try {
@@ -177,6 +182,33 @@ const YouthDashboardPage = () => {
   );
 
   const currentUserId = user?.user?.id;
+  const paginatedInspirations = filteredInspirations.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize
+  );
+
+  const paginatedNotifications = reversedNotifications?.slice(
+    (notificationPage - 1) * notificationPageSize,
+    notificationPage * notificationPageSize
+  );
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const handlePageSizeChange = (size: number) => {
+    setPageSize(size);
+    setCurrentPage(1);
+  };
+
+  const handleNotificationPageChange = (page: number) => {
+    setNotificationPage(page);
+  };
+
+  const handleNotificationPageSizeChange = (size: number) => {
+    setNotificationPageSize(size);
+    setNotificationPage(1);
+  };
 
   return (
     <CustomDashboardLayout>
@@ -219,7 +251,7 @@ const YouthDashboardPage = () => {
                 <Loader />
               ) : (
                 <ul className="space-y-4">
-                  {notificationsData?.data?.map((notification) => (
+                  {paginatedNotifications?.map((notification) => (
                     <li
                       key={notification.id}
                       className={`p-3 rounded-lg transition-all cursor-pointer ${
@@ -261,6 +293,17 @@ const YouthDashboardPage = () => {
                 </ul>
               )}
             </div>
+            {reversedNotifications && reversedNotifications.length > notificationPageSize && (
+              <div className="mt-4">
+                <Pagination
+                  currentPage={notificationPage}
+                  totalPages={Math.ceil(reversedNotifications.length / notificationPageSize)}
+                  pageSize={notificationPageSize}
+                  onPageChange={handleNotificationPageChange}
+                  onPageSizeChange={handleNotificationPageSizeChange}
+                />
+              </div>
+            )}
           </Card>
           <div className="flex justify-between mb-4">
             <Dropdown
@@ -315,7 +358,7 @@ const YouthDashboardPage = () => {
           {/* Recent Inspirations */}
           <Card title="Inspiration Quotations" className="shadow-sm">
             <div className="space-y-2 p-2 overflow-y-auto h-[330px]">
-              {filteredInspirations?.map((inspiration) => (
+              {paginatedInspirations?.map((inspiration) => (
                 <div key={inspiration.id} className="border-b p-3">
                   <div className="flex justify-between items-center">
                     <p className="text-red-500 font-medium">
@@ -378,6 +421,15 @@ const YouthDashboardPage = () => {
                 </div>
               ))}
             </div>
+            {filteredInspirations.length > pageSize && (
+              <Pagination
+                currentPage={currentPage}
+                totalPages={Math.ceil(filteredInspirations.length / pageSize)}
+                pageSize={pageSize}
+                onPageChange={handlePageChange}
+                onPageSizeChange={handlePageSizeChange}
+              />
+            )}
           </Card>
         </div>
 
