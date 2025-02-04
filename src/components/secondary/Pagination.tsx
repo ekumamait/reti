@@ -1,4 +1,5 @@
-import { Button, Select } from "antd";
+import { Button } from "antd";
+import { LeftOutlined, RightOutlined } from "@ant-design/icons";
 
 interface PaginationProps {
   currentPage: number;
@@ -11,9 +12,7 @@ interface PaginationProps {
 const Pagination: React.FC<PaginationProps> = ({
   currentPage,
   totalPages,
-  pageSize,
   onPageChange,
-  onPageSizeChange,
 }) => {
   return (
     <div className="flex items-center justify-between mt-4">
@@ -21,18 +20,18 @@ const Pagination: React.FC<PaginationProps> = ({
         <Button
           disabled={currentPage <= 1}
           onClick={() => onPageChange(currentPage - 1)}
-        >
-          Previous
-        </Button>
+          icon={<LeftOutlined />}
+          aria-label="Previous page"
+        />
         <span className="flex items-center">
           {currentPage} of {totalPages}
         </span>
         <Button
           disabled={currentPage >= totalPages}
           onClick={() => onPageChange(currentPage + 1)}
-        >
-          Next
-        </Button>
+          icon={<RightOutlined />}
+          aria-label="Next page"
+        />
       </div>
     </div>
   );
