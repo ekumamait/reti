@@ -65,13 +65,21 @@ const OpportunitiesPage = () => {
           </div>
 
           {loginDetails().user.role === "employer" && (
-            <Button
-              type="primary"
-              onClick={showModal}
-              className="ml-auto"
-            >
-              Create a job
-            </Button>
+            <div className="flex items-center justify-end mb-4">
+              <div>
+                <Button type="primary" onClick={showModal} className="ml-auto">
+                  Create a job
+                </Button>
+                <AddOpportunitiesForm
+                  onOk={handleOk}
+                  onCancel={handleCancel}
+                  open={open}
+                  loading={false}
+                  isEdit={false}
+                  initialData={undefined}
+                />
+              </div>
+            </div>
           )}
         </div>
         <Layout>
