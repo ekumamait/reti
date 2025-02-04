@@ -115,7 +115,7 @@ const ProductDetailsPage = () => {
                     <img
                       src={
                         data?.data?.imageUrl?.[
-                          imageIndexes[data?.data?.id] || 1
+                          imageIndexes[data?.data?.id] || 0
                         ] || "https://via.placeholder.com/300x200"
                       }
                       alt={data?.data?.name}

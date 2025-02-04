@@ -70,7 +70,7 @@ const AllOpportunitiesPage = ({
                         </Avatar>
                         <div>
                           <Typography.Text type="secondary">
-                            {`${opportunity.employer.firstName} ${opportunity.employer.lastName}`}
+                            {`${opportunity?.employer?.firstName} ${opportunity?.employer?.lastName}`}
                           </Typography.Text>
                         </div>
                       </div>

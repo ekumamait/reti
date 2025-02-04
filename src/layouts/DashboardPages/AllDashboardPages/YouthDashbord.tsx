@@ -52,7 +52,7 @@ const YouthDashboardPage = () => {
   const [selectedMentor, setSelectedMentor] = useState<string | null>(null);
   const [isMentorDropdownVisible, setIsMentorDropdownVisible] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(2);
+  const [pageSize, setPageSize] = useState(4);
   const [notificationPage, setNotificationPage] = useState(1);
   const [notificationPageSize, setNotificationPageSize] = useState(2);
 
@@ -187,7 +187,7 @@ const YouthDashboardPage = () => {
     currentPage * pageSize
   );
 
-  const paginatedNotifications = reversedNotifications?.slice(
+  const paginatedNotifications = notificationsData?.data?.slice(
     (notificationPage - 1) * notificationPageSize,
     notificationPage * notificationPageSize
   );
@@ -293,13 +293,13 @@ const YouthDashboardPage = () => {
                 </ul>
               )}
             </div>
-            {reversedNotifications &&
-              reversedNotifications.length > notificationPageSize && (
+            {notificationsData?.data &&
+              notificationsData?.data?.length > notificationPageSize && (
                 <div className="mt-4">
                   <Pagination
                     currentPage={notificationPage}
                     totalPages={Math.ceil(
-                      reversedNotifications.length / notificationPageSize
+                      notificationsData?.data?.length / notificationPageSize
                     )}
                     pageSize={notificationPageSize}
                     onPageChange={handleNotificationPageChange}

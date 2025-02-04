@@ -33,7 +33,7 @@ const UsersPage = () => {
   const [searchText, setSearchText] = useState("");
   const [roleFilter, setRoleFilter] = useState("all");
   const [userPage, setUserPage] = useState(1);
-  const [userPageSize, setUserPageSize] = useState(20);
+  const [userPageSize, setUserPageSize] = useState(10);
   const navigate = useNavigate();
 
   const handleViewUser = (userId: string) => {
