@@ -119,6 +119,8 @@ const PersonalDetailsSettings = () => {
               gender: data?.data.gender,
               bio: data?.data.bio,
               dateOfBirth: data?.data.dateOfBirth,
+              location: data?.data.location,
+              country: 'Uganda',
               prefix: "256",
             }}
             onFinish={handleFinish}
@@ -129,18 +131,26 @@ const PersonalDetailsSettings = () => {
               <div className="border-b border-gray-200 pb-4">
                 <h2 className="text-sm font-medium text-gray-700">Bio Data</h2>
               </div>
-              
+
               <div className="flex items-start gap-4">
                 <div>
-                  <Avatar
-                    size={80}
-                    icon={<UserOutlined />}
-                    src={
-                      avatarUrl ||
-                      data?.data.profileImage ||
-                      "https://via.placeholder.com/80"
-                    }
-                  />
+                  <div className="relative mr-10">
+                    <Avatar
+                      size={80}
+                      icon={<UserOutlined />}
+                      src={
+                        avatarUrl ||
+                        data?.data.profileImage ||
+                        "https://via.placeholder.com/80"
+                      }
+                    />
+                    <Button
+                      type="text"
+                      icon={<EditOutlined />}
+                      className="text-blue-500 absolute bottom-0 right-0 translate-y-1/4 bg-white/80 backdrop-blur-sm border-none shadow-sm"
+                      onClick={handleAvatarClick}
+                    />
+                  </div>
                   <p className="text-md font-semibold mt-2">
                     {data &&
                       `${data?.data.user.firstName} ${data?.data.user.lastName}`}
@@ -153,14 +163,6 @@ const PersonalDetailsSettings = () => {
                   accept="image/*"
                   style={{ display: "none" }}
                 />
-                <Button
-                  type="text"
-                  icon={<EditOutlined />}
-                  className="text-blue-500 mt-2"
-                  onClick={handleAvatarClick}
-                >
-                  Change avatar
-                </Button>
 
                 {isLoading && (
                   <div className="w-auto text-center">
@@ -187,23 +189,14 @@ const PersonalDetailsSettings = () => {
                       <Input bordered size="large" className="rounded-md" />
                     </Form.Item>
                   </div>
-                  
-                  <Form.Item 
-                    label="Phone number" 
+
+                  <Form.Item
+                    label="Phone number"
                     name="phoneNumber"
                     labelCol={{ className: "text-sm font-medium text-gray-600" }}
                   >
                     <Input bordered size="large" className="rounded-md" />
                   </Form.Item>
-
-                  {/* <Form.Item 
-                    label="Role"
-                    labelCol={{ className: "text-sm font-medium text-gray-600" }}
-                  >
-                    <div className="bg-gray-50 p-3 rounded-md text-sm border border-gray-200">
-                      Tailor
-                    </div>
-                  </Form.Item> */}
                 </div>
               </div>
             </div>
@@ -213,25 +206,11 @@ const PersonalDetailsSettings = () => {
               <div className="border-b border-gray-200 pb-4">
                 <h2 className="text-sm font-medium text-gray-700">Address</h2>
               </div>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <Form.Item
-                  label="Street"
-                  name="street"
-                  labelCol={{ className: "text-sm font-medium text-gray-600" }}
-                >
-                  <Input bordered size="large" className="rounded-md" />
-                </Form.Item>
-                <Form.Item
-                  label="Plot Number"
-                  name="plotNumber"
-                  labelCol={{ className: "text-sm font-medium text-gray-600" }}
-                >
-                  <Input bordered size="large" className="rounded-md" />
-                </Form.Item>
-                <Form.Item
                   label="City"
-                  name="city"
+                  name="location"
                   labelCol={{ className: "text-sm font-medium text-gray-600" }}
                 >
                   <Input bordered size="large" className="rounded-md" />
@@ -249,13 +228,9 @@ const PersonalDetailsSettings = () => {
             {/* id */}
 
             <div>
-              <div className="sm:flex sm:justify-between">
-                <div>
-                  <h2 className="text-md font-semibold text-gray-900">
-                    Identification
-                  </h2>
+            <div className="border-t border-gray-200 pt-4">
+                  <h2 className="text-sm font-medium text-gray-700">Identification</h2>
                 </div>
-              </div>
 
               {/* profile picture and inputs */}
               <div className="sm:flex gap-10 py-4">
@@ -284,8 +259,8 @@ const PersonalDetailsSettings = () => {
             </div>
 
             <div className="text-right">
-              <Button 
-                type="primary" 
+              <Button
+                type="primary"
                 htmlType="submit"
                 className="h-10 px-6 rounded-md font-medium transition-colors"
               >
