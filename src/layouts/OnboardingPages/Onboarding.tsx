@@ -3,7 +3,7 @@ import React, {useEffect, useState} from 'react';
 import {Button, Progress, Form, notification} from 'antd';
 import WelcomePage from './WelcomePage';
 import InformationPage from './InformationPage';
-import SectionsPage from './SectorsPage';
+import RetiCandidatePage from './RetiCandidatePage';
 import AdditionalInformationPage from './AdditionalInformationPage';
 import {useUpdateProfileMutation} from "../../services/profiles.ts";
 import {userDetails} from "../../utils.ts";
@@ -52,7 +52,7 @@ const Onboarding: React.FC = () => {
         {
             title: 'Third',
             content: () => (
-                <SectionsPage sectionsData={sectionsData} setSectionsData={setSectionsData} />
+                <RetiCandidatePage sectionsData={sectionsData} setSectionsData={setSectionsData} />
             ),
             key: 'sectionsData',
         },
@@ -63,7 +63,6 @@ const Onboarding: React.FC = () => {
         },
     ];
     const [updateUser, {isSuccess}] = useUpdateProfileMutation()
-
     const progressPercentage = ((current + 1) / steps.length) * 100;
     const handleFinish = async ()=> {
         try {
@@ -71,19 +70,9 @@ const Onboarding: React.FC = () => {
                     ...informData,
                     ...additionalData,
                     role:sectionsData,
-                }, profileId: userDetails().data.id}).unwrap()
+                }, profileId: userDetails()?.data.id}).unwrap()
         } catch (e) {
-            let message = 'Try again'
-            if (typeof e.data.message === "string") {
-                message = e.data.message
-            } else {
-                message = e.data.message[0]
-            }
-            notification['error']({
-                message: 'Something went wrong',
-                description:
-                message,
-            });
+            console.log(e);
         }
     }
     useEffect(() => {

@@ -71,7 +71,7 @@ const ChangePasswordSettings = () => {
                             <Form form={form} layout="vertical" className="space-y-4">
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                     <Form.Item
-                                        label="New Email"
+                                        label="Current Email"
                                         name="email"
                                         labelCol={{ className: "text-xs sm:text-sm font-medium text-gray-600" }}
                                     >
@@ -83,14 +83,14 @@ const ChangePasswordSettings = () => {
                                     </Form.Item>
 
                                     <Form.Item
-                                        label="Password"
-                                        name="password"
+                                        label="New Email"
+                                        name="email"
                                         labelCol={{ className: "text-xs sm:text-sm font-medium text-gray-600" }}
                                     >
-                                        <Input.Password 
+                                        <Input 
                                             size="middle"
                                             className="text-sm sm:text-base rounded-md"
-                                            placeholder="Current password"
+                                            placeholder="john@gmail.com"
                                         />
                                     </Form.Item>
                                 </div>

@@ -26,8 +26,6 @@ const ProfileSettings = () => {
     }
   }, [isError, error]);
 
-  
-
   return (
     <Content className="px-4 py-4  bg-white border border-gray-900/10 rounded-lg">
       <div className=" text-gray-900  p-4">

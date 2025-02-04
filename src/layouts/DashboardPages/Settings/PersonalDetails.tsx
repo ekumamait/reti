@@ -21,6 +21,7 @@ const PersonalDetailsSettings = () => {
   const [, setUploadedImages] = useState<string[]>([]);
   const [avatarUrl, setAvatarUrl] = useState<string>("");
   const fileInputRef = useRef<HTMLInputElement>(null);
+
   useEffect(() => {
     if (isError) {
       toast.error("Something went wrong");
@@ -195,14 +196,14 @@ const PersonalDetailsSettings = () => {
                     <Input bordered size="large" className="rounded-md" />
                   </Form.Item>
 
-                  <Form.Item 
+                  {/* <Form.Item 
                     label="Role"
                     labelCol={{ className: "text-sm font-medium text-gray-600" }}
                   >
                     <div className="bg-gray-50 p-3 rounded-md text-sm border border-gray-200">
                       Tailor
                     </div>
-                  </Form.Item>
+                  </Form.Item> */}
                 </div>
               </div>
             </div>
