@@ -223,7 +223,7 @@ const OpportunitiesDetailsPage = () => {
                       <span className="text-gray-400">
                         <PhoneOutlined />
                       </span>
-                      {data?.data?.employer.phoneNumber}
+                      {data?.data?.employer?.phoneNumber}
                     </p>
                   </div>
 

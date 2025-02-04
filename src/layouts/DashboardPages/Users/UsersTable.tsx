@@ -2,13 +2,17 @@ import { Space, Table, Tag, Input, Select } from "antd";
 import type { TableProps } from "antd";
 import CustomDashboardLayout from "../../../components/secondary/CustomDashboardPagesLayout";
 import Header from "../../../components/secondary/Header";
-import { useGetAllUsersQuery, useDeleteUserMutation } from "../../../services/users";
+import {
+  useGetAllUsersQuery,
+  useDeleteUserMutation,
+} from "../../../services/users";
 import { DeleteOutlined, SearchOutlined } from "@ant-design/icons";
 import DeletePopconfirm from "../../../components/secondary/CustomDeletePopUp";
 import { useState } from "react";
-import Loader from '../../loader.tsx';
+import Loader from "../../loader.tsx";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import Pagination from "../../../components/secondary/Pagination";
 
 const { Search } = Input;
 const { Option } = Select;
@@ -26,8 +30,10 @@ interface User {
 const UsersPage = () => {
   const { data, isLoading } = useGetAllUsersQuery();
   const [deleteUser] = useDeleteUserMutation();
-  const [searchText, setSearchText] = useState('');
-  const [roleFilter, setRoleFilter] = useState('all');
+  const [searchText, setSearchText] = useState("");
+  const [roleFilter, setRoleFilter] = useState("all");
+  const [userPage, setUserPage] = useState(1);
+  const [userPageSize, setUserPageSize] = useState(10);
   const navigate = useNavigate();
 
   const handleViewUser = (userId: string) => {
@@ -37,7 +43,7 @@ const UsersPage = () => {
   const handleDeleteUser = async (userId: any) => {
     try {
       await deleteUser(userId).unwrap();
-      toast.success('User deleted successfully');
+      toast.success("User deleted successfully");
     } catch (error) {
       toast.error(`Failed to delete user ${error.data?.message}`);
     }
@@ -49,52 +55,71 @@ const UsersPage = () => {
       user.lastName.toLowerCase().includes(searchText.toLowerCase()) ||
       user.phoneNumber.includes(searchText);
 
-    const matchesRole = roleFilter === 'all' || user.role === roleFilter;
+    const matchesRole = roleFilter === "all" || user.role === roleFilter;
 
     return matchesSearch && matchesRole;
   });
 
-  const columns: TableProps<User>['columns'] = [
+  const paginatedUsers = filteredData?.slice(
+    (userPage - 1) * userPageSize,
+    userPage * userPageSize
+  );
+
+  const handleUserPageChange = (page: number) => {
+    setUserPage(page);
+  };
+
+  const handleUserPageSizeChange = (size: number) => {
+    setUserPageSize(size);
+    setUserPage(1);
+  };
+
+  const columns: TableProps<User>["columns"] = [
     {
-      title: 'Id',
-      dataIndex: 'id',
-      key: 'id',
+      title: "Id",
+      dataIndex: "id",
+      key: "id",
     },
     {
-      title: 'Name',
-      key: 'name',
+      title: "Name",
+      key: "name",
       render: (_, record) => `${record.firstName} ${record.lastName}`,
       sorter: (a, b) => a.firstName.localeCompare(b.firstName),
     },
     {
-      title: 'Phone',
-      dataIndex: 'phoneNumber',
-      key: 'phone',
+      title: "Phone",
+      dataIndex: "phoneNumber",
+      key: "phone",
     },
     {
-      title: 'Role',
-      dataIndex: 'role',
-      key: 'role',
+      title: "Role",
+      dataIndex: "role",
+      key: "role",
       render: (role) => (
-        <Tag color={role === 'admin' ? 'red' : 'green'}>
+        <Tag color={role === "admin" ? "red" : "green"}>
           {role.toUpperCase()}
         </Tag>
       ),
       filters: [
-        { text: 'Admin', value: 'admin' },
-        { text: 'Youth', value: 'youth' },
-        { text: 'Mentor', value: 'mentor' },
-        { text: 'Employer', value: 'employer' },
+        { text: "Admin", value: "admin" },
+        { text: "Youth", value: "youth" },
+        { text: "Mentor", value: "mentor" },
+        { text: "Employer", value: "employer" },
       ],
       onFilter: (value, record) => record.role === value,
     },
     {
-      title: 'Action',
-      key: 'action',
+      title: "Action",
+      key: "action",
       render: (_, record) => {
         return (
           <Space size="middle">
-            <a className='text-blue-500 hover:underline' onClick={() => handleViewUser(record.id)}>See Details</a>
+            <a
+              className="text-blue-500 hover:underline"
+              onClick={() => handleViewUser(record.id)}
+            >
+              See Details
+            </a>
             <DeletePopconfirm
               title="Delete User"
               description="Are you sure you want to delete this user?"
@@ -122,7 +147,6 @@ const UsersPage = () => {
             onChange={(e) => setSearchText(e.target.value)}
             style={{ width: 300 }}
             prefix={<SearchOutlined />}
-           
           />
           <Select
             defaultValue="all"
@@ -139,12 +163,26 @@ const UsersPage = () => {
         {isLoading ? (
           <Loader />
         ) : (
-          <Table
-            columns={columns}
-            dataSource={filteredData}
-            loading={isLoading}
-            rowKey="id"
-          />
+          <>
+            <Table
+              columns={columns}
+              dataSource={paginatedUsers}
+              loading={isLoading}
+              rowKey="id"
+              pagination={false}
+            />
+            {filteredData && filteredData.length > userPageSize && (
+              <div className="mt-4">
+                <Pagination
+                  currentPage={userPage}
+                  totalPages={Math.ceil(filteredData.length / userPageSize)}
+                  pageSize={userPageSize}
+                  onPageChange={handleUserPageChange}
+                  onPageSizeChange={handleUserPageSizeChange}
+                />
+              </div>
+            )}
+          </>
         )}
       </CustomDashboardLayout>
     </>
@@ -152,5 +190,3 @@ const UsersPage = () => {
 };
 
 export default UsersPage;
-
-
