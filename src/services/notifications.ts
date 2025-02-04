@@ -28,7 +28,7 @@ export const notificationApi = createApi({
             invalidatesTags: ['Notifications'],
         }),
 
-        markAsRead: builder.mutation<void, number>({
+        markAsRead: builder.mutation<any, number>({
             query: (notificationId) => ({
                 url: `notifications/${notificationId}/read`,
                 method: 'PATCH',

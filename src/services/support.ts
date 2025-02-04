@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery, BaseQueryFn, FetchArgs } from "@reduxjs/toolkit/query/react";
-import { LoginResponseType, User, customError } from "./types.ts";
+import { customError } from "./types.ts";
 import { getAccessToken, getHeaders } from "../utils.ts";
 
 export const supportApi = createApi({
@@ -16,7 +16,7 @@ export const supportApi = createApi({
     }) as BaseQueryFn<string | FetchArgs, unknown, customError>,
     tagTypes: ['Support'],
     endpoints: ({mutation}) => ({
-        sendSupportRequest: mutation<LoginResponseType, { contact: string; description: string }>({
+        sendSupportRequest: mutation<any, { contact: string; description: string }>({
             query: (requestBody) => {
                 return {
                     url: `support`,

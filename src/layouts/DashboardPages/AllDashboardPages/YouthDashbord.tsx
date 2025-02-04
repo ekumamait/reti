@@ -60,7 +60,8 @@ const YouthDashboardPage = () => {
       if (!notification.isRead) {
         const notificationId = notification.id;
         const response = await markAsRead(notificationId).unwrap();
-        toast.success(response.message);
+        const message = response.message;
+        toast.success(message);
       }
       return;
     } catch (error) {

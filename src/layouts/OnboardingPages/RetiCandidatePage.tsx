@@ -16,6 +16,8 @@ const RetiCandidatePage = ({ sectionsData, setSectionsData }) => {
 	const handleSelection = (value: string) => {
         setSectionsData(value);
     };
+	console.log(sectionsData, handleSelection);
+	
     return (
         <div className="space-y-6">
             <div className="text-xl/8 font-semibold text-gray-900 sm:text-lg/9">
