@@ -17,7 +17,7 @@ const SettingsPage = () => {
       key: "2",
       label: "Personal Details",
       children: (
-        <div className="w-[75%] ">
+        <div className="w-full md:w-[75%]">
           <PersonalDetailsSettings />
         </div>
       ),
@@ -26,7 +26,7 @@ const SettingsPage = () => {
       key: "3",
       label: "Account",
       children: (
-        <div className="w-[75%]">
+        <div className="w-full md:w-[75%]">
           <ChangePasswordSettings />
         </div>
       ),
