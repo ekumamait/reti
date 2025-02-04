@@ -1,4 +1,4 @@
-import { Space, Table, Tag, Input, Select } from "antd";
+import { Space, Table, Tag, Input, Select} from "antd";
 import type { TableProps } from "antd";
 import CustomDashboardLayout from "../../../components/secondary/CustomDashboardPagesLayout";
 import Header from "../../../components/secondary/Header";
@@ -9,6 +9,7 @@ import { useState } from "react";
 import Loader from '../../loader.tsx';
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import Pagination from "../../../components/secondary/Pagination";
 
 const { Search } = Input;
 const { Option } = Select;
@@ -28,6 +29,8 @@ const UsersPage = () => {
   const [deleteUser] = useDeleteUserMutation();
   const [searchText, setSearchText] = useState('');
   const [roleFilter, setRoleFilter] = useState('all');
+  const [userPage, setUserPage] = useState(1);
+  const [userPageSize, setUserPageSize] = useState(2);
   const navigate = useNavigate();
 
   const handleViewUser = (userId: string) => {
@@ -53,6 +56,20 @@ const UsersPage = () => {
 
     return matchesSearch && matchesRole;
   });
+
+  const paginatedUsers = filteredData?.slice(
+    (userPage - 1) * userPageSize,
+    userPage * userPageSize
+  );
+
+  const handleUserPageChange = (page: number) => {
+    setUserPage(page);
+  };
+
+  const handleUserPageSizeChange = (size: number) => {
+    setUserPageSize(size);
+    setUserPage(1);
+  };
 
   const columns: TableProps<User>['columns'] = [
     {
@@ -122,7 +139,6 @@ const UsersPage = () => {
             onChange={(e) => setSearchText(e.target.value)}
             style={{ width: 300 }}
             prefix={<SearchOutlined />}
-           
           />
           <Select
             defaultValue="all"
@@ -139,12 +155,26 @@ const UsersPage = () => {
         {isLoading ? (
           <Loader />
         ) : (
-          <Table
-            columns={columns}
-            dataSource={filteredData}
-            loading={isLoading}
-            rowKey="id"
-          />
+          <>
+            <Table
+              columns={columns}
+              dataSource={paginatedUsers}
+              loading={isLoading}
+              rowKey="id"
+              pagination={false}
+            />
+            {filteredData && filteredData.length > userPageSize && (
+              <div className="mt-4">
+                <Pagination
+                  currentPage={userPage}
+                  totalPages={Math.ceil(filteredData.length / userPageSize)}
+                  pageSize={userPageSize}
+                  onPageChange={handleUserPageChange}
+                  onPageSizeChange={handleUserPageSizeChange}
+                />
+              </div>
+            )}
+          </>
         )}
       </CustomDashboardLayout>
     </>
