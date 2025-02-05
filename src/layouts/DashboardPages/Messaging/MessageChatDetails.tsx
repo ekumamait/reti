@@ -1,9 +1,11 @@
-import { CaretRightOutlined } from "@ant-design/icons";
+import { CaretRightOutlined, CheckOutlined } from "@ant-design/icons";
 import { Button } from "antd";
 import TextArea from "antd/es/input/TextArea";
 import { useEffect, useState } from "react";
 import { useGetUserProfileQuery } from "../../../services/profiles";
 import { Message } from "../../../services/types";
+import { formatRelativeTime } from "../../../utils";
+import { useMarkMessageAsReadMutation } from "../../../services/conversations";
 
 const MessagingChatDetails = ({
   conversation,
@@ -14,6 +16,8 @@ const MessagingChatDetails = ({
 }) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState<string>("");
+  const { data } = useGetUserProfileQuery(propReceiverId, { skip: !propReceiverId });
+  const [markMessageAsRead] = useMarkMessageAsReadMutation();
 
   useEffect(() => {
     if (conversation) {
@@ -39,7 +43,6 @@ const MessagingChatDetails = ({
     conversation?.messages?.find(
       (msg: Message) => Number(msg.senderId) === userId
     )?.receiverId;
-  const { data } = useGetUserProfileQuery(receiverId, { skip: !receiverId });
 
   const handleSendMessage = () => {
     if (newMessage.trim() === "") return;
@@ -60,6 +63,22 @@ const MessagingChatDetails = ({
   const sortedMessages = [...messages].sort(
     (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
   );
+
+  useEffect(() => {
+    const markConversationAsRead = async () => {
+      if (!conversation?.id || !userId) return;
+      const convoId = conversation.id;
+      const response = await markMessageAsRead(convoId).unwrap();
+      if (response) {
+        setMessages(prev => prev.map(msg => ({
+          ...msg,
+          isRead: Number(msg.receiverId) === userId ? msg.isRead : true
+        })));
+      }
+    };
+
+    markConversationAsRead();
+  }, [conversation?.id, userId]); 
 
   return (
     <div className="h-full w-full sm:w-[710px]">
@@ -91,18 +110,33 @@ const MessagingChatDetails = ({
           {sortedMessages?.map((msg, index) => (
             <div
               key={index}
-              className={`mb-4 ${
-                Number(msg.senderId) === userId ? "text-right" : "text-left"
-              }`}
+              className={`flex ${Number(msg.senderId) === userId ? "justify-end" : "justify-start"} mb-4`}
             >
               <div
-                className={`${
+                className={`relative max-w-[70%] rounded-xl p-4 ${
                   Number(msg.senderId) === userId
-                    ? "bg-gray-200 text-gray-900"
-                    : "bg-blue-500 text-white"
-                } max-w-xs p-3 rounded-lg shadow-sm inline-block`}
+                    ? "bg-gray-200 rounded-br-none ml-12"
+                    : "bg-blue-100 rounded-bl-none mr-12 shadow-sm"
+                }`}
               >
-                {msg.content}
+                <p className="text-gray-900 text-sm mb-2">{msg.content}</p>
+                <div className="flex items-center justify-end gap-2">
+                  <span className="text-xs text-gray-500">
+                    {formatRelativeTime(msg.createdAt)}
+                  </span>
+                  {Number(msg.senderId) === userId && (
+                    <span className="flex items-center gap-0.5">
+                      {msg.isRead ? (
+                        <>
+                          <CheckOutlined className="text-gray-400 text-[10px]" />
+                          <CheckOutlined className="text-gray-400 text-[10px]" />
+                        </>
+                      ) : (
+                        <CheckOutlined className="text-gray-400 text-[10px]" />
+                      )}
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
           ))}

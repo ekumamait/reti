@@ -1,4 +1,5 @@
 import {
+  CheckOutlined,
   DownOutlined,
   LeftOutlined,
   MessageOutlined,
@@ -134,6 +135,9 @@ export default function Chat({ receiverId}: { receiverId?: number }) {
                     const lastMessage =
                       conversation?.messages[conversation?.messages.length - 1];
                     const receiverProfile = getReceiverProfile(conversation);
+                    const unreadCount = conversation?.messages?.filter(msg => 
+                      !msg.isRead && Number(msg.receiverId) === userId
+                    ).length || null
 
                     return (
                       <li
@@ -157,9 +161,21 @@ export default function Chat({ receiverId}: { receiverId?: number }) {
                                 `${receiverProfile?.user?.firstName} ${receiverProfile?.user?.lastName}`
                               )}
                             </div>
-                            <div className="text-xs text-green-500">Online</div>
+                            <Badge count={unreadCount} className="hidden lg:block"></Badge>
                           </div>
-                          <div className="text-gray-600 truncate">
+                          <div className="text-gray-600 truncate flex items-center gap-0">
+                            {lastMessage && (
+                              <span className="inline-flex">
+                                {lastMessage.isRead ? (
+                                  <>
+                                  <CheckOutlined className="text-gray-400 text-[10px]" />
+                                  <CheckOutlined className="text-gray-400 text-[10px] mr-1" />
+                                  </>
+                                ) : (
+                                  <CheckOutlined className="text-gray-400 text-[10px] mr-1" />
+                                )}
+                              </span>
+                            )}
                             {lastMessage.content}
                           </div>
                         </div>

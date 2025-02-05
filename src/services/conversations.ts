@@ -76,6 +76,18 @@ export const conversationApi = createApi({
       }
     ),
 
+    // Mark a message as read
+    markMessageAsRead: mutation<MessagesResponseType, number>(
+      {
+        query: (id) => ({
+          url: `conversations/${id}/read`,
+          method: "PATCH",
+          headers: getHeaders(),
+        }),
+        invalidatesTags: ["Conversations"],
+      }
+    ),
+
     // Create a new conversation
     createConversation: mutation<ConversationType, { participants: string[] }>({
       query: (data) => ({
@@ -105,6 +117,7 @@ export const {
   useGetConversationDetailsQuery,
   useGetMessagesQuery,
   useSendMessageMutation,
+  useMarkMessageAsReadMutation,
   useCreateConversationMutation,
   useDeleteConversationMutation,
   useGetUserConversationsQuery,
