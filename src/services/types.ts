@@ -231,7 +231,7 @@ export interface CreateNotificationRequest {
 
 
 export interface MentorshipSession {
-  id: string;
+  id: number;
   title: string;
   notes: string;
   sessionDate: string;
