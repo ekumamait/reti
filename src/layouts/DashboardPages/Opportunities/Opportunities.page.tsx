@@ -1,57 +1,101 @@
 import Layout from "antd/es/layout/layout";
 import AllOpportunitiesPage from "./AllOpportunities";
-import { Button } from "antd";
+import { Button, Input } from "antd";
 import { useState } from "react";
 import AddOpportunitiesForm from "../Forms/AddOpportunityForm";
 import Header from "../../../components/secondary/Header";
 import CustomDashboardLayout from "../../../components/secondary/CustomDashboardPagesLayout";
 import { loginDetails } from "../../../utils";
 import Chat from "../../../components/secondary/Chat";
+import { Select } from "antd";
+import { SearchOutlined } from "@ant-design/icons";
+
+const { Search } = Input;
+const { Option } = Select;
 
 const OpportunitiesPage = () => {
-    const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [opportunityPage, setOpportunityPage] = useState(1);
+  const [opportunityPageSize, setOpportunityPageSize] = useState(9);
+  const [searchText, setSearchText] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
 
-    const showModal = () => {
-        setOpen(true);
-    };
+  const showModal = () => {
+    setOpen(true);
+  };
 
-    const handleOk = () => {
-        setOpen(false);
-    };
+  const handleOk = () => {
+    setOpen(false);
+  };
 
-    const handleCancel = () => {
-        setOpen(false);
-    };
+  const handleCancel = () => {
+    setOpen(false);
+  };
 
-    return (
-        <>
-            <Header pageTitle="Opportunities" />
-            <CustomDashboardLayout>
-                {loginDetails().user.role === 'employer' && (
-                    <div className="flex items-center justify-end mb-4">
-                        <div>
-                            <Button type="primary" onClick={showModal}>
-                                Create a job
-                            </Button>
-                            <AddOpportunitiesForm
-                                onOk={handleOk}
-                                onCancel={handleCancel}
-                                open={open}
-                                loading={false}
-                                isEdit={false} 
-                                initialData={undefined}                            
-                            />
-                        </div>
-                    </div>
-                )}
+  const handleOpportunityPageChange = (page: number) => {
+    setOpportunityPage(page);
+  };
 
-                <Layout>
-                    <AllOpportunitiesPage />
-                </Layout>
-            </CustomDashboardLayout>
-            {loginDetails().user.role !== 'admin' && <Chat />}
-        </>
-    )
-}
+  const handleOpportunityPageSizeChange = (size: number) => {
+    setOpportunityPageSize(size);
+    setOpportunityPage(1);
+  };
+
+  return (
+    <>
+      <Header pageTitle="Opportunities" />
+      <CustomDashboardLayout>
+        <div className="mb-4 flex flex-col sm:flex-row gap-4">
+          <div className="flex flex-1 gap-4">
+            <Search
+              placeholder="Search by title or company"
+              onChange={(e) => setSearchText(e.target.value)}
+              style={{ width: 300 }}
+              prefix={<SearchOutlined />}
+            />
+            <Select
+              defaultValue="all"
+              style={{ width: 120 }}
+              onChange={setStatusFilter}
+            >
+              <Option value="all">Show All</Option>
+              <Option value="active">Active</Option>
+              <Option value="inactive">Inactive</Option>
+            </Select>
+          </div>
+
+          {loginDetails().user.role === "employer" && (
+            <div className="flex items-center justify-end mb-4">
+              <div>
+                <Button type="primary" onClick={showModal} className="ml-auto">
+                  Create a job
+                </Button>
+                <AddOpportunitiesForm
+                  onOk={handleOk}
+                  onCancel={handleCancel}
+                  open={open}
+                  loading={false}
+                  isEdit={false}
+                  initialData={undefined}
+                />
+              </div>
+            </div>
+          )}
+        </div>
+        <Layout>
+          <AllOpportunitiesPage
+            currentPage={opportunityPage}
+            pageSize={opportunityPageSize}
+            onPageChange={handleOpportunityPageChange}
+            onPageSizeChange={handleOpportunityPageSizeChange}
+            searchText={searchText}
+            statusFilter={statusFilter}
+          />
+        </Layout>
+      </CustomDashboardLayout>
+      {loginDetails().user.role !== "admin" && <Chat />}
+    </>
+  );
+};
 
 export default OpportunitiesPage;
