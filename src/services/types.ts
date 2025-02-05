@@ -137,7 +137,7 @@ export interface Salary {
   max: number;
 }
 export interface Message {
-//   id: number;
+  id?: number;
   content: string;
   senderId: number;
   receiverId: number;
