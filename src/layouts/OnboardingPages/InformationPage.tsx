@@ -1,5 +1,5 @@
 import {Button, DatePicker, Form, Input, Select} from "antd";
-import {userDetails} from "../../utils.ts";
+import {userDetails, validateDOB} from "../../utils.ts";
 import moment from "moment";
 
 const InformationPage = ({setInformData}) => {
@@ -7,20 +7,6 @@ const InformationPage = ({setInformData}) => {
     const userDetailsData = userDetails();
     const user = userDetailsData?.user || {};
 
-    const validateDOB = (_, value) => {
-        if (!value) {
-            return Promise.reject(new Error('Date of Birth is required'));
-        }
-        const today = moment();
-        const age = today.diff(moment(value.$d), 'years');
-        if (age < 18) {
-            return Promise.reject(new Error('You must be at least 18 years old'));
-        }
-        if (age > 150) {
-            return Promise.reject(new Error('Please enter a valid Date of Birth'));
-        }
-        return Promise.resolve();
-    };
     return (
         <>
             <div className="text-xl/8 font-semibold text-gray-900 sm:text-lg/9">

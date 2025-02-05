@@ -228,7 +228,6 @@ const OpportunitiesDetailsPage = () => {
                   </div>
 
                   <div className="mt-2">
-                    {loginDetails().user.role === "youth" && (
                       <Button
                         className="bg-green-600 text-white hover:bg-green-700"
                         type="default"
@@ -236,12 +235,11 @@ const OpportunitiesDetailsPage = () => {
                       >
                         Start Chat
                       </Button>
-                    )}
                   </div>
                 </div>
               </div>
             </div>
-            {loginDetails().user.role === "employer" && (
+            {loginDetails().user.role === "employer" || loginDetails().user.role === "admin" && (
               <div className="absolute bottom-4 right-4 space-y-2">
                 <div>
                   <DeletePopconfirm

@@ -30,7 +30,7 @@ import DeletePopconfirm from "../../../components/secondary/CustomDeletePopUp";
 import AddInspirationsForm from "../Forms/AddGuidanceForm";
 import Pagination from "../../../components/secondary/Pagination";
 
-const YouthDashboardPage = () => {
+const DashboardPage = () => {
   const { data: notificationsData, isLoading } = useGetNotificationsQuery();
   const [markAsRead] = useMarkAsReadMutation();
   const [likeInspiration] = useLikeInspirationMutation();
@@ -491,4 +491,4 @@ const YouthDashboardPage = () => {
   );
 };
 
-export default YouthDashboardPage;
+export default DashboardPage;

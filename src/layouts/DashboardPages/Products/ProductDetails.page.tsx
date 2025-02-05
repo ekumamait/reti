@@ -234,7 +234,7 @@ const ProductDetailsPage = () => {
             </div>
 
             {user?.user?.id === data?.data?.userId &&
-              user?.user?.role === "youth" && (
+              user?.user?.role === "youth" || user?.user?.role === "admin" && (
                 <div className="absolute bottom-4 right-4 space-y-2">
                   <div>
                     <DeletePopconfirm
