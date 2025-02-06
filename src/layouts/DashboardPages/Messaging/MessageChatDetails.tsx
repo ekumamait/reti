@@ -1,5 +1,5 @@
-import { CaretRightOutlined, CheckOutlined } from "@ant-design/icons";
-import { Button } from "antd";
+import { CaretRightOutlined, CheckOutlined, UserOutlined } from "@ant-design/icons";
+import { Avatar, Button } from "antd";
 import TextArea from "antd/es/input/TextArea";
 import { useEffect, useState } from "react";
 import { useGetUserProfileQuery } from "../../../services/profiles";
@@ -85,11 +85,23 @@ const MessagingChatDetails = ({
       {/* typing */}
       <div className="sm:w-11/12">
         <div className="p-4 border-b border-gray-200 flex items-center justify-between w-full sm:w-[710px]">
-          <h2 className="text-lg/6 truncate font-semibold text-gray-900">
-            {data?.data?.user?.firstName
-              ? `${data.data.user.firstName} ${data.data.user.lastName}`
-              : " "}
-          </h2>
+          <div className="flex items-center space-x-6">
+            <div className="shrink-0">
+              <Avatar
+                size="large"
+                icon={<UserOutlined />}
+                src={
+                  data?.data?.profileImage ||
+                  "https://via.placeholder.com/80"
+                }
+              />
+            </div>
+            <h2 className="text-lg/6 truncate font-semibold text-gray-900">
+              {data?.data?.user?.firstName
+                ? `${data.data.user.firstName} ${data.data.user.lastName}`
+                : " "}
+            </h2>
+          </div>
           <div className="flex items-center justify-center gap-x-1.5">
             {online ? (
               <p className="text-xs/5 text-green-500">online</p>
@@ -113,11 +125,10 @@ const MessagingChatDetails = ({
               className={`flex ${Number(msg.senderId) === userId ? "justify-end" : "justify-start"} mb-4`}
             >
               <div
-                className={`relative max-w-[70%] rounded-xl p-4 ${
-                  Number(msg.senderId) === userId
+                className={`relative max-w-[70%] rounded-xl p-4 ${Number(msg.senderId) === userId
                     ? "bg-gray-200 rounded-br-none ml-12"
                     : "bg-blue-100 rounded-bl-none mr-12 shadow-sm"
-                }`}
+                  }`}
               >
                 <p className="text-gray-900 text-sm mb-2">{msg.content}</p>
                 <div className="flex items-center justify-end gap-2">
