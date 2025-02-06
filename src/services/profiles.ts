@@ -30,7 +30,7 @@ export const profileApi = createApi({
                 method: "GET",
                 headers: getHeaders(),
             }),
-            invalidatesTags: ['Profiles'],
+            transformResponse: (response: ProfileResponseType) => response,
         }),
         updateProfile: mutation<LoginResponseType,  { profile: Partial<User>; profileId: string }>({
             query: ({ profile, profileId }) => ({

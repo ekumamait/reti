@@ -11,7 +11,7 @@ const { TextArea } = Input;
 type FormProps =
     | {
         isEdit: true;
-        initialData: { id: number; title: string; content: string };
+        initialData: { id: number; images: string; content: string };
         onOk: () => void;
         onCancel: () => void;
         open: boolean;
