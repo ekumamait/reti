@@ -152,7 +152,7 @@ const AddProductForm = ({
               precision={2}
               style={{ width: "100%" }}
               formatter={(value) =>
-                Number(value || 0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                value?.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
               }
               parser={(value) => {
                 const numericValue = Number(value?.replace(/[^0-9.]/g, "") || 0);

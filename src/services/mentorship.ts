@@ -1,6 +1,7 @@
 import { createApi, fetchBaseQuery, BaseQueryFn, FetchArgs } from "@reduxjs/toolkit/query/react";
 import { customError } from "./types.ts";
 import { getHeaders } from "../utils.ts";
+import { notificationApi } from './notifications';
 
 export const mentorshipApi = createApi({
     reducerPath: 'mentorshipApi',
@@ -25,6 +26,12 @@ export const mentorshipApi = createApi({
                 headers: getHeaders(),
             }),
             invalidatesTags: ['Mentorship'],
+            async onQueryStarted(_, { dispatch, queryFulfilled }) {
+                await queryFulfilled;
+                dispatch(
+                    notificationApi.util.invalidateTags(['Notifications'])
+                );
+            },
         }),
         updateMentorshipSession: builder.mutation<any, { sessionId: number; body: any }>({
             query: ({sessionId, body}) => ({
@@ -34,6 +41,12 @@ export const mentorshipApi = createApi({
                 headers: getHeaders(),
             }),
             invalidatesTags: ['Mentorship'],
+            async onQueryStarted(_, { dispatch, queryFulfilled }) {
+                await queryFulfilled;
+                dispatch(
+                    notificationApi.util.invalidateTags(['Notifications'])
+                );
+            },
         }),
         deleteMentorshipSession: builder.mutation<any, any>({
             query: (sessionId) => ({
@@ -42,6 +55,12 @@ export const mentorshipApi = createApi({
                 headers: getHeaders(),
             }),
             invalidatesTags: ['Mentorship'],
+            async onQueryStarted(_, { dispatch, queryFulfilled }) {
+                await queryFulfilled;
+                dispatch(
+                    notificationApi.util.invalidateTags(['Notifications'])
+                );
+            },
         }),
     }),
 });

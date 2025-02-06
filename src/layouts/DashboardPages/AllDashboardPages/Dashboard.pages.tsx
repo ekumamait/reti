@@ -1,7 +1,7 @@
 
 import "tailwindcss/tailwind.css";
 import Header from "../../../components/secondary/Header";
-import YouthDashboardPage from "./Dashboard";
+import Dashboard from "./Dashboard";
 import AdminDashboardPage from "./Admin/AdminDashboard";
 import { loginDetails } from "../../../utils";
 import Chat from "../../../components/secondary/Chat";
@@ -11,7 +11,7 @@ const DashboardPage = () => {
   return (
     <>
       <Header pageTitle="Dashboard" />
-      {role === 'admin' ? <AdminDashboardPage /> : <YouthDashboardPage /> }
+      {role === 'admin' ? <AdminDashboardPage /> : <Dashboard /> }
       {role !== 'admin' && <Chat />}
     </>
   );

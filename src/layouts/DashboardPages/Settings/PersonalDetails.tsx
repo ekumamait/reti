@@ -1,15 +1,16 @@
 import { EditOutlined, InboxOutlined, UserOutlined } from "@ant-design/icons";
-import { Avatar, Button, Input, Spin, Form, notification } from "antd";
+import { Avatar, Button, Input, Spin, Form, notification, DatePicker } from "antd";
 import { Content } from "antd/es/layout/layout";
 import {
   useGetUserProfileQuery,
   useUpdateProfileMutation,
 } from "../../../services/profiles.ts";
-import { loginDetails } from "../../../utils.ts";
+import { loginDetails, validateDOB } from "../../../utils.ts";
 import { useEffect, useRef, useState } from "react";
 import Dragger from "antd/es/upload/Dragger";
 import { uploadImage, validateFile } from "../../../utils/uploadImage.ts";
 import { toast } from "react-toastify";
+import moment from "moment";
 
 const PersonalDetailsSettings = () => {
   const { data, isLoading, isError, error, refetch } = useGetUserProfileQuery(
@@ -118,7 +119,7 @@ const PersonalDetailsSettings = () => {
               phoneNumber: data?.data.user.phoneNumber,
               gender: data?.data.gender,
               bio: data?.data.bio,
-              dateOfBirth: data?.data.dateOfBirth,
+              dateOfBirth: data?.data.dateOfBirth ? moment(data.data.dateOfBirth) : null,
               location: data?.data.location,
               country: 'Uganda',
               prefix: "256",
@@ -190,6 +191,29 @@ const PersonalDetailsSettings = () => {
                     </Form.Item>
                   </div>
 
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <Form.Item
+                      label="Date of birth"
+                      name="dateOfBirth"
+                      rules={[{ validator: validateDOB }]}
+                      className="w-full"
+                    >
+                      <DatePicker 
+                        size="large" 
+                        className="w-full"
+                        format="YYYY-MM-DD"
+                        disabledDate={(current) => current && current > moment().endOf('day')}
+                      />
+                    </Form.Item>
+                    <Form.Item
+                      label="Gender"
+                      name="gender"
+                      labelCol={{ className: "text-sm font-medium text-gray-600" }}
+                    >
+                      <Input bordered size="large" className="rounded-md" disabled/>
+                    </Form.Item>
+                  </div>
+
                   <Form.Item
                     label="Phone number"
                     name="phoneNumber"
@@ -198,6 +222,7 @@ const PersonalDetailsSettings = () => {
                     <Input bordered size="large" className="rounded-md" />
                   </Form.Item>
                 </div>
+
               </div>
             </div>
 
@@ -228,9 +253,9 @@ const PersonalDetailsSettings = () => {
             {/* id */}
 
             <div>
-            <div className="border-t border-gray-200 pt-4">
-                  <h2 className="text-sm font-medium text-gray-700">Identification</h2>
-                </div>
+              <div className="border-t border-gray-200 pt-4">
+                <h2 className="text-sm font-medium text-gray-700">Identification</h2>
+              </div>
 
               {/* profile picture and inputs */}
               <div className="sm:flex gap-10 py-4">

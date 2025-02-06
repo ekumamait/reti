@@ -137,7 +137,7 @@ export interface Salary {
   max: number;
 }
 export interface Message {
-//   id: number;
+  id?: number;
   content: string;
   senderId: number;
   receiverId: number;
@@ -231,7 +231,7 @@ export interface CreateNotificationRequest {
 
 
 export interface MentorshipSession {
-  id: string;
+  id: number;
   title: string;
   notes: string;
   sessionDate: string;

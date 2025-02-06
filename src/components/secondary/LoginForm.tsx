@@ -81,9 +81,14 @@ const LoginForm = () => {
                 <Form.Item
                     name="password"
                     label={
-                        <div className="flex items-center">
-                            <span className="mr-4">Password</span>
-                            <Link className="text-red-500 hover:text-red-700 hover:underline" to="/reset-password">Forgot your password?</Link>
+                        <div className="flex justify-between w-full">
+                            <span className="text-left">Password</span>
+                            <Link 
+                                className="text-red-500 hover:text-red-700 hover:underline text-sm ml-24" 
+                                to="/reset-password"
+                            >
+                                Forgot your password?
+                            </Link>
                         </div>
                     }
                     rules={[{ required: true, message: 'Please enter your password!' }]}>
@@ -115,7 +120,7 @@ const LoginForm = () => {
 
                 <div className="flex justify-center mt-6">
                     <Tag color="red" onClick={showModal} className="cursor-pointer">
-                        <QuestionCircleOutlined /> Help and Support
+                        <QuestionCircleOutlined /> Help & Support
                     </Tag>
                 </div>
             </Form>

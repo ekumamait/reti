@@ -75,6 +75,30 @@ const MentorshipCalendar = () => {
     setIsModalVisible(true);
   };
 
+  const handleUpdateSession = async (values: any) => {
+    try {
+      if (!selectedSession) return;
+      const [startTime, endTime] = values.duration;
+      const sessionData = {
+        title: values.title,
+        notes: values.notes,
+        duration: endTime.diff(startTime, 'minutes'),
+        meetingLink: values.meetingLink,
+        status: values.status || selectedSession.status,
+      };
+      await updateSession({
+        sessionId: selectedSession.id,
+        body: sessionData
+      }).unwrap();
+      toast.success('Mentorship session updated successfully!');
+      setIsModalVisible(false);
+      form.resetFields();
+      setSelectedSession(null);
+    } catch (error) {
+      toast.error('Failed to update mentorship session');
+    }
+  };
+
   const handleCreateSession = async (values: any) => {
     try {
       const [startTime, endTime] = values.duration;
@@ -132,9 +156,12 @@ const MentorshipCalendar = () => {
           <Form
             form={form}
             layout="vertical"
-            onFinish={selectedSession ? updateSession : handleCreateSession}
+            onFinish={selectedSession ? handleUpdateSession : handleCreateSession}
             initialValues={{
               date: selectedDate,
+              ...(selectedSession && {
+                status: selectedSession.status
+              })
             }}
           >
             <Form.Item
@@ -175,7 +202,7 @@ const MentorshipCalendar = () => {
                   }}
                 />
                 </Form.Item>
-              {selectedSession && userRole !== 'youth' && (
+              {selectedSession && userRole === 'mentor' && (
                 <Form.Item
                   name="status"
                   label="Status"
