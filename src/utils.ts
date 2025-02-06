@@ -273,3 +273,29 @@ export const formatRelativeTime = (createdAt: string) => {
     });
   }
 };
+
+export const formatTwitterTime = (createdAt: string) => {
+  const date = new Date(createdAt);
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  
+  // Convert milliseconds to hours
+  const hours = Math.floor(diffMs / (1000 * 60 * 60));
+  if (hours < 24) {
+    return `${hours}h`;
+  }
+
+  // Convert to days
+  const days = Math.floor(hours / 24);
+  if (days <= 7) {
+    return `${days}d`;
+  }
+
+  // Format as DD/MM/YYYY for older dates
+  return date.toLocaleDateString('en-GB', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric'
+  });
+};
+

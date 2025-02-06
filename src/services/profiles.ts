@@ -24,6 +24,14 @@ export const profileApi = createApi({
             }),
             transformResponse: (response: ProfileResponseType) => response,
         }),
+        getAllProfiles: query<any, void>({
+            query: () => ({
+                url: `profiles`,
+                method: "GET",
+                headers: getHeaders(),
+            }),
+            invalidatesTags: ['Profiles'],
+        }),
         updateProfile: mutation<LoginResponseType,  { profile: Partial<User>; profileId: string }>({
             query: ({ profile, profileId }) => ({
                 url: `profiles/${profileId}`,
@@ -42,5 +50,6 @@ export const profileApi = createApi({
 
 export const {
     useGetUserProfileQuery,
+    useGetAllProfilesQuery,
     useUpdateProfileMutation,
 } = profileApi;

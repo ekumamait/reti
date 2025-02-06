@@ -1,14 +1,8 @@
-'use client'
-
 import { Button } from "antd";
 import { useState } from "react";
 
-
 export default function MessagingItemDetails() {
-
     const [isVisible, setIsVisible] = useState(true);
-
-
 
     return (
         <>

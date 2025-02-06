@@ -2,8 +2,7 @@ import React, { useState } from 'react';
 import { Drawer, Button, Badge } from 'antd';
 import { BellOutlined, MenuOutlined } from '@ant-design/icons';
 import SiderTwo from './SideBarMenuTwo';
-
-
+import { useGetNotificationsQuery } from '../../services/notifications';
 
 interface HeaderProps {
     onMenuClick?: () => void;
@@ -19,6 +18,11 @@ const Header: React.FC<HeaderProps> = ({ pageTitle }) => {
     const showDrawer = () => setDrawerVisible(true);
     const closeDrawer = () => setDrawerVisible(false);
 
+    const { data: notifications } = useGetNotificationsQuery();
+    const unreadCount = notifications?.data?.filter(
+        (notification) => !notification.isRead
+    ).length || 0;
+
     return (
         <div className="sticky top-0 z-50 h-16 bg-white flex justify-between items-center px-4 border-b border-gray-300 shadow-sm">
             <h2 className="hidden text-xl font-medium lg:block px-4">{pageTitle}</h2>
@@ -26,7 +30,7 @@ const Header: React.FC<HeaderProps> = ({ pageTitle }) => {
 
             {/* Notifications and Avatar */}
             <div className="flex items-center space-x-4 mr-2">
-                <Badge count={5} className="hidden lg:block">
+                <Badge count={unreadCount} className="hidden lg:block">
                     <BellOutlined className="text-xl" />
                 </Badge>
 
