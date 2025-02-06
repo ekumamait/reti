@@ -443,7 +443,7 @@ const DashboardPage = () => {
           </Card>
 
           {/* Chats */}
-          <Chat />
+          <Chat receiverId={undefined}/>
         </div>
       </div>
 

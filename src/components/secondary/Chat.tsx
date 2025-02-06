@@ -99,7 +99,7 @@ export default function Chat({ receiverId }: { receiverId?: number }) {
             socket={socket}
             userId={userId}
             online={!!onlineUsers[String(determinedReceiverId)]}
-            receiverId={selectedConversation?.receiverId}
+            receiverId={determinedReceiverId}
           />
         </Card>
       ) : (
@@ -150,12 +150,6 @@ export default function Chat({ receiverId }: { receiverId?: number }) {
                     const unreadCount = conversation?.messages?.filter(msg => 
                       !msg.isRead && Number(msg.receiverId) === userId
                     ).length || null
-                    const receiverId =
-                      lastMessage?.senderId === userId
-                        ? lastMessage?.receiverId
-                        : lastMessage?.senderId;
-                   
-                    const isReceiverOnline = !!onlineUsers[String(receiverId)];
 
                     return (
                       <li
@@ -180,15 +174,6 @@ export default function Chat({ receiverId }: { receiverId?: number }) {
                               )}
                             </div>
                             <Badge count={unreadCount} className="hidden lg:block"></Badge>
-                            <div
-                              className={`text-xs ${
-                                isReceiverOnline
-                                  ? "text-green-500"
-                                  : "text-red-400"
-                              }`}
-                            >
-                              {isReceiverOnline ? "Online" : "Offline"}
-                            </div>
                           </div>
                           <div className="text-gray-600 truncate flex items-center gap-0">
                             {lastMessage && (
