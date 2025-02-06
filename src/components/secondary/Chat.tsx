@@ -14,7 +14,7 @@ import { useProfiles } from "../../hooks/useProfiles";
 import { useEffect, useState } from "react";
 import Loader from "../../layouts/loader";
 
-export default function Chat({ receiverId}: { receiverId?: number }) {
+export default function Chat({ receiverId }: { receiverId?: number }) {
   const user = loginDetails();
   const userId = user.user.id;
   const { data } = useGetUserConversationsQuery(userId);
@@ -23,6 +23,7 @@ export default function Chat({ receiverId}: { receiverId?: number }) {
   const [socket, setSocket] = useState(null);
   const [isChatsVisible, setIsChatsVisible] = useState(false);
   const { profiles, isLoading: profilesLoading } = useProfiles(conversations);
+  const [onlineUsers, setOnlineUsers] = useState({});
 
   const getReceiverProfile = (conversation) => {
     const lastMessage =
@@ -44,7 +45,13 @@ export default function Chat({ receiverId}: { receiverId?: number }) {
       });
 
       setSocket(newSocket);
+      newSocket.emit("user-online", { userId });
+
+      newSocket.on("online-users", (users) => {
+        setOnlineUsers(users);
+      });
       return () => {
+        newSocket.emit("user-offline", { userId });
         newSocket.disconnect();
       };
     }
@@ -77,6 +84,11 @@ export default function Chat({ receiverId}: { receiverId?: number }) {
     }
   }, [receiverId, conversations, userId]);
 
+  const lastMessage = selectedConversation?.messages[selectedConversation?.messages.length - 1];
+
+  const determinedReceiverId =
+    lastMessage?.senderId === userId ? lastMessage?.receiverId : lastMessage?.senderId;
+
   return (
     <div className="sm:flex items-start justify-between gap-2">
       {isChatsVisible && selectedConversation ? (
@@ -86,8 +98,8 @@ export default function Chat({ receiverId}: { receiverId?: number }) {
             conversation={selectedConversation}
             socket={socket}
             userId={userId}
-            online={true}
-            receiverId={selectedConversation?.receiverId}
+            online={!!onlineUsers[String(determinedReceiverId)]}
+            receiverId={determinedReceiverId}
           />
         </Card>
       ) : (
