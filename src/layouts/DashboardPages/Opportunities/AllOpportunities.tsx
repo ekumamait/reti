@@ -23,8 +23,8 @@ const AllOpportunitiesPage = ({
       setPageSize(window.innerWidth >= 2560 ? 12 : 6);
     };
 
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   const filteredOpportunities = opportunities?.data?.filter((opportunity) => {
@@ -32,7 +32,8 @@ const AllOpportunitiesPage = ({
       opportunity.title.toLowerCase().includes(searchText.toLowerCase()) ||
       opportunity.companyName.toLowerCase().includes(searchText.toLowerCase());
 
-    const matchesStatus = statusFilter === 'all' || opportunity.status === statusFilter;
+    const matchesStatus =
+      statusFilter === "all" || opportunity.status === statusFilter;
 
     return matchesSearch && matchesStatus;
   });
@@ -62,7 +63,8 @@ const AllOpportunitiesPage = ({
                     </h3>
                     <p className="text-sm truncate text-gray-500 flex items-center gap-1">
                       <div className="text-right mb-1">
-                        <ClockCircleOutlined /> {formatRelativeTime(opportunity.createdAt)}
+                        <ClockCircleOutlined />{" "}
+                        {formatRelativeTime(opportunity.createdAt)}
                       </div>
                     </p>
 
@@ -88,7 +90,11 @@ const AllOpportunitiesPage = ({
                       </div>
                       <div className="flex items-center gap-1 mt-2">
                         <Tag
-                          color={opportunity.status === "active" ? "success" : "error"}
+                          color={
+                            opportunity.status === "active"
+                              ? "success"
+                              : "error"
+                          }
                         >
                           {opportunity.status}
                         </Tag>
@@ -101,15 +107,33 @@ const AllOpportunitiesPage = ({
           </div>
 
           {filteredOpportunities && filteredOpportunities.length > pageSize && (
-            <div className="mt-4 fixed bottom-0 p-4">
-              <Pagination
-                currentPage={currentPage}
-                totalPages={Math.ceil(filteredOpportunities.length / pageSize)}
-                pageSize={pageSize}
-                onPageChange={onPageChange}
-                onPageSizeChange={onPageSizeChange}
-              />
-            </div>
+            <>
+              {/* Desktop Pagination */}
+              <div className="mt-4 fixed bottom-0 p-4 bg-white shadow-sm hidden sm:block w-full">
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={Math.ceil(
+                    filteredOpportunities.length / pageSize
+                  )}
+                  pageSize={pageSize}
+                  onPageChange={onPageChange}
+                  onPageSizeChange={onPageSizeChange}
+                />
+              </div>
+
+              {/* Mobile Pagination */}
+              <div className=" p-4 sm:hidden w-full z-50 mb-16">
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={Math.ceil(
+                    filteredOpportunities.length / pageSize
+                  )}
+                  pageSize={pageSize}
+                  onPageChange={onPageChange}
+                  onPageSizeChange={onPageSizeChange}
+                />
+              </div>
+            </>
           )}
         </>
       )}
