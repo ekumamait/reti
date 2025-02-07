@@ -119,7 +119,7 @@ const ProductDetailsPage = () => {
                         ] || "https://via.placeholder.com/300x200"
                       }
                       alt={data?.data?.name}
-                      className="w-full max-w-md rounded-lg"
+                      className="w-full h-auto min-w-[250px] max-w-full rounded-lg"
                     />
                     {data?.data?.imageUrl &&
                       data?.data?.imageUrl.length > 1 && (
