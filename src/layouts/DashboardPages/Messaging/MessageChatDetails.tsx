@@ -1,7 +1,11 @@
-import { CaretRightOutlined, CheckOutlined, UserOutlined } from "@ant-design/icons";
+import {
+  CaretRightOutlined,
+  CheckOutlined,
+  UserOutlined,
+} from "@ant-design/icons";
 import { Avatar, Button } from "antd";
 import TextArea from "antd/es/input/TextArea";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useGetUserProfileQuery } from "../../../services/profiles";
 import { Message } from "../../../services/types";
 import { formatRelativeTime } from "../../../utils";
@@ -14,26 +18,42 @@ const MessagingChatDetails = ({
   online,
   receiverId: propReceiverId,
 }) => {
+  const chatContainerRef = useRef(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState<string>("");
-  const { data } = useGetUserProfileQuery(propReceiverId, { skip: !propReceiverId });
+  const { data } = useGetUserProfileQuery(propReceiverId, {
+    skip: !propReceiverId,
+  });
   const [markMessageAsRead] = useMarkMessageAsReadMutation();
 
   useEffect(() => {
     if (conversation) {
       setMessages(conversation?.messages || []);
     }
+
     if (socket) {
-      socket.on("receiveMessage", (updatedConversation: any) => {
-        if (updatedConversation.id === conversation.id) {
-          setMessages(updatedConversation.messages);
+      socket.on("receiveMessage", (newMessage: any) => {
+        if (!newMessage.data || !newMessage.data.messages) {
+          return;
+        }
+
+        const latestMessage =
+          newMessage.data.messages[newMessage.data.messages.length - 1];
+
+        if (!latestMessage) {
+          return;
+        }
+
+        if (latestMessage.senderId !== userId) {
+          setMessages((prevMessages) => [...prevMessages, latestMessage]);
         }
       });
+
       return () => {
         socket.off("receiveMessage");
       };
     }
-  }, [conversation, socket]);
+  }, [conversation, socket, userId]);
 
   const receiverId =
     propReceiverId ||
@@ -70,15 +90,24 @@ const MessagingChatDetails = ({
       const convoId = conversation.id;
       const response = await markMessageAsRead(convoId).unwrap();
       if (response) {
-        setMessages(prev => prev.map(msg => ({
-          ...msg,
-          isRead: Number(msg.receiverId) === userId ? msg.isRead : true
-        })));
+        setMessages((prev) =>
+          prev.map((msg) => ({
+            ...msg,
+            isRead: Number(msg.receiverId) === userId ? msg.isRead : true,
+          }))
+        );
       }
     };
 
     markConversationAsRead();
-  }, [conversation?.id, userId]); 
+  }, [conversation?.id, userId]);
+
+  useEffect(() => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop =
+        chatContainerRef.current.scrollHeight;
+    }
+  }, [messages]);
 
   return (
     <div className="h-full w-full sm:w-[710px]">
@@ -91,8 +120,7 @@ const MessagingChatDetails = ({
                 size="large"
                 icon={<UserOutlined />}
                 src={
-                  data?.data?.profileImage ||
-                  "https://via.placeholder.com/80"
+                  data?.data?.profileImage || "https://via.placeholder.com/80"
                 }
               />
             </div>
@@ -112,7 +140,10 @@ const MessagingChatDetails = ({
         </div>
 
         {/* Chat Area */}
-        <div className="p-4 h-[400px] w-full sm:w-[710px] overflow-y-auto bg-gray-50">
+        <div
+          ref={chatContainerRef}
+          className="p-4 h-[400px] w-full sm:w-[710px] overflow-y-auto bg-gray-50"
+        >
           {/* Example messages */}
           <h2 className="pb-8 text-xs flex items-center justify-center">
             Today
@@ -122,13 +153,18 @@ const MessagingChatDetails = ({
           {sortedMessages?.map((msg, index) => (
             <div
               key={index}
-              className={`flex ${Number(msg.senderId) === userId ? "justify-end" : "justify-start"} mb-4`}
+              className={`flex ${
+                Number(msg.senderId) === userId
+                  ? "justify-end"
+                  : "justify-start"
+              } mb-4`}
             >
               <div
-                className={`relative max-w-[70%] rounded-xl p-4 ${Number(msg.senderId) === userId
+                className={`relative max-w-[70%] rounded-xl p-4 ${
+                  Number(msg.senderId) === userId
                     ? "bg-gray-200 rounded-br-none ml-12"
                     : "bg-blue-100 rounded-bl-none mr-12 shadow-sm"
-                  }`}
+                }`}
               >
                 <p className="text-gray-900 text-sm mb-2">{msg.content}</p>
                 <div className="flex items-center justify-end gap-2">

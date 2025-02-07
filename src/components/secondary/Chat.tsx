@@ -46,16 +46,63 @@ export default function Chat({ receiverId }: { receiverId?: number }) {
 
       setSocket(newSocket);
       newSocket.emit("user-online", { userId });
-
       newSocket.on("online-users", (users) => {
         setOnlineUsers(users);
       });
+
+      newSocket.on("receiveMessage", (newMessageData: any) => {
+        if (!newMessageData.data || !newMessageData.data.messages) return;
+        const newMessage =
+          newMessageData.data.messages[newMessageData.data.messages.length - 1];
+        if (!newMessage) {
+          return;
+        }
+
+        setConversations((prevConversations) => {
+          const matchingConversation = prevConversations.find((conv) =>
+            conv.messages.some(
+              (msg) =>
+                (msg.senderId === newMessage.senderId &&
+                  msg.receiverId === newMessage.receiverId) ||
+                (msg.senderId === newMessage.receiverId &&
+                  msg.receiverId === newMessage.senderId)
+            )
+          );
+
+          if (!matchingConversation) {
+            return [
+              ...prevConversations,
+              {
+                id: Date.now(),
+                messages: [newMessage],
+                unreadCount: 1,
+              },
+            ];
+          }
+
+          const updatedConversations = prevConversations.map((conv) => {
+            if (conv.id === matchingConversation.id) {
+              return {
+                ...conv,
+                messages: [...conv.messages, newMessage],
+                unreadCount:
+                  conv.id === selectedConversation?.id
+                    ? 0
+                    : (conv.unreadCount || 0) + 1,
+              };
+            }
+            return conv;
+          });
+          return updatedConversations;
+        });
+      });
+
       return () => {
         newSocket.emit("user-offline", { userId });
         newSocket.disconnect();
       };
     }
-  }, [data, isChatsVisible, user.access_token, userId]);
+  }, [data, isChatsVisible, user.access_token, userId, selectedConversation]);
 
   const handleConversationClick = (conversation) => {
     setSelectedConversation(conversation);
@@ -84,10 +131,13 @@ export default function Chat({ receiverId }: { receiverId?: number }) {
     }
   }, [receiverId, conversations, userId]);
 
-  const lastMessage = selectedConversation?.messages[selectedConversation?.messages.length - 1];
+  const lastMessage =
+    selectedConversation?.messages[selectedConversation?.messages.length - 1];
 
   const determinedReceiverId =
-    lastMessage?.senderId === userId ? lastMessage?.receiverId : lastMessage?.senderId;
+    lastMessage?.senderId === userId
+      ? lastMessage?.receiverId
+      : lastMessage?.senderId;
 
   return (
     <div className="sm:flex items-start justify-between gap-2">
@@ -100,6 +150,7 @@ export default function Chat({ receiverId }: { receiverId?: number }) {
             userId={userId}
             online={!!onlineUsers[String(determinedReceiverId)]}
             receiverId={determinedReceiverId}
+            
           />
         </Card>
       ) : (
@@ -147,9 +198,11 @@ export default function Chat({ receiverId }: { receiverId?: number }) {
                     const lastMessage =
                       conversation?.messages[conversation?.messages.length - 1];
                     const receiverProfile = getReceiverProfile(conversation);
-                    const unreadCount = conversation?.messages?.filter(msg => 
-                      !msg.isRead && Number(msg.receiverId) === userId
-                    ).length || null
+                    const unreadCount =
+                      conversation?.messages?.filter(
+                        (msg) =>
+                          !msg.isRead && Number(msg.receiverId) === userId
+                      ).length || null;
 
                     return (
                       <li
@@ -173,15 +226,18 @@ export default function Chat({ receiverId }: { receiverId?: number }) {
                                 `${receiverProfile?.user?.firstName} ${receiverProfile?.user?.lastName}`
                               )}
                             </div>
-                            <Badge count={unreadCount} className="hidden lg:block"></Badge>
+                            <Badge
+                              count={unreadCount}
+                              className="hidden lg:block"
+                            ></Badge>
                           </div>
                           <div className="text-gray-600 truncate flex items-center gap-0">
                             {lastMessage && (
                               <span className="inline-flex">
                                 {lastMessage.isRead ? (
                                   <>
-                                  <CheckOutlined className="text-gray-400 text-[10px]" />
-                                  <CheckOutlined className="text-gray-400 text-[10px] mr-1" />
+                                    <CheckOutlined className="text-gray-400 text-[10px]" />
+                                    <CheckOutlined className="text-gray-400 text-[10px] mr-1" />
                                   </>
                                 ) : (
                                   <CheckOutlined className="text-gray-400 text-[10px] mr-1" />
