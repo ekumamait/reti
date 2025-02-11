@@ -1,20 +1,15 @@
 import { Input, Form, Button, Avatar } from "antd";
-import { Upload, message } from "antd";
-import { EditOutlined, InboxOutlined, UserOutlined } from "@ant-design/icons";
+import { Upload } from "antd";
+import { EditOutlined, UserOutlined } from "@ant-design/icons";
 import { uploadImage, validateFile } from "../../utils/uploadImage";
 import { useState, useRef, useEffect } from "react";
 import { toast } from "react-toastify";
 
-const { Dragger } = Upload;
-
 const AdditionalInformationPage = ({ formData, setFormData }) => {
-
-    const [, setUploadedImages] = useState<string[]>([]);
-    const [avatarUrl, setAvatarUrl] = useState<string>("");
     const fileInputRef = useRef<HTMLInputElement>(null);
-
     const { TextArea } = Input;
     const [form] = Form.useForm();
+    const [avatarUrl, setAvatarUrl] = useState<string>(formData.profilePicture || "");
 
     useEffect(() => {
         form.setFieldsValue({
@@ -27,9 +22,7 @@ const AdditionalInformationPage = ({ formData, setFormData }) => {
         fileInputRef.current?.click();
     };
 
-    const handleImageChange = async (
-        event: React.ChangeEvent<HTMLInputElement>
-    ) => {
+    const handleImageChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
         if (!file) return;
 
@@ -38,10 +31,9 @@ const AdditionalInformationPage = ({ formData, setFormData }) => {
         try {
             const imageUrl = await uploadImage(file);
             if (imageUrl) {
-                setUploadedImages((prev) => [...prev, imageUrl]);
                 setAvatarUrl(imageUrl);
+                setFormData((prev) => ({ ...prev, profilePicture: imageUrl }));
                 form.setFieldsValue({ profilePicture: imageUrl });
-                toast.success("Image uploaded successfully!");
             }
         } catch (error) {
             toast.error("Failed to upload image");
@@ -55,19 +47,21 @@ const AdditionalInformationPage = ({ formData, setFormData }) => {
                     <p>Additional Information</p>
                 </div>
             </div>
-            <Form form={form} layout="vertical" onValuesChange={(changedValues, allValues) => {
-                setFormData((prev) => ({ ...prev, ...allValues }));
-            }}>
+
+            <Form
+                form={form}
+                layout="vertical"
+                initialValues={{ profilePicture: formData.profilePicture, bio: formData.bio }}
+                onValuesChange={(changedValues, allValues) => {
+                    setFormData((prev) => ({ ...prev, ...allValues }));
+                }}
+            >
                 <div className="flex items-start gap-4">
                     <div className="relative mr-10">
                         <Avatar
                             size={80}
                             icon={<UserOutlined />}
-                            src={
-                                avatarUrl ||
-
-                                "https://via.placeholder.com/80"
-                            }
+                            src={avatarUrl || "https://via.placeholder.com/80"}
                         />
                         <Button
                             type="text"
@@ -85,7 +79,7 @@ const AdditionalInformationPage = ({ formData, setFormData }) => {
                     />
                 </div>
                 <Form.Item label="About me" className="my-14" name="bio">
-                    <TextArea placeholder="" allowClear />
+                    <TextArea placeholder="Write something about yourself" allowClear />
                 </Form.Item>
             </Form>
         </div>

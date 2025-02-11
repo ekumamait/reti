@@ -1,27 +1,14 @@
-import React, {useEffect, useState} from 'react';
-import {Button, Progress, Form, notification} from 'antd';
+import React, { useEffect, useState } from 'react';
+import { Button, Progress, Form, notification } from 'antd';
 import WelcomePage from './WelcomePage';
 import InformationPage from './InformationPage';
 import RetiCandidatePage from './RetiCandidatePage';
 import AdditionalInformationPage from './AdditionalInformationPage';
-import {useUpdateProfileMutation} from "../../services/profiles.ts";
-import {userDetails} from "../../utils.ts";
-import {useNavigate} from "react-router-dom";
+import { useCreateProfileMutation } from "../../services/profiles.ts";
+import { userDetails } from "../../utils.ts";
+import { useNavigate } from "react-router-dom";
 import OnboardSuccessPage from './OnboardSuccessPage';
-
-interface InformData {
-    firstName?: string;
-    lastName?: string;
-    email?: string;
-    phoneNumber?: string;
-    dateOfBirth?: string;
-    role?: string
-}
-
-interface AdditionalInformation {
-    aboutMe?: string;
-    profilePicture?: string;
-}
+import moment from 'moment';
 
 const Onboarding: React.FC = () => {
     const [form] = Form.useForm();
@@ -54,45 +41,45 @@ const Onboarding: React.FC = () => {
         },
         {
             title: 'four',
-            content: () => <AdditionalInformationPage formData={formData} setFormData={setFormData}/>,
+            content: () => <AdditionalInformationPage formData={formData} setFormData={setFormData} />,
             key: 'lastData',
         },
     ];
-    const [updateUser, {isSuccess}] = useUpdateProfileMutation()
+    const [updateUser] = useCreateProfileMutation()
     const progressPercentage = ((current + 1) / steps.length) * 100;
 
     const handleFormChange = (changedValues: any, allValues: any) => {
-        setFormData(prev => ({ 
-            ...prev, 
+        setFormData(prev => ({
+            ...prev,
             ...allValues,
             sectionsData: {
                 ...prev.sectionsData,
                 ...allValues.sectionsData
+            },
+            lastData: {
+                ...prev.lastData,
+                ...allValues.lastData
             }
         }));
     };
 
     const handleFinish = async () => {
-        console.log(formData, '>>>>');
-        
-        try {
-            await updateUser({
-                profile: {
-                    ...formData,
-                    role: formData.sectionsData,
-                },
-                profileId: userDetails()?.data.id
-            }).unwrap();
-            
-            setSubmissionStatus('success');
-            localStorage.removeItem('userDetails');
-        } catch (error) {
-            notification.error({
-                message: 'Submission Failed',
-                description: 'Please review your information and try again'
-            });
-            setSubmissionStatus('error');
-        }
+        const finalValues = { ...formData, ...form.getFieldsValue() };
+        const { firstName, lastName, ...restData } = finalValues;
+        const age = moment().diff(finalValues.dateOfBirth, 'years');
+
+        const profilePayload = {
+            ...restData,
+            age: age,
+        };
+
+        const response = await updateUser({
+            profile: profilePayload,
+            profileId: userDetails()?.user.id
+        }).unwrap();
+        console.log(response);
+        setSubmissionStatus('success');
+        localStorage.removeItem('userDetails');
     };
 
     if (submissionStatus === 'success') {
@@ -118,8 +105,8 @@ const Onboarding: React.FC = () => {
                         </div>
 
                         {/* Step content */}
-                        <div  className="sm:h-[500px] px-2 w-full sm:overflow-hidden">
-                           
+                        <div className="sm:h-[500px] px-2 w-full sm:overflow-hidden">
+
                             {/* {steps[current].content} */}
                             {steps[current].content()}
                         </div>
@@ -132,13 +119,25 @@ const Onboarding: React.FC = () => {
                                 </Button>
                             )}
                             {current < steps.length - 1 ? (
-                                <Button 
-                                    className="ml-2 w-24" 
-                                    type="primary" 
-                                    onClick={() => next()}
+                                <Button
+                                    className="ml-2 w-24"
+                                    type="primary"
+                                    onClick={() => {
+                                        form
+                                            .validateFields()
+                                            .then(() => {
+                                                setFormData((prev) => ({ ...prev, ...form.getFieldsValue() })); // Ensure all fields are saved
+                                                if (current < steps.length - 1) {
+                                                    next(); // Move to next step only if it's not the last
+                                                }
+                                            })
+                                            .catch((err) => console.log('Validation Failed:', err));
+                                    }}
                                 >
                                     Next
                                 </Button>
+
+
                             ) : (
                                 <Button
                                     className="ml-2 w-24"

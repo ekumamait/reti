@@ -210,7 +210,7 @@ const PersonalDetailsSettings = () => {
                       name="gender"
                       labelCol={{ className: "text-sm font-medium text-gray-600" }}
                     >
-                      <Input bordered size="large" className="rounded-md" disabled/>
+                      <Input bordered size="large" className="capitalize rounded-md" disabled/>
                     </Form.Item>
                   </div>
 

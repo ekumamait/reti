@@ -66,7 +66,7 @@ const RetiCandidatePage = ({ formData, setFormData }) => {
                             {partners.map(partner => (
                                 <div
                                     key={partner}
-                                    onClick={() => handlePartnerClick(partner)}
+                                    onClick={() => { e.preventDefault(); handlePartnerClick(partner);}}
                                     className={`p-4 border rounded-lg cursor-pointer h-full transition-colors
                                     ${form.getFieldValue('retiPartner') === partner
                                             ? 'border-blue-500 bg-blue-50'

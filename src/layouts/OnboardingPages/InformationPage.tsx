@@ -49,7 +49,7 @@ const InformationPage = ({ formData, setFormData }) => {
                         style={{ display: 'inline-block', width: '50%', margin: '0' }}
                         label="Date of birth"
                         name="dateOfBirth"
-                        rules={[{ validator: validateDOB }]}
+                        rules={[{ validator: validateDOB, required: true }]}
                     >
                         <DatePicker size="large" className="w-full" />
                     </Form.Item>
@@ -58,8 +58,9 @@ const InformationPage = ({ formData, setFormData }) => {
                         style={{ display: 'inline-block', width: 'calc(50% - 8px)', margin: '0 0 0 8px' }}
                         label="Gender"
                         name="gender"
+                        rules={[{ required: true }]}
                     >
-                        <Select size="large" defaultValue="other">
+                        <Select size="large" defaultValue="Select">
                             <Select.Option value="male">Male</Select.Option>
                             <Select.Option value="female">Female</Select.Option>
                         </Select>

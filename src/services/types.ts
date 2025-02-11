@@ -288,3 +288,13 @@ export const partners = [
     'PALM Corps (PAC)',
     'YARID (YAR)'
 ];
+
+export interface Profile {
+  profileImage: string;
+  isRetiCandidate?: boolean;
+  bio: string;
+  email?: string;
+  retiPartner: string;
+  age: any;
+  gender: string;
+}
