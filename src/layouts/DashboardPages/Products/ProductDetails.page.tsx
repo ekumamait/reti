@@ -104,7 +104,7 @@ const ProductDetailsPage = () => {
         {isLoading ? (
           <Loader />
         ) : (
-          <Content className="bg-white mt-2 border border-gray-900/10 rounded-lg relative">
+          <Content className="bg-white mt-2 border border-gray-900/10 rounded-lg relative w-full max-w-3xl">
             <div className="sm:flex justify-between">
               <div className="sm:w-8/12 border-r border-gray-200 p-6">
                 <div>
@@ -119,7 +119,7 @@ const ProductDetailsPage = () => {
                         ] || "https://via.placeholder.com/300x200"
                       }
                       alt={data?.data?.name}
-                      className="w-full max-w-md rounded-lg"
+                      className="w-full h-auto min-w-[250px] max-w-full rounded-lg"
                     />
                     {data?.data?.imageUrl &&
                       data?.data?.imageUrl.length > 1 && (
@@ -178,7 +178,7 @@ const ProductDetailsPage = () => {
                 </div>
               </div>
 
-              <div className="w-4/12">
+              <div className="w-7/12">
                 <div className="p-6">
                   <h3 className="text-xl font-semibold text-gray-800 mb-4">
                     Product Info
