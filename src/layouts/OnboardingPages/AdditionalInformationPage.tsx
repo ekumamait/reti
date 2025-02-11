@@ -1,60 +1,91 @@
-import {Input, Form, Button} from "antd";
-import {Upload, message} from "antd";
-import {InboxOutlined} from "@ant-design/icons";
+import { Input, Form, Button, Avatar } from "antd";
+import { Upload, message } from "antd";
+import { EditOutlined, InboxOutlined, UserOutlined } from "@ant-design/icons";
+import { uploadImage, validateFile } from "../../utils/uploadImage";
+import { useState, useRef, useEffect } from "react";
+import { toast } from "react-toastify";
 
-const {Dragger} = Upload;
+const { Dragger } = Upload;
 
-const AdditionalInformationPage = ({setAdditionalData}) => {
-    const {TextArea} = Input;
+const AdditionalInformationPage = ({ formData, setFormData }) => {
+
+    const [, setUploadedImages] = useState<string[]>([]);
+    const [avatarUrl, setAvatarUrl] = useState<string>("");
+    const fileInputRef = useRef<HTMLInputElement>(null);
+
+    const { TextArea } = Input;
     const [form] = Form.useForm();
-    const props = {
-        name: "file",
-        multiple: false,
-        accept: "image/*", // Restricts to images only
-        action: "/upload", // Replace with your upload endpoint
-        onChange(info: any) {
-            const {status} = info.file;
-            if (status === "done") {
-                message.success(`${info.file.name} file uploaded successfully.`);
-            } else if (status === "error") {
-                message.error(`${info.file.name} file upload failed.`);
-            }
-        },
+
+    useEffect(() => {
+        form.setFieldsValue({
+            profilePicture: formData.profilePicture || "",
+            bio: formData.bio || "",
+        });
+    }, [formData]);
+
+    const handleAvatarClick = () => {
+        fileInputRef.current?.click();
     };
 
+    const handleImageChange = async (
+        event: React.ChangeEvent<HTMLInputElement>
+    ) => {
+        const file = event.target.files?.[0];
+        if (!file) return;
+
+        if (!validateFile(file)) return;
+
+        try {
+            const imageUrl = await uploadImage(file);
+            if (imageUrl) {
+                setUploadedImages((prev) => [...prev, imageUrl]);
+                setAvatarUrl(imageUrl);
+                form.setFieldsValue({ profilePicture: imageUrl });
+                toast.success("Image uploaded successfully!");
+            }
+        } catch (error) {
+            toast.error("Failed to upload image");
+        }
+    };
 
     return (
-        <div className="space-y-6">
-            <div className="mt-2">
+        <div className="space-y-1">
+            <div className="mt-1">
                 <div className="text-xl/8 font-semibold text-gray-900 sm:text-lg/9">
                     <p>Additional Information</p>
                 </div>
             </div>
-            <Form form={form} layout="vertical">
-                <Form.Item label="About me" className="my-24" name="bio">
-                    <TextArea placeholder="" allowClear/>
-                </Form.Item>
+            <Form form={form} layout="vertical" onValuesChange={(changedValues, allValues) => {
+                setFormData((prev) => ({ ...prev, ...allValues }));
+            }}>
+                <div className="flex items-start gap-4">
+                    <div className="relative mr-10">
+                        <Avatar
+                            size={80}
+                            icon={<UserOutlined />}
+                            src={
+                                avatarUrl ||
 
-                <Form.Item className="my-24" label="Upload a profile picture" name="profilePicture">
-                    <Dragger
-                        {...props}
-                    >
-                        <p className="text-center text-2xl">
-                            <InboxOutlined/>
-                        </p>
-                        <p className="text-center text-gray-600 mt-2">
-                            Upload or drag and drop
-                        </p>
-                        <p className="text-center text-gray-400 text-sm">
-                            Only image files are supported.
-                        </p>
-                    </Dragger>
-                </Form.Item>
-                <Form.Item className="mt-36">
-                    <Button type="default" block onClick={() => {
-                        const values = form.getFieldsValue();
-                        setAdditionalData(values);
-                    }}>Save</Button>
+                                "https://via.placeholder.com/80"
+                            }
+                        />
+                        <Button
+                            type="text"
+                            icon={<EditOutlined />}
+                            className="text-blue-500 absolute bottom-0 right-0 translate-y-1/4 bg-white/80 backdrop-blur-sm border-none shadow-sm"
+                            onClick={handleAvatarClick}
+                        />
+                    </div>
+                    <input
+                        type="file"
+                        ref={fileInputRef}
+                        onChange={handleImageChange}
+                        accept="image/*"
+                        style={{ display: "none" }}
+                    />
+                </div>
+                <Form.Item label="About me" className="my-14" name="bio">
+                    <TextArea placeholder="" allowClear />
                 </Form.Item>
             </Form>
         </div>

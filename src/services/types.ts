@@ -277,3 +277,14 @@ export interface RegisterUserDto {
   lastName: string;
 }
 
+export const partners = [
+    'Bishop Stuart University (BSU)',
+    'CEFORD (CEF)',
+    'Dan Church Aid (DCA)',
+    'Finn Church Aid (FCA)',
+    'Gulu University (GUN)',
+    'Meeting Points Kitgum (MPK)',
+    'Muni University (MUN)',
+    'PALM Corps (PAC)',
+    'YARID (YAR)'
+];

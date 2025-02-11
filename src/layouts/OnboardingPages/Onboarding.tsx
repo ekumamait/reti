@@ -1,4 +1,3 @@
-
 import React, {useEffect, useState} from 'react';
 import {Button, Progress, Form, notification} from 'antd';
 import WelcomePage from './WelcomePage';
@@ -8,6 +7,7 @@ import AdditionalInformationPage from './AdditionalInformationPage';
 import {useUpdateProfileMutation} from "../../services/profiles.ts";
 import {userDetails} from "../../utils.ts";
 import {useNavigate} from "react-router-dom";
+import OnboardSuccessPage from './OnboardSuccessPage';
 
 interface InformData {
     firstName?: string;
@@ -26,16 +26,12 @@ interface AdditionalInformation {
 const Onboarding: React.FC = () => {
     const [form] = Form.useForm();
     const navigate = useNavigate();
-
     const [current, setCurrent] = useState(0);
+    const [formData, setFormData] = useState<Record<string, any>>({});
+    const [submissionStatus, setSubmissionStatus] = useState<'idle' | 'success' | 'error'>('idle');
 
     const next = () => setCurrent((prev) => prev + 1);
-
     const prev = () => setCurrent((prev) => prev - 1);
-
-    const [informData, setInformData] = useState<InformData | null>(null);
-    const [sectionsData, setSectionsData] = useState<string | null>(null);
-    const [additionalData, setAdditionalData] = useState<AdditionalInformation | null>(null);
 
     const steps = [
         {
@@ -46,52 +42,73 @@ const Onboarding: React.FC = () => {
         {
             title: 'Second',
             content: () => (
-                <InformationPage setInformData={setInformData} />),
+                <InformationPage formData={formData} setFormData={setFormData} />),
             key: 'informationData',
         },
         {
             title: 'Third',
             content: () => (
-                <RetiCandidatePage sectionsData={sectionsData} setSectionsData={setSectionsData} />
+                <RetiCandidatePage formData={formData} setFormData={setFormData} />
             ),
             key: 'sectionsData',
         },
         {
             title: 'four',
-            content: () => <AdditionalInformationPage setAdditionalData={setAdditionalData} />,
+            content: () => <AdditionalInformationPage formData={formData} setFormData={setFormData}/>,
             key: 'lastData',
         },
     ];
     const [updateUser, {isSuccess}] = useUpdateProfileMutation()
     const progressPercentage = ((current + 1) / steps.length) * 100;
-    const handleFinish = async ()=> {
+
+    const handleFormChange = (changedValues: any, allValues: any) => {
+        setFormData(prev => ({ 
+            ...prev, 
+            ...allValues,
+            sectionsData: {
+                ...prev.sectionsData,
+                ...allValues.sectionsData
+            }
+        }));
+    };
+
+    const handleFinish = async () => {
+        console.log(formData, '>>>>');
+        
         try {
-            await updateUser({profile:{
-                    ...informData,
-                    ...additionalData,
-                    role:sectionsData,
-                }, profileId: userDetails()?.data.id}).unwrap()
-        } catch (e) {
-            console.log(e);
+            await updateUser({
+                profile: {
+                    ...formData,
+                    role: formData.sectionsData,
+                },
+                profileId: userDetails()?.data.id
+            }).unwrap();
+            
+            setSubmissionStatus('success');
+            localStorage.removeItem('userDetails');
+        } catch (error) {
+            notification.error({
+                message: 'Submission Failed',
+                description: 'Please review your information and try again'
+            });
+            setSubmissionStatus('error');
         }
+    };
+
+    if (submissionStatus === 'success') {
+        return <OnboardSuccessPage />;
     }
-    useEffect(() => {
-        if (isSuccess) {
-            localStorage.removeItem('userDetails')
-            notification["success"]({
-                message: 'Profile updated successfully',
-            })
-            navigate("/");
-        }
-    }, [isSuccess]);
 
     return (
         <div className='py-20'>
             <div className="mx-auto max-w-2xl">
-                <div
-                    className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8"
-                >
-                    <Form form={form} onFinish={handleFinish}>
+                <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
+                    <Form
+                        form={form}
+                        onFinish={handleFinish}
+                        onValuesChange={handleFormChange}
+                        initialValues={formData}
+                    >
                         {/* Progress bar & step text */}
                         <div className='px-2'>
                             <div className="font-semibold text-sm text-gray-900">
@@ -114,12 +131,15 @@ const Onboarding: React.FC = () => {
                                     Back
                                 </Button>
                             )}
-                            {current < steps.length - 1 && (
-                                <Button className="ml-2 w-24" type="primary" onClick={() => next()}>
+                            {current < steps.length - 1 ? (
+                                <Button 
+                                    className="ml-2 w-24" 
+                                    type="primary" 
+                                    onClick={() => next()}
+                                >
                                     Next
                                 </Button>
-                            )}
-                            {current === steps.length - 1 && (
+                            ) : (
                                 <Button
                                     className="ml-2 w-24"
                                     type="primary"
