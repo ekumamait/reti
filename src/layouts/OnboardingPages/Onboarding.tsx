@@ -1,18 +1,16 @@
-import React, { useEffect, useState } from 'react';
-import { Button, Progress, Form, notification } from 'antd';
+import React, { useState } from 'react';
+import { Button, Progress, Form } from 'antd';
 import WelcomePage from './WelcomePage';
 import InformationPage from './InformationPage';
 import RetiCandidatePage from './RetiCandidatePage';
 import AdditionalInformationPage from './AdditionalInformationPage';
 import { useCreateProfileMutation } from "../../services/profiles.ts";
 import { userDetails } from "../../utils.ts";
-import { useNavigate } from "react-router-dom";
 import OnboardSuccessPage from './OnboardSuccessPage';
 import moment from 'moment';
 
 const Onboarding: React.FC = () => {
     const [form] = Form.useForm();
-    const navigate = useNavigate();
     const [current, setCurrent] = useState(0);
     const [formData, setFormData] = useState<Record<string, any>>({});
     const [submissionStatus, setSubmissionStatus] = useState<'idle' | 'success' | 'error'>('idle');
@@ -29,7 +27,7 @@ const Onboarding: React.FC = () => {
         {
             title: 'Second',
             content: () => (
-                <InformationPage formData={formData} setFormData={setFormData} />),
+                <InformationPage setFormData={setFormData} />),
             key: 'informationData',
         },
         {
@@ -48,7 +46,7 @@ const Onboarding: React.FC = () => {
     const [updateUser] = useCreateProfileMutation()
     const progressPercentage = ((current + 1) / steps.length) * 100;
 
-    const handleFormChange = (changedValues: any, allValues: any) => {
+    const handleFormChange = (allValues: any) => {
         setFormData(prev => ({
             ...prev,
             ...allValues,

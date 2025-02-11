@@ -31,10 +31,11 @@ import ProductDetailsPage from "./layouts/DashboardPages/Products/ProductDetails
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ProfileSettings from "./layouts/DashboardPages/Settings/Profile.tsx";
+import { checkAuthAndLogout } from './utils';
 
 function protectedLoader({ request }: LoaderFunctionArgs) {
-  const loginDetails = localStorage.getItem("loginDetails");
-  if (!loginDetails) {
+  const token = checkAuthAndLogout();
+  if (!token) {
     const params = new URLSearchParams();
     params.set("from", new URL(request.url).pathname);
     return redirect("/login?" + params.toString());
@@ -42,8 +43,8 @@ function protectedLoader({ request }: LoaderFunctionArgs) {
   return null;
 }
 function protectedOnBoardingLoader() {
-  const loginDetails = localStorage.getItem("loginDetails");
-  if (!loginDetails) {
+  const token = checkAuthAndLogout();
+  if (!token) {
     return redirect("/login");
   }
   return null;

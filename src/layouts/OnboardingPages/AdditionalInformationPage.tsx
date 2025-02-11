@@ -1,5 +1,4 @@
 import { Input, Form, Button, Avatar } from "antd";
-import { Upload } from "antd";
 import { EditOutlined, UserOutlined } from "@ant-design/icons";
 import { uploadImage, validateFile } from "../../utils/uploadImage";
 import { useState, useRef, useEffect } from "react";
@@ -52,7 +51,7 @@ const AdditionalInformationPage = ({ formData, setFormData }) => {
                 form={form}
                 layout="vertical"
                 initialValues={{ profilePicture: formData.profilePicture, bio: formData.bio }}
-                onValuesChange={(changedValues, allValues) => {
+                onValuesChange={(allValues) => {
                     setFormData((prev) => ({ ...prev, ...allValues }));
                 }}
             >

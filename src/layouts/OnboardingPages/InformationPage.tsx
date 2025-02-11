@@ -1,8 +1,7 @@
-import { Button, DatePicker, Form, Input, Select } from "antd";
+import { DatePicker, Form, Input, Select } from "antd";
 import { userDetails, validateDOB } from "../../utils.ts";
-import moment from "moment";
 
-const InformationPage = ({ formData, setFormData }) => {
+const InformationPage = ({ setFormData }) => {
     const [form] = Form.useForm();
     const userDetailsData = userDetails();
     const user = userDetailsData?.user || {};
@@ -23,7 +22,7 @@ const InformationPage = ({ formData, setFormData }) => {
                     phoneNumber: user?.phoneNumber,
                     prefix: "256",
                 }}
-                onValuesChange={(changedValues, allValues) => {
+                onValuesChange={(_, allValues) => {
                     setFormData(prev => ({ ...prev, ...allValues }));
                 }}
             >
