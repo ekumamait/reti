@@ -181,7 +181,7 @@ const DashboardPage = () => {
   );
 
   const currentUserId = user?.user?.id;
-  const paginatedInspirations = filteredInspirations.slice(
+  const paginatedInspirations = filteredInspirations?.slice(
     (currentPage - 1) * pageSize,
     currentPage * pageSize
   );
