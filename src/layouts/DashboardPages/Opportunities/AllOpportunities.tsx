@@ -109,7 +109,7 @@ const AllOpportunitiesPage = ({
           {filteredOpportunities && filteredOpportunities.length > pageSize && (
             <>
               {/* Desktop Pagination */}
-              <div className="mt-4 fixed bottom-0 p-4 bg-white shadow-sm hidden sm:block w-full">
+              <div className="mt-4 fixed bottom-0 p-4 sm:block w-full">
                 <Pagination
                   currentPage={currentPage}
                   totalPages={Math.ceil(

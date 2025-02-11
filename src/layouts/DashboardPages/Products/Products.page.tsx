@@ -16,8 +16,8 @@ const ProductsPage = () => {
   const [open, setOpen] = useState(false);
   const [productPage, setProductPage] = useState(1);
   const [productPageSize, setProductPageSize] = useState(9);
-  const [searchText, setSearchText] = useState("");
-  const [stockFilter, setStockFilter] = useState("all");
+  const [searchText, setSearchText] = useState('');
+  const [stockFilter, setStockFilter] = useState('all');
 
   const showModal = () => {
     setOpen(true);
@@ -66,22 +66,22 @@ const ProductsPage = () => {
               <Option value="outOfStock">Out of Stock</Option>
             </Select>
           </div>
-
+  
           {loginDetails().user.role === "youth" && (
-            <div className="flex items-center justify-end mb-4">
-              <div>
-                <Button type="primary" onClick={showModal} className="ml-auto">
-                  Add New Product
-                </Button>
-                <AddProductForm
-                  onOk={handleOk}
-                  onCancel={handleCancel}
-                  open={open}
-                  loading={loading}
-                  initialData={undefined}
-                />
-              </div>
-            </div>
+          <div className="flex items-center justify-end mb-4">
+          <div>
+            <Button type="primary" onClick={showModal} className="ml-auto">
+              Add New Product
+            </Button>
+            <AddProductForm
+              onOk={handleOk}
+              onCancel={handleCancel}
+              open={open}
+              loading={loading}
+              initialData={undefined}
+            />
+          </div>
+        </div>
           )}
         </div>
 

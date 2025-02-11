@@ -17,8 +17,8 @@ const OpportunitiesPage = () => {
   const [open, setOpen] = useState(false);
   const [opportunityPage, setOpportunityPage] = useState(1);
   const [opportunityPageSize, setOpportunityPageSize] = useState(9);
-  const [searchText, setSearchText] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all");
+  const [searchText, setSearchText] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
 
   const showModal = () => {
     setOpen(true);
