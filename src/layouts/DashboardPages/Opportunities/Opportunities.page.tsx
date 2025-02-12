@@ -90,7 +90,7 @@ const OpportunitiesPage = () => {
           />
         </Layout>
       </CustomDashboardLayout>
-      {loginDetails().user.role !== "admin" && <Chat />}
+      {loginDetails().user.role !== "super" && <Chat />}
     </>
   );
 };

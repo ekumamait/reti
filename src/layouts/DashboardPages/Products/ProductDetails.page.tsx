@@ -217,29 +217,29 @@ const ProductDetailsPage = () => {
               </div>
             </div>
 
-            {((user?.user?.id === data?.data?.userId &&
+            {(user?.user?.id === data?.data?.userId &&
               user?.user?.role === "youth") ||
-              user?.user?.role === "admin") && (
-              <div className="absolute bottom-4 right-4 space-y-2">
-                <div>
-                  <DeletePopconfirm
-                    title="Delete Product"
-                    description="Are you sure to delete this product?"
-                    onConfirm={handleDeleteProduct}
-                    onConfirmMessage="Product deleted successfully"
-                    onCancelMessage="Product deletion cancelled"
-                    okText="Yes"
-                    cancelText="No"
-                  />
+              (user?.user?.role === "super" && (
+                <div className="absolute bottom-4 right-4 space-y-2">
+                  <div>
+                    <DeletePopconfirm
+                      title="Delete Product"
+                      description="Are you sure to delete this product?"
+                      onConfirm={handleDeleteProduct}
+                      onConfirmMessage="Product deleted successfully"
+                      onCancelMessage="Product deletion cancelled"
+                      okText="Yes"
+                      cancelText="No"
+                    />
+                  </div>
+                  <div>
+                    <EditOutlined
+                      onClick={() => setIsEditOpen(true)}
+                      className="text-blue-500 cursor-pointer text-lg"
+                    />
+                  </div>
                 </div>
-                <div>
-                  <EditOutlined
-                    onClick={() => setIsEditOpen(true)}
-                    className="text-blue-500 cursor-pointer text-lg"
-                  />
-                </div>
-              </div>
-            )}
+              ))}
 
             {user?.user?.role === "youth" && (
               <AddProductForm

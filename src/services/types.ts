@@ -300,3 +300,6 @@ export interface Profile {
   age: any;
   gender: string;
 }
+export const roles = ["youth", "mentor", "employer", "staff", "admin"];
+
+

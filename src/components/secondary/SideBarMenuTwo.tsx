@@ -35,7 +35,7 @@ const SiderTwo = ({ closeDrawer }) => {
     setSelectedKey(e.key); // Update the selected key when an item is clicked
   };
 
-  const [loading ] = useState(false);
+  const [loading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const showModal = () => {
@@ -91,7 +91,11 @@ const SiderTwo = ({ closeDrawer }) => {
         ),
       },
     ];
-    if (user?.user?.role === "admin") {
+    if (
+      user?.user?.role === "super" ||
+      user?.user?.role === "staff" ||
+      user?.user?.role === "admin"
+    ) {
       menuItems.splice(3, 0, {
         key: "Profiles",
         icon: <UsergroupAddOutlined />,
@@ -102,7 +106,9 @@ const SiderTwo = ({ closeDrawer }) => {
         ),
       });
     } else {
-      menuItems.splice(3, 0, 
+      menuItems.splice(
+        3,
+        0,
         {
           key: "help-support",
           icon: <QuestionCircleOutlined />,
@@ -158,8 +164,11 @@ const SiderTwo = ({ closeDrawer }) => {
         />
         <div className="ml-2">
           <Tag color="#f50">
-            <label className="block text-white">{`${user?.user?.firstName} ${user?.user?.lastName}`}</label>
+            <label className="block text-white">
+              {`${user?.user?.firstName} ${user?.user?.lastName}`}{" "}
+            </label>
           </Tag>
+          {user?.user?.role}
           <div className="flex items-center gap-1 text-white">
             <PhoneOutlined className="text-white" />
             <label>{user?.user?.phoneNumber}</label>

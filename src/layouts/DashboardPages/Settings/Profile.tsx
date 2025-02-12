@@ -4,21 +4,69 @@ import {
   ShoppingOutlined,
   UserOutlined,
 } from "@ant-design/icons";
-import { Avatar, Button, Space } from "antd";
+import { Avatar, Button, Select, Space } from "antd";
 
 import { Content } from "antd/es/layout/layout";
 import { useGetUserProfileQuery } from "../../../services/profiles.ts";
 import { loginDetails } from "../../../utils.ts";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import ProfileTabs from "./ProfileTabs.tsx";
 import { toast } from "react-toastify";
 import { handleDownloadData } from "../../../utils.ts";
 import { useParams } from "react-router-dom";
+import { useUpdateUserMutation } from "../../../services/users.ts";
+import { roles } from "../../../services/types.ts";
+import { useCreateNotificationMutation } from "../../../services/notifications.ts";
 
 const ProfileSettings = () => {
-   const { userId: paramUserId } = useParams<{ userId: string }>();
-   const userId = paramUserId ? Number(paramUserId) : loginDetails().user.id;
-   const { data, isError, error } = useGetUserProfileQuery(userId);
+  const { userId: paramUserId } = useParams<{ userId: string }>();
+  const userId = paramUserId ? Number(paramUserId) : loginDetails().user.id;
+  const { data, isError, error, refetch } = useGetUserProfileQuery(userId);
+  const [updateUser] = useUpdateUserMutation();
+  const [createNotification] = useCreateNotificationMutation();
+  const user = data?.data?.user;
+  const currentRole = user?.role;
+
+  const [selectedRole, setSelectedRole] = useState<string | undefined>(
+    currentRole
+  );
+
+  useEffect(() => {
+    if (currentRole) {
+      setSelectedRole(currentRole);
+    }
+  }, [currentRole]);
+
+  const handleRoleUpdate = async (newRole: string) => {
+    if (!user?.id) return;
+    const notificationData = {
+      title: "Role Update",
+      message: `Your role has been updated to ${newRole}.`,
+      userId: user.id,
+    };
+    try {
+      await updateUser({
+        userId: user.id,
+        data: { role: newRole },
+      }).unwrap();
+      await createNotification(notificationData).unwrap();
+
+      toast.success(`Role updated to ${newRole}`);
+      toast.success("User has been notified about the role change.");
+      setSelectedRole(newRole);
+      refetch();
+    } catch (err) {
+      toast.error("Failed to update role");
+    }
+  };
+
+  const getAssignableRoles = (userRole: string) => {
+    if (userRole === "super") return roles;
+    if (userRole === "admin") return ["staff", "youth"];
+    if (userRole === "staff") return ["youth", "mentor", "employer"];
+    return [];
+  };
+  const assignableRoles = getAssignableRoles(loginDetails().user.role);
 
   useEffect(() => {
     if (isError) {
@@ -61,20 +109,37 @@ const ProfileSettings = () => {
               </p>
             </div>
             <p className="text-md text-gray-500">{data?.data?.bio}</p>
-            
-            <Button
-            type="dashed"
-            className="px-4 text-red-500"
-            icon={<DownloadOutlined />}
-            onClick={() => handleDownloadData(data)}
-          >
-            Download data
-          </Button>
+            <p className="text-md text-gray-500">{data?.data?.geoLocationDetails?.partnerResponsible}</p>
+            <div className="flex flex-row items-center gap-4">
+              {assignableRoles.length > 0 && (
+                <div>
+                  <Select
+                    style={{ width: 150 }}
+                    value={selectedRole}
+                    onChange={handleRoleUpdate}
+                  >
+                    {assignableRoles.map((role) => (
+                      <Select.Option key={role} value={role}>
+                        {role.charAt(0).toUpperCase() + role.slice(1)}{" "}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </div>
+              )}
+
+              <Button
+                type="dashed"
+                className="px-4 text-red-500"
+                icon={<DownloadOutlined />}
+                onClick={() => handleDownloadData(data)}
+              >
+                Download data
+              </Button>
+            </div>
           </div>
-          
         </div>
         <div className="text-gray-900 p-4">
-          <ProfileTabs profileData={data}/>
+          <ProfileTabs profileData={data} />
         </div>
       </div>
     </Content>
