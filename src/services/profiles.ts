@@ -30,6 +30,7 @@ export const profileApi = createApi({
                 method: "GET",
                 headers: getHeaders(),
             }),
+            providesTags: ['Profiles'],
             transformResponse: (response: ProfileResponseType) => response,
         }),
         createProfile: mutation<LoginResponseType,  { profile: Partial<User>; profileId: string }>({

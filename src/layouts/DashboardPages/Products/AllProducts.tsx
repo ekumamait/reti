@@ -16,11 +16,11 @@ const AllProductsPage = ({
 }) => {
   const navigate = useNavigate();
   const { data: products, isLoading } = useGetProductsQuery();
-  const [pageSize, setPageSize] = useState(window.innerWidth >= 2560 ? 12 : 6);
+  const [pageSize, setPageSize] = useState(window.innerWidth >= 1536 ? 9 : 6);
 
   useEffect(() => {
     const handleResize = () => {
-      setPageSize(window.innerWidth >= 1536 ? 12 : 6);
+      setPageSize(window.innerWidth >= 1536 ? 9 : 6);
     };
 
     window.addEventListener("resize", handleResize);

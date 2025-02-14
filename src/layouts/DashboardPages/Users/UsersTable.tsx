@@ -5,7 +5,7 @@ import Header from "../../../components/secondary/Header";
 import { useDeleteUserMutation } from "../../../services/users";
 import { DeleteOutlined, SearchOutlined } from "@ant-design/icons";
 import DeletePopconfirm from "../../../components/secondary/CustomDeletePopUp";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Loader from "../../loader.tsx";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
@@ -27,7 +27,7 @@ interface User {
 }
 
 const UsersPage = () => {
-  const { data: profdata, isLoading } = useGetAllProfilesQuery();
+  const { data: profdata, isLoading, refetch } = useGetAllProfilesQuery();
   const [deleteUser] = useDeleteUserMutation();
   const [searchText, setSearchText] = useState("");
   const [roleFilter, setRoleFilter] = useState("all");
@@ -56,6 +56,12 @@ const UsersPage = () => {
       toast.error(`Failed to delete user ${error.data?.message}`);
     }
   };
+
+  useEffect(() => {
+    if (profdata) {
+      refetch();
+    }
+  }, [profdata, refetch]);
 
   const filteredData = profdata?.data
     ?.map((profile: any) => ({
