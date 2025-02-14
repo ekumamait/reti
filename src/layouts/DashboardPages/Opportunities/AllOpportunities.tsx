@@ -1,11 +1,12 @@
-import { ClockCircleOutlined } from "@ant-design/icons";
+import { ClockCircleOutlined, DeleteOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
-import { Avatar, Tag, Typography } from "antd";
-import { useGetOpportunitiesQuery } from "../../../services/opportunities.ts";
+import { Avatar, Tag, Typography, Button } from "antd";
+import { useGetOpportunitiesQuery, useDeleteOpportunityMutation } from "../../../services/opportunities.ts";
 import Loader from "../../loader.tsx";
-import { formatRelativeTime } from "../../../utils.ts";
+import { formatRelativeTime, loginDetails } from "../../../utils.ts";
 import Pagination from "../../../components/secondary/Pagination";
 import { useState, useEffect } from "react";
+import { toast } from "react-toastify";
 
 const AllOpportunitiesPage = ({
   currentPage,
@@ -15,8 +16,9 @@ const AllOpportunitiesPage = ({
   statusFilter,
 }) => {
   const navigate = useNavigate();
-  const { data: opportunities, isLoading } = useGetOpportunitiesQuery();
+  const { data: opportunities, isLoading, refetch } = useGetOpportunitiesQuery();
   const [pageSize, setPageSize] = useState(window.innerWidth >= 2560 ? 12 : 6);
+  const [deleteOpportunity] = useDeleteOpportunityMutation();
 
   useEffect(() => {
     const handleResize = () => {
@@ -43,6 +45,19 @@ const AllOpportunitiesPage = ({
     currentPage * pageSize
   );
 
+  const canDelete = loginDetails().user.role === 'admin' || 
+                    loginDetails().user.id === opportunities?.data?.find(o => o.id === opportunities.id)?.employer?.id;
+
+  const handleDeleteOpportunity = async (id: number) => {
+    try {
+      await deleteOpportunity(id).unwrap();
+      toast.success('Opportunity deleted successfully');
+      refetch();
+    } catch (error) {
+      toast.error('Failed to delete opportunity');
+    }
+  };
+
   return (
     <>
       {isLoading ? (
@@ -54,9 +69,9 @@ const AllOpportunitiesPage = ({
               <div
                 key={opportunity.id}
                 onClick={() => navigate(`/opportunities/${opportunity.id}`)}
-                className="h-34 relative flex flex-col p-1 border border-gray-300 rounded-lg bg-white hover:shadow-lg hover:bg-gray-50 cursor-pointer transition-all duration-200"
+                className="h-34 relative flex p-1 border border-gray-300 rounded-lg bg-white hover:shadow-lg hover:bg-gray-50 cursor-pointer transition-all duration-200"
               >
-                <div className="p-2">
+                <div className="flex-1 p-2">
                   <div className="space-y-4">
                     <h3 className="text-lg capitalize truncate  text-gray-700">
                       {opportunity.title}
@@ -102,6 +117,29 @@ const AllOpportunitiesPage = ({
                     </div>
                   </div>
                 </div>
+                
+                {opportunity.imageUrl && !opportunity.imageUrl.includes('dummy') && (
+                  <div className="w-2/5 p-2">
+                    <img
+                      src={opportunity.imageUrl}
+                      alt="Opportunity"
+                      className="w-full h-full object-cover rounded-lg"
+                    />
+                  </div>
+                )}
+
+                {canDelete && (
+                  <Button
+                    type="text"
+                    icon={<DeleteOutlined className="text-red-500" />}
+                    size="small"
+                    className="absolute top-2 right-2 text-red-500 hover:text-red-700 border border-red-500 hover:border-red-700 rounded-full p-1"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDeleteOpportunity(opportunity.id);
+                    }}
+                  />
+                )}
               </div>
             ))}
           </div>

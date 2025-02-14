@@ -117,6 +117,16 @@ const OpportunitiesDetailsPage = () => {
                     {data?.data.title}
                   </h1>
 
+                  {data?.data.imageUrl && (
+                    <div className="my-4">
+                      <img
+                        src={data.data.imageUrl}
+                        alt="Opportunity"
+                        className="w-full h-64 object-cover rounded-lg"
+                      />
+                    </div>
+                  )}
+
                   <div>
                     <h3 className="pt-2 text-lg font-semibold text-gray-900">
                       {" "}
@@ -239,8 +249,16 @@ const OpportunitiesDetailsPage = () => {
                 </div>
               </div>
             </div>
-            {loginDetails().user.role === "employer" || loginDetails().user.role === "admin" && (
+            {(loginDetails().user.role === "employer" || loginDetails().user.role === "admin") && (
               <div className="absolute bottom-4 right-4 space-y-2">
+                {loginDetails().user.role === "employer" && (
+                  <div>
+                    <EditOutlined
+                      onClick={() => setIsEditOpen(true)}
+                      className="text-blue-500 cursor-pointer text-lg"
+                    />
+                  </div>
+                )}
                 <div>
                   <DeletePopconfirm
                     title="Delete"
@@ -250,12 +268,6 @@ const OpportunitiesDetailsPage = () => {
                     onCancelMessage="Job deletion cancelled"
                     okText="Yes"
                     cancelText="No"
-                  />
-                </div>
-                <div>
-                  <EditOutlined
-                    onClick={() => setIsEditOpen(true)}
-                    className="text-blue-500 cursor-pointer text-lg"
                   />
                 </div>
               </div>

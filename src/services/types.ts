@@ -75,6 +75,7 @@ export interface SectionsPageProps {
 
 
 export interface OpportunitiesResponseType {
+  id: number;
   status: number;
   message: string;
   data: OpportunitiesType[];
@@ -92,6 +93,7 @@ export interface OpportunitiesDetailsResponseType {
 }
 
 export interface OpportunitiesType {
+  imageUrl: string;
   id: number;
   title: string;
   description: string;
