@@ -48,7 +48,7 @@ const AllOpportunitiesPage = ({
   const canDelete = loginDetails().user.role === 'admin' || 
                     loginDetails().user.id === opportunities?.data?.find(o => o.id === opportunities.id)?.employer?.id;
 
-  const handleDeleteOpportunity = async (id: string) => {
+  const handleDeleteOpportunity = async (id: number) => {
     try {
       await deleteOpportunity(id).unwrap();
       toast.success('Opportunity deleted successfully');
