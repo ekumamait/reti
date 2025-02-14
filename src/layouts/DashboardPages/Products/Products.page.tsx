@@ -64,22 +64,22 @@ const ProductsPage = () => {
               <Option value="outOfStock">Out of Stock</Option>
             </Select>
           </div>
-  
+
           {loginDetails().user.role === "youth" && (
-          <div className="flex items-center justify-end mb-4">
-          <div>
-            <Button type="primary" onClick={showModal} className="ml-auto">
-              Add New Product
-            </Button>
-            <AddProductForm
-              onOk={handleOk}
-              onCancel={handleCancel}
-              open={open}
-              loading={loading}
-              initialData={undefined}
-            />
-          </div>
-        </div>
+            <div className="flex items-center justify-end mb-4">
+              <div>
+                <Button type="primary" onClick={showModal} className="ml-auto">
+                  Add New Product
+                </Button>
+                <AddProductForm
+                  onOk={handleOk}
+                  onCancel={handleCancel}
+                  open={open}
+                  loading={loading}
+                  initialData={undefined}
+                />
+              </div>
+            </div>
           )}
         </div>
 
@@ -100,7 +100,7 @@ const ProductsPage = () => {
           />
         </Layout>
       </CustomDashboardLayout>
-      {loginDetails().user.role !== "admin" && <Chat />}
+      {loginDetails().user.role !== "super" && <Chat />}
     </>
   );
 };

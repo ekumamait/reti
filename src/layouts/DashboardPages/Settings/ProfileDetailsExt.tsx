@@ -1,11 +1,17 @@
 import { useState } from "react";
 import { Modal, Form, Input } from "antd";
-import { EditOutlined, BankOutlined, CalendarOutlined, ExperimentOutlined, RocketOutlined } from "@ant-design/icons";
+import {
+  EditOutlined,
+  BankOutlined,
+  CalendarOutlined,
+  ExperimentOutlined,
+  RocketOutlined,
+} from "@ant-design/icons";
 import { loginDetails } from "../../../utils";
 
 const ProfileDetailsExt = ({ profileData }) => {
-  const userRole = loginDetails().user.role; 
-    const isAdmin = userRole === "admin";
+  const userRole = loginDetails().user.role;
+  const isAdmin = userRole === "super" || userRole === "staff" || userRole === "admin";
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingType, setEditingType] = useState<
@@ -18,29 +24,43 @@ const ProfileDetailsExt = ({ profileData }) => {
 
   const [details, setDetails] = useState({
     trainingCentreDetails: {
-      nameOfTrainingCentre: profileData?.data?.trainingCentreDetails?.nameOfTrainingCentre,
-      locationVillage: profileData?.data?.trainingCentreDetails?.locationVillage,
-      locationSubCounty: profileData?.data?.trainingCentreDetails?.locationSubCounty,
-      locationSettlement: profileData?.data?.trainingCentreDetails?.locationSettlement,
-      mainTelephoneContact: profileData?.data?.trainingCentreDetails?.mainTelephoneContact,
-      alternativeTelephoneContact: profileData?.data?.trainingCentreDetails?.alternativeTelephoneContact,
+      nameOfTrainingCentre:
+        profileData?.data?.trainingCentreDetails?.nameOfTrainingCentre,
+      locationVillage:
+        profileData?.data?.trainingCentreDetails?.locationVillage,
+      locationSubCounty:
+        profileData?.data?.trainingCentreDetails?.locationSubCounty,
+      locationSettlement:
+        profileData?.data?.trainingCentreDetails?.locationSettlement,
+      mainTelephoneContact:
+        profileData?.data?.trainingCentreDetails?.mainTelephoneContact,
+      alternativeTelephoneContact:
+        profileData?.data?.trainingCentreDetails?.alternativeTelephoneContact,
     },
     trainingCohorts: {
       cohort: profileData?.data?.trainingCohorts?.cohort,
-      tradeTakenDuringTraining: profileData?.data?.trainingCohorts?.tradeTakenDuringTraining,
+      tradeTakenDuringTraining:
+        profileData?.data?.trainingCohorts?.tradeTakenDuringTraining,
     },
     retiTrainingDetails: {
       startTime: profileData?.data?.retiTrainingDetails?.startTime,
-      completionStatus: profileData?.data?.retiTrainingDetails?.completionStatus,
-      reasonForDroppingOut: profileData?.data?.retiTrainingDetails?.reasonForDroppingOut,
+      completionStatus:
+        profileData?.data?.retiTrainingDetails?.completionStatus,
+      reasonForDroppingOut:
+        profileData?.data?.retiTrainingDetails?.reasonForDroppingOut,
       monthsSpent: profileData?.data?.retiTrainingDetails?.monthsSpent,
-      certificationStatus: profileData?.data?.retiTrainingDetails?.certificationStatus,
+      certificationStatus:
+        profileData?.data?.retiTrainingDetails?.certificationStatus,
     },
     internshipAndStartupDetails: {
-      completionTime: profileData?.data?.internshipAndStartupDetails?.completionTime,
-      internshipPlacement: profileData?.data?.internshipAndStartupDetails?.internshipPlacement,
-      startupKitReceived: profileData?.data?.internshipAndStartupDetails?.startupKitReceived,
-      startupGrantReceived: profileData?.data?.internshipAndStartupDetails?.startupGrantReceived,
+      completionTime:
+        profileData?.data?.internshipAndStartupDetails?.completionTime,
+      internshipPlacement:
+        profileData?.data?.internshipAndStartupDetails?.internshipPlacement,
+      startupKitReceived:
+        profileData?.data?.internshipAndStartupDetails?.startupKitReceived,
+      startupGrantReceived:
+        profileData?.data?.internshipAndStartupDetails?.startupGrantReceived,
     },
   });
 
@@ -61,7 +81,9 @@ const ProfileDetailsExt = ({ profileData }) => {
   return (
     <div className="pt-4 space-y-6">
       <div className="flex items-center justify-between pb-4 border-b">
-        <h1 className="text-2xl font-bold text-gray-900">Training & Development</h1>
+        <h1 className="text-2xl font-bold text-gray-900">
+          Training & Development
+        </h1>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -73,19 +95,28 @@ const ProfileDetailsExt = ({ profileData }) => {
               Institution Details
             </h2>
             {isAdmin && (
-            <EditOutlined 
-              className="cursor-pointer text-blue-500 hover:text-blue-700"
-              onClick={() => openEditModal("trainingCentreDetails")}
-            />
+              <EditOutlined
+                className="cursor-pointer text-blue-500 hover:text-blue-700"
+                onClick={() => openEditModal("trainingCentreDetails")}
+              />
             )}
           </div>
           <div className="space-y-3">
-            {Object.entries(details.trainingCentreDetails).map(([key, value]) => (
-              <div key={key} className="flex justify-between items-start border-b pb-2">
-                <span className="text-gray-600 capitalize">{key.replace(/([A-Z])/g, ' $1').toLowerCase()}:</span>
-                <span className="text-gray-800 font-medium">{value || 'Not specified'}</span>
-              </div>
-            ))}
+            {Object.entries(details.trainingCentreDetails).map(
+              ([key, value]) => (
+                <div
+                  key={key}
+                  className="flex justify-between items-start border-b pb-2"
+                >
+                  <span className="text-gray-600 capitalize">
+                    {key.replace(/([A-Z])/g, " $1").toLowerCase()}:
+                  </span>
+                  <span className="text-gray-800 font-medium">
+                    {value || "Not specified"}
+                  </span>
+                </div>
+              )
+            )}
           </div>
         </div>
 
@@ -97,17 +128,24 @@ const ProfileDetailsExt = ({ profileData }) => {
               Cohort Details
             </h2>
             {isAdmin && (
-            <EditOutlined 
-              className="cursor-pointer text-blue-500 hover:text-blue-700"
-              onClick={() => openEditModal("trainingCohorts")}
-            />
+              <EditOutlined
+                className="cursor-pointer text-blue-500 hover:text-blue-700"
+                onClick={() => openEditModal("trainingCohorts")}
+              />
             )}
           </div>
           <div className="space-y-3">
             {Object.entries(details.trainingCohorts).map(([key, value]) => (
-              <div key={key} className="flex justify-between items-start border-b pb-2">
-                <span className="text-gray-600 capitalize">{key.replace(/([A-Z])/g, ' $1').toLowerCase()}:</span>
-                <span className="text-gray-800 font-medium">{value || 'Not specified'}</span>
+              <div
+                key={key}
+                className="flex justify-between items-start border-b pb-2"
+              >
+                <span className="text-gray-600 capitalize">
+                  {key.replace(/([A-Z])/g, " $1").toLowerCase()}:
+                </span>
+                <span className="text-gray-800 font-medium">
+                  {value || "Not specified"}
+                </span>
               </div>
             ))}
           </div>
@@ -121,17 +159,19 @@ const ProfileDetailsExt = ({ profileData }) => {
               RETI Program Details
             </h2>
             {isAdmin && (
-            <EditOutlined 
-              className="cursor-pointer text-blue-500 hover:text-blue-700"
-              onClick={() => openEditModal("retiTrainingDetails")}
-            />
+              <EditOutlined
+                className="cursor-pointer text-blue-500 hover:text-blue-700"
+                onClick={() => openEditModal("retiTrainingDetails")}
+              />
             )}
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {Object.entries(details.retiTrainingDetails).map(([key, value]) => (
               <div key={key} className="space-y-1">
-                <p className="text-sm text-gray-500 capitalize">{key.replace(/([A-Z])/g, ' $1').toLowerCase()}</p>
-                <p className="font-medium text-gray-800">{value || '—'}</p>
+                <p className="text-sm text-gray-500 capitalize">
+                  {key.replace(/([A-Z])/g, " $1").toLowerCase()}
+                </p>
+                <p className="font-medium text-gray-800">{value || "—"}</p>
               </div>
             ))}
           </div>
@@ -145,19 +185,23 @@ const ProfileDetailsExt = ({ profileData }) => {
               Internship & Startup
             </h2>
             {isAdmin && (
-            <EditOutlined 
-              className="cursor-pointer text-blue-500 hover:text-blue-700"
-              onClick={() => openEditModal("internshipAndStartupDetails")}
-            />
+              <EditOutlined
+                className="cursor-pointer text-blue-500 hover:text-blue-700"
+                onClick={() => openEditModal("internshipAndStartupDetails")}
+              />
             )}
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {Object.entries(details.internshipAndStartupDetails).map(([key, value]) => (
-              <div key={key} className="space-y-1">
-                <p className="text-sm text-gray-500 capitalize">{key.replace(/([A-Z])/g, ' $1').toLowerCase()}</p>
-                <p className="font-medium text-gray-800">{value || '—'}</p>
-              </div>
-            ))}
+            {Object.entries(details.internshipAndStartupDetails).map(
+              ([key, value]) => (
+                <div key={key} className="space-y-1">
+                  <p className="text-sm text-gray-500 capitalize">
+                    {key.replace(/([A-Z])/g, " $1").toLowerCase()}
+                  </p>
+                  <p className="font-medium text-gray-800">{value || "—"}</p>
+                </div>
+              )
+            )}
           </div>
         </div>
       </div>

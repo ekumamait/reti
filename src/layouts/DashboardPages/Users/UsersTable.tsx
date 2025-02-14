@@ -2,10 +2,7 @@ import { Space, Table, Tag, Input, Select } from "antd";
 import type { TableProps } from "antd";
 import CustomDashboardLayout from "../../../components/secondary/CustomDashboardPagesLayout";
 import Header from "../../../components/secondary/Header";
-import {
-  useGetAllUsersQuery,
-  useDeleteUserMutation,
-} from "../../../services/users";
+import { useDeleteUserMutation } from "../../../services/users";
 import { DeleteOutlined, SearchOutlined } from "@ant-design/icons";
 import DeletePopconfirm from "../../../components/secondary/CustomDeletePopUp";
 import { useState } from "react";
@@ -13,6 +10,8 @@ import Loader from "../../loader.tsx";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import Pagination from "../../../components/secondary/Pagination";
+import { useGetAllProfilesQuery } from "../../../services/profiles.ts";
+import { loginDetails } from "../../../utils.ts";
 
 const { Search } = Input;
 const { Option } = Select;
@@ -28,13 +27,22 @@ interface User {
 }
 
 const UsersPage = () => {
-  const { data, isLoading } = useGetAllUsersQuery();
+  const { data: profdata, isLoading } = useGetAllProfilesQuery();
   const [deleteUser] = useDeleteUserMutation();
   const [searchText, setSearchText] = useState("");
   const [roleFilter, setRoleFilter] = useState("all");
   const [userPage, setUserPage] = useState(1);
   const [userPageSize, setUserPageSize] = useState(10);
   const navigate = useNavigate();
+  const user = loginDetails();
+  const loggedInUser = user?.user.id;
+
+  const loggedInUserProfile = profdata?.data.find(
+    (profile: any) => profile.user.id === loggedInUser
+  );
+  const loggedInUserRole = loggedInUserProfile?.user?.role || "";
+  const loggedInUserPartner =
+    loggedInUserProfile?.geoLocationDetails?.partnerResponsible || "";
 
   const handleViewUser = (userId: string) => {
     navigate(`/users/${userId}`);
@@ -49,16 +57,33 @@ const UsersPage = () => {
     }
   };
 
-  const filteredData = data?.data?.filter((user: User) => {
-    const matchesSearch =
-      user.firstName.toLowerCase().includes(searchText.toLowerCase()) ||
-      user.lastName.toLowerCase().includes(searchText.toLowerCase()) ||
-      user.phoneNumber.includes(searchText);
+  const filteredData = profdata?.data
+    ?.map((profile: any) => ({
+      id: profile.id,
+      firstName: profile.user?.firstName || "N/A",
+      lastName: profile.user?.lastName || "N/A",
+      phoneNumber: profile.user?.phoneNumber || "N/A",
+      role: profile.user?.role || "N/A",
+      partnerResponsible:
+        profile.geoLocationDetails?.partnerResponsible || "N/A",
+    }))
+    .filter((profile) => {
+      const matchesSearch =
+        profile.firstName.toLowerCase().includes(searchText.toLowerCase()) ||
+        profile.lastName.toLowerCase().includes(searchText.toLowerCase()) ||
+        profile.phoneNumber.includes(searchText) ||
+        profile.role.toLowerCase().includes(searchText.toLowerCase());
 
-    const matchesRole = roleFilter === "all" || user.role === roleFilter;
+      const matchesRole = roleFilter === "all" || profile.role === roleFilter;
+      const matchesPartner = ["admin", "staff"].includes(loggedInUserRole)
+        ? profile.partnerResponsible === loggedInUserPartner
+        : true;
+      const excludeSuperRole = ["admin", "staff"].includes(loggedInUserRole)
+        ? profile.role !== "super"
+        : true;
 
-    return matchesSearch && matchesRole;
-  });
+      return matchesSearch && matchesRole && matchesPartner && excludeSuperRole;
+    });
 
   const paginatedUsers = filteredData?.slice(
     (userPage - 1) * userPageSize,
@@ -96,15 +121,17 @@ const UsersPage = () => {
       dataIndex: "role",
       key: "role",
       render: (role) => (
-        <Tag color={role === "admin" ? "red" : "green"}>
+        <Tag color={role === "super" ? "red" : "green"}>
           {role.toUpperCase()}
         </Tag>
       ),
       filters: [
-        { text: "Admin", value: "admin" },
+        { text: "super", value: "super" },
         { text: "Youth", value: "youth" },
         { text: "Mentor", value: "mentor" },
         { text: "Employer", value: "employer" },
+        { text: "Admin", value: "admin" },
+        { text: "Staff", value: "staff" },
       ],
       onFilter: (value, record) => record.role === value,
     },
@@ -154,7 +181,7 @@ const UsersPage = () => {
             onChange={setRoleFilter}
           >
             <Option value="all">All Roles</Option>
-            <Option value="admin">Admin</Option>
+            <Option value="super">Admin</Option>
             <Option value="youth">Youth</Option>
             <Option value="mentor">Mentor</Option>
             <Option value="employer">Employer</Option>
@@ -172,7 +199,7 @@ const UsersPage = () => {
               pagination={false}
             />
             {filteredData && filteredData.length > userPageSize && (
-              <div className="mt-4">
+              <div className="mt-4 fixed bottom-0 p-4 sm:block w-full">
                 <Pagination
                   currentPage={userPage}
                   totalPages={Math.ceil(filteredData.length / userPageSize)}

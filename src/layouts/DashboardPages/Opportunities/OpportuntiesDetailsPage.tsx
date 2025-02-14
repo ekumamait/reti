@@ -83,21 +83,21 @@ const OpportunitiesDetailsPage = () => {
 
   const formattedInitialData = data?.data
     ? {
-      id: data.data.id,
-      title: data.data.title,
-      description: data.data.description,
-      jobType: data.data.jobType,
-      jobCategory: data.data.jobCategory,
-      location: data.data.location,
-      companyName: data.data.companyName,
-      contactEmail: data.data.contactEmail,
-      positions: data.data.positions,
-      experience: data.data.experience,
-      minSalary: data.data.salary.min,
-      maxSalary: data.data.salary.max,
-      applicationDeadline: moment(data.data.applicationDeadline),
-      qualifications: data.data.qualifications || [],
-    }
+        id: data.data.id,
+        title: data.data.title,
+        description: data.data.description,
+        jobType: data.data.jobType,
+        jobCategory: data.data.jobCategory,
+        location: data.data.location,
+        companyName: data.data.companyName,
+        contactEmail: data.data.contactEmail,
+        positions: data.data.positions,
+        experience: data.data.experience,
+        minSalary: data.data.salary.min,
+        maxSalary: data.data.salary.max,
+        applicationDeadline: moment(data.data.applicationDeadline),
+        qualifications: data.data.qualifications || [],
+      }
     : null;
 
   return (
@@ -143,7 +143,7 @@ const OpportunitiesDetailsPage = () => {
 
                   <div className="mb-6">
                     <h4 className="font-semibold text-gray-800">
-                      Application Deadline: { }
+                      Application Deadline: {}
                       <span className="text-gray-600">
                         {new Date(
                           data?.data.applicationDeadline
@@ -238,40 +238,39 @@ const OpportunitiesDetailsPage = () => {
                   </div>
 
                   <div className="mt-2">
-                      <Button
-                        className="bg-green-600 text-white hover:bg-green-700"
-                        type="default"
-                        onClick={handleSendMessage}
-                      >
-                        Start Chat
-                      </Button>
+                    <Button
+                      className="bg-green-600 text-white hover:bg-green-700"
+                      type="default"
+                      onClick={handleSendMessage}
+                    >
+                      Start Chat
+                    </Button>
                   </div>
                 </div>
               </div>
             </div>
-            {(loginDetails().user.role === "employer" || loginDetails().user.role === "admin") && (
-              <div className="absolute bottom-4 right-4 space-y-2">
-                {loginDetails().user.role === "employer" && (
+            {loginDetails().user.role === "employer" ||
+              (loginDetails().user.role === "super" && (
+                <div className="absolute bottom-4 right-4 space-y-2">
+                  <div>
+                    <DeletePopconfirm
+                      title="Delete"
+                      description="Are you sure to delete this job?"
+                      onConfirm={handleDeleteJob}
+                      onConfirmMessage="Job deleted successfully"
+                      onCancelMessage="Job deletion cancelled"
+                      okText="Yes"
+                      cancelText="No"
+                    />
+                  </div>
                   <div>
                     <EditOutlined
                       onClick={() => setIsEditOpen(true)}
                       className="text-blue-500 cursor-pointer text-lg"
                     />
                   </div>
-                )}
-                <div>
-                  <DeletePopconfirm
-                    title="Delete"
-                    description="Are you sure to delete this job?"
-                    onConfirm={handleDeleteJob}
-                    onConfirmMessage="Job deleted successfully"
-                    onCancelMessage="Job deletion cancelled"
-                    okText="Yes"
-                    cancelText="No"
-                  />
                 </div>
-              </div>
-            )}
+              ))}
             {loginDetails().user.role === "employer" && (
               <AddOpportunitiesForm
                 onCancel={handleCancel}
