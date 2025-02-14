@@ -94,7 +94,7 @@ const ProductDetailsPage = () => {
                   <h1 className="text-2xl font-bold text-gray-800 mb-4">
                     {data?.data.name}
                   </h1>
-                  <div className="w-1/3 relative mb-4">
+                  <div className="relative w-full flex justify-center" >
                     {data?.data?.imageUrl &&
                     Array.isArray(data.data.imageUrl) &&
                     data.data.imageUrl.length > 0 ? (
@@ -110,7 +110,7 @@ const ProductDetailsPage = () => {
                               onClick={(e) =>
                                 handlePrevImage(e, data.data.imageUrl.length)
                               }
-                              className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-white/80 p-1 rounded-full shadow-md hover:bg-white"
+                              className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white/80 p-1 rounded-full shadow-md hover:bg-white"
                             >
                               <LeftOutlined />
                             </button>
@@ -118,7 +118,7 @@ const ProductDetailsPage = () => {
                               onClick={(e) =>
                                 handleNextImage(e, data.data.imageUrl.length)
                               }
-                              className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-white/80 p-1 rounded-full shadow-md hover:bg-white"
+                              className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white/80 p-1 rounded-full shadow-md hover:bg-white"
                             >
                               <RightOutlined />
                             </button>
