@@ -34,10 +34,7 @@ const ProductDetailsPage = () => {
   const productCreatedDate = new Date(data?.data.createdAt);
   const user = loginDetails();
   const [receiverId, setReceiverId] = useState(null);
-
-  const [imageIndexes, setImageIndexes] = useState<{ [key: string]: number }>(
-    {}
-  );
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const handleSendMessage = () => {
     const creatorId = data?.data?.userId;
@@ -46,28 +43,14 @@ const ProductDetailsPage = () => {
     }
   };
 
-  const handleNextImage = (
-    e: React.MouseEvent,
-    productId: string,
-    maxLength: number
-  ) => {
+  const handleNextImage = (e: React.MouseEvent, maxLength: number) => {
     e.stopPropagation();
-    setImageIndexes((prev) => ({
-      ...prev,
-      [productId]: ((prev[productId] || 0) + 1) % maxLength,
-    }));
+    setCurrentImageIndex((prev) => (prev + 1) % maxLength);
   };
 
-  const handlePrevImage = (
-    e: React.MouseEvent,
-    productId: string,
-    maxLength: number
-  ) => {
+  const handlePrevImage = (e: React.MouseEvent, maxLength: number) => {
     e.stopPropagation();
-    setImageIndexes((prev) => ({
-      ...prev,
-      [productId]: ((prev[productId] || 0) - 1 + maxLength) % maxLength,
-    }));
+    setCurrentImageIndex((prev) => (prev - 1 + maxLength) % maxLength);
   };
 
   const handleDeleteProduct = async () => {
@@ -111,57 +94,56 @@ const ProductDetailsPage = () => {
                   <h1 className="text-2xl font-bold text-gray-800 mb-4">
                     {data?.data.name}
                   </h1>
-                  <div className="w-1/3 relative mb-4">
-                    <img
-                      src={
-                        data?.data?.imageUrl?.[
-                          imageIndexes[data?.data?.id] || 0
-                        ] || "https://via.placeholder.com/300x200"
-                      }
-                      alt={data?.data?.name}
-                      className="w-full h-auto min-w-[250px] max-w-full rounded-lg"
-                    />
+                  <div className="relative w-full flex justify-center" >
                     {data?.data?.imageUrl &&
-                      data?.data?.imageUrl.length > 1 && (
-                        <>
-                          <button
-                            onClick={(e) =>
-                              handlePrevImage(
-                                e,
-                                data?.data?.id,
-                                data?.data?.imageUrl.length
-                              )
-                            }
-                            className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-white/80 p-1 rounded-full shadow-md hover:bg-white"
-                          >
-                            <LeftOutlined />
-                          </button>
-                          <button
-                            onClick={(e) =>
-                              handleNextImage(
-                                e,
-                                data?.data?.id,
-                                data?.data?.imageUrl.length
-                              )
-                            }
-                            className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-white/80 p-1 rounded-full shadow-md hover:bg-white"
-                          >
-                            <RightOutlined />
-                          </button>
-                          <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2 flex gap-1">
-                            {data?.data?.imageUrl.map((_, index) => (
-                              <div
-                                key={index}
-                                className={`w-1.5 h-1.5 rounded-full ${
-                                  index === (imageIndexes[data?.data?.id] || 0)
-                                    ? "bg-blue-500"
-                                    : "bg-gray-300"
-                                }`}
-                              />
-                            ))}
-                          </div>
-                        </>
-                      )}
+                    Array.isArray(data.data.imageUrl) &&
+                    data.data.imageUrl.length > 0 ? (
+                      <>
+                        <img
+                          src={data.data.imageUrl[currentImageIndex]}
+                          alt={data.data.name}
+                          className="w-full h-auto min-w-[250px] max-w-full rounded-lg"
+                        />
+                        {data.data.imageUrl.length > 1 && (
+                          <>
+                            <button
+                              onClick={(e) =>
+                                handlePrevImage(e, data.data.imageUrl.length)
+                              }
+                              className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white/80 p-1 rounded-full shadow-md hover:bg-white"
+                            >
+                              <LeftOutlined />
+                            </button>
+                            <button
+                              onClick={(e) =>
+                                handleNextImage(e, data.data.imageUrl.length)
+                              }
+                              className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white/80 p-1 rounded-full shadow-md hover:bg-white"
+                            >
+                              <RightOutlined />
+                            </button>
+                            <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2 flex gap-1">
+                              {data.data.imageUrl.map((_, index) => (
+                                <div
+                                  key={index}
+                                  className={`w-1.5 h-1.5 rounded-full ${
+                                    index === currentImageIndex
+                                      ? "bg-blue-500"
+                                      : "bg-gray-300"
+                                  }`}
+                                />
+                              ))}
+                            </div>
+                          </>
+                        )}
+                      </>
+                    ) : (
+                      <img
+                        src="https://via.placeholder.com/300x200"
+                        alt="Placeholder"
+                        className="w-full h-auto min-w-[250px] max-w-full rounded-lg"
+                      />
+                    )}
                   </div>
 
                   <p className="text-md text-gray-700 mb-6">
@@ -226,35 +208,38 @@ const ProductDetailsPage = () => {
                           : "bg-red-100 text-red-800"
                       }`}
                     >
-                      {data?.data.stockQuantity > 0 ? "In Stock" : "Out of Stock"}
+                      {data?.data.stockQuantity > 0
+                        ? "In Stock"
+                        : "Out of Stock"}
                     </span>
                   </div>
                 </div>
               </div>
             </div>
 
-            {user?.user?.id === data?.data?.userId &&
-              user?.user?.role === "youth" || user?.user?.role === "admin" && (
-                <div className="absolute bottom-4 right-4 space-y-2">
-                  <div>
-                    <DeletePopconfirm
-                      title="Delete Product"
-                      description="Are you sure to delete this product?"
-                      onConfirm={handleDeleteProduct}
-                      onConfirmMessage="Product deleted successfully"
-                      onCancelMessage="Product deletion cancelled"
-                      okText="Yes"
-                      cancelText="No"
-                    />
-                  </div>
-                  <div>
-                    <EditOutlined
-                      onClick={() => setIsEditOpen(true)}
-                      className="text-blue-500 cursor-pointer text-lg"
-                    />
-                  </div>
+            {((user?.user?.id === data?.data?.userId &&
+              user?.user?.role === "youth") ||
+              user?.user?.role === "admin") && (
+              <div className="absolute bottom-4 right-4 space-y-2">
+                <div>
+                  <DeletePopconfirm
+                    title="Delete Product"
+                    description="Are you sure to delete this product?"
+                    onConfirm={handleDeleteProduct}
+                    onConfirmMessage="Product deleted successfully"
+                    onCancelMessage="Product deletion cancelled"
+                    okText="Yes"
+                    cancelText="No"
+                  />
                 </div>
-              )}
+                <div>
+                  <EditOutlined
+                    onClick={() => setIsEditOpen(true)}
+                    className="text-blue-500 cursor-pointer text-lg"
+                  />
+                </div>
+              </div>
+            )}
 
             {user?.user?.role === "youth" && (
               <AddProductForm
@@ -269,7 +254,7 @@ const ProductDetailsPage = () => {
           </Content>
         )}
       </CustomDashboardLayout>
-      <Chat receiverId={receiverId}/>
+      <Chat receiverId={receiverId} />
     </div>
   );
 };
