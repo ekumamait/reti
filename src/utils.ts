@@ -13,8 +13,8 @@ export const validateDOB = (_, value) => {
   }
   const today = moment();
   const age = today.diff(moment(value.$d), 'years');
-  if (age < 18) {
-      return Promise.reject(new Error('You must be at least 18 years old'));
+  if (age < 15) {
+      return Promise.reject(new Error('You must be at least 15 years old'));
   }
   if (age > 150) {
       return Promise.reject(new Error('Please enter a valid Date of Birth'));
