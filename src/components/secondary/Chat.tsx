@@ -17,7 +17,7 @@ import Loader from "../../layouts/loader";
 export default function Chat({ receiverId }: { receiverId?: number }) {
   const user = loginDetails();
   const userId = user.user.id;
-  const { data } = useGetUserConversationsQuery(userId);
+  const { data, refetch } = useGetUserConversationsQuery(userId);
   const [conversations, setConversations] = useState<any>([]);
   const [selectedConversation, setSelectedConversation] = useState(null);
   const [socket, setSocket] = useState(null);
@@ -37,6 +37,7 @@ export default function Chat({ receiverId }: { receiverId?: number }) {
 
   useEffect(() => {
     if (data) {
+      refetch();
       setConversations(data?.data);
     }
     if (isChatsVisible) {

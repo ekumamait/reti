@@ -198,7 +198,9 @@ const PersonalDetailsSettings = () => {
                     <Form.Item
                       label="Date of birth"
                       name="dateOfBirth"
-                      rules={[{ validator: validateDOB }]}
+                      rules={[{
+                        validator: (_, value) => validateDOB(_, value?.format('YYYY-MM-DD'))
+                      }]}
                       className="w-full"
                     >
                       <DatePicker 
