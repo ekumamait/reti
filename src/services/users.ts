@@ -94,7 +94,6 @@ export const userApi = createApi({
                 method: "GET",
                 headers: getHeaders(),
             }),
-            invalidatesTags: ['Users'], 
         }),
         deleteUser: mutation<ProfileResponseType, number>({
             query: (userId) => ({
@@ -103,7 +102,7 @@ export const userApi = createApi({
                 headers: getHeaders(),
             }),
         }),
-        updateUser: mutation<ApiResponse<User>, { userId: number; data: Partial<User> }>({
+        updateUser: mutation<User, { userId: number; data: Partial<User> }>({
             query: ({ userId, data }) => ({
                 url: `/users/${userId}`,
                 method: "PATCH",
@@ -112,7 +111,6 @@ export const userApi = createApi({
             }),
             invalidatesTags: ['Users'], 
         }),
-        
     })
 })
 

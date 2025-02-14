@@ -52,7 +52,6 @@ const ProfileSettings = () => {
       await createNotification(notificationData).unwrap();
 
       toast.success(`Role updated to ${newRole}`);
-      toast.success("User has been notified about the role change.");
       setSelectedRole(newRole);
       refetch();
     } catch (err) {

@@ -1,4 +1,4 @@
-import { Space, Table, Tag, Input, Select, Button } from "antd";
+import { Space, Table, Tag, Input, Select } from "antd";
 import type { TableProps } from "antd";
 import CustomDashboardLayout from "../../../components/secondary/CustomDashboardPagesLayout";
 import Header from "../../../components/secondary/Header";
@@ -27,7 +27,7 @@ interface User {
 }
 
 const UsersPage = () => {
-  const { data: profdata } = useGetAllProfilesQuery();
+  const { data: profdata, isLoading } = useGetAllProfilesQuery();
   const [deleteUser] = useDeleteUserMutation();
   const [searchText, setSearchText] = useState("");
   const [roleFilter, setRoleFilter] = useState("all");
@@ -186,10 +186,6 @@ const UsersPage = () => {
             <Option value="mentor">Mentor</Option>
             <Option value="employer">Employer</Option>
           </Select>
-
-          <Button type="primary" onClick={refetch} loading={isLoading}>
-            Refresh
-          </Button>
         </div>
         {isLoading ? (
           <Loader />
@@ -203,7 +199,7 @@ const UsersPage = () => {
               pagination={false}
             />
             {filteredData && filteredData.length > userPageSize && (
-              <div className="mt-4">
+              <div className="mt-4 fixed bottom-0 p-4 sm:block w-full">
                 <Pagination
                   currentPage={userPage}
                   totalPages={Math.ceil(filteredData.length / userPageSize)}
