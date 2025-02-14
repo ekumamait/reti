@@ -8,13 +8,15 @@ import {
   Col,
   Modal,
 } from "antd";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   useAddOpportunityMutation,
   useUpdateOpportunityMutation,
 } from "../../../services/opportunities";
 import moment from "moment";
 import { toast } from "react-toastify";
+import { UploadOutlined, DeleteOutlined } from '@ant-design/icons';
+import { uploadImage, validateFile } from "../../../utils/uploadImage";
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -30,6 +32,8 @@ const AddOpportunitiesForm = ({
   const [form] = Form.useForm();
   const [addJob] = useAddOpportunityMutation();
   const [updateJob] = useUpdateOpportunityMutation();
+  const [imageUrl, setImageUrl] = useState('');
+  const [isUploading, setIsUploading] = useState(false);
 
   useEffect(() => {
     if (initialData && open && isEdit) {
@@ -46,11 +50,29 @@ const AddOpportunitiesForm = ({
         minSalary: initialData.minSalary,
         maxSalary: initialData.maxSalary,
         applicationDeadline: moment(initialData.applicationDeadline),
+        imageUrl: initialData.imageUrl,
       });
+      setImageUrl(initialData.imageUrl);
     } else {
       form.resetFields();
+      setImageUrl('');
     }
   }, [form, initialData, open, isEdit]);
+
+  const handleImageUpload = async (file: File) => {
+    if (!validateFile(file)) return;
+    
+    setIsUploading(true);
+    try {
+      const uploadedUrl = await uploadImage(file);
+      setImageUrl(uploadedUrl);
+      form.setFieldsValue({ imageUrl: uploadedUrl });
+    } catch (error) {
+      console.error('Image upload failed:', error);
+    } finally {
+      setIsUploading(false);
+    }
+  };
 
   const handleSubmit = async () => {
     try {
@@ -62,17 +84,19 @@ const AddOpportunitiesForm = ({
           max: parseInt(values.maxSalary),
         },
         applicationDeadline: values.applicationDeadline.format("YYYY-MM-DD"),
+        imageUrl: imageUrl
       };
 
       if (isEdit) {
         await updateJob({payload: formattedData, jobID: initialData.id }).unwrap();
-        toast.success( "Job updated successfully");
+        toast.success("Job updated successfully");
       } else {
         await addJob(formattedData).unwrap();
         toast.success("Job created successfully");
       }
 
       form.resetFields();
+      setImageUrl('');
       onOk();
     } catch (error) {
       toast.error(`Operation failed ${error?.data?.message}`);
@@ -327,6 +351,44 @@ const AddOpportunitiesForm = ({
                 rows={4}
                 placeholder="Describe the responsibilities and expectations"
               />
+            </Form.Item>
+
+            <Form.Item label="Job Image">
+              <div className="space-y-4">
+                {imageUrl && (
+                  <div className="relative">
+                    <img
+                      src={imageUrl}
+                      alt="Job"
+                      className="w-full h-32 object-cover rounded-lg"
+                    />
+                    <Button
+                      type="text"
+                      icon={<DeleteOutlined className="text-red-500" />}
+                      size="small"
+                      className="absolute top-2 right-2 text-red-500 hover:text-red-700 border border-red-500 hover:border-red-700 rounded-full p-1"
+                      onClick={() => setImageUrl('')}
+                    />
+                  </div>
+                )}
+                <input
+                  type="file"
+                  id="job-image-upload"
+                  accept="image/*"
+                  style={{ display: 'none' }}
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) handleImageUpload(file);
+                  }}
+                />
+                <Button 
+                  icon={<UploadOutlined />}
+                  onClick={() => document.getElementById('job-image-upload')?.click()}
+                  loading={isUploading}
+                >
+                  Upload Image
+                </Button>
+              </div>
             </Form.Item>
           </Form>
         </div>
