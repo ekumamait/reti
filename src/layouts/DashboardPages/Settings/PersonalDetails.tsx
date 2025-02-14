@@ -31,19 +31,22 @@ const PersonalDetailsSettings = () => {
 
   const handleFinish = async (values) => {
     try {
+      const formattedValues = {
+        ...values,
+        dateOfBirth: values.dateOfBirth ? values.dateOfBirth.format('YYYY-MM-DD') : null
+      };
+
       await updateUser({
-        profile: { ...values, profileImage: avatarUrl },
+        profile: { ...formattedValues, profileImage: avatarUrl },
         profileId: loginDetails()?.user.id,
       }).unwrap();
 
-      // Update local storage
       const currentUser = loginDetails();
       if (currentUser) {
         currentUser.profileImage = avatarUrl;
         localStorage.setItem("user", JSON.stringify(currentUser));
       }
 
-      // Force refetch of user profile data to update sidebar
       await refetch();
 
       notification.success({
