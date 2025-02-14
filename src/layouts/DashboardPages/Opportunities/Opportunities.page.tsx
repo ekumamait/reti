@@ -16,7 +16,6 @@ const { Option } = Select;
 const OpportunitiesPage = () => {
   const [open, setOpen] = useState(false);
   const [opportunityPage, setOpportunityPage] = useState(1);
-  const [opportunityPageSize, setOpportunityPageSize] = useState(9);
   const [searchText, setSearchText] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
 
@@ -36,8 +35,7 @@ const OpportunitiesPage = () => {
     setOpportunityPage(page);
   };
 
-  const handleOpportunityPageSizeChange = (size: number) => {
-    setOpportunityPageSize(size);
+  const handleOpportunityPageSizeChange = () => {
     setOpportunityPage(1);
   };
 
@@ -85,7 +83,6 @@ const OpportunitiesPage = () => {
         <Layout>
           <AllOpportunitiesPage
             currentPage={opportunityPage}
-            pageSize={opportunityPageSize}
             onPageChange={handleOpportunityPageChange}
             onPageSizeChange={handleOpportunityPageSizeChange}
             searchText={searchText}

@@ -15,7 +15,6 @@ const ProductsPage = () => {
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const [productPage, setProductPage] = useState(1);
-  const [productPageSize, setProductPageSize] = useState(9);
   const [searchText, setSearchText] = useState('');
   const [stockFilter, setStockFilter] = useState('all');
 
@@ -39,8 +38,7 @@ const ProductsPage = () => {
     setProductPage(page);
   };
 
-  const handleProductPageSizeChange = (size: number) => {
-    setProductPageSize(size);
+  const handleProductPageSizeChange = () => {
     setProductPage(1);
   };
 
@@ -95,7 +93,6 @@ const ProductsPage = () => {
         <Layout>
           <AllProductsPage
             currentPage={productPage}
-            pageSize={productPageSize}
             onPageChange={handleProductPageChange}
             onPageSizeChange={handleProductPageSizeChange}
             searchText={searchText}
