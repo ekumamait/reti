@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery, BaseQueryFn, FetchArgs } from "@reduxjs/toolkit/query/react";
-import { ProfileResponseType, LoginResponseType, User, customError } from "./types.ts";
+import { ProfileResponseType, LoginResponseType, User, customError, Profile } from "./types.ts";
 import { getAccessToken, getHeaders } from "../utils.ts";
 
 export const profileApi = createApi({
@@ -32,7 +32,20 @@ export const profileApi = createApi({
             }),
             transformResponse: (response: ProfileResponseType) => response,
         }),
-        updateProfile: mutation<LoginResponseType,  { profile: Partial<User>; profileId: string }>({
+        createProfile: mutation<LoginResponseType,  { profile: Partial<User>; profileId: string }>({
+            query: ({ profile, profileId }) => ({
+                url: `profiles/${profileId}`,
+                method: 'POST',
+                body: profile,
+                headers: getHeaders(),
+            }),
+            invalidatesTags: ['Profiles'],
+            transformResponse: (response: LoginResponseType) => response,
+            transformErrorResponse: (response) => {
+                return response;
+            },
+        }),
+        updateProfile: mutation<LoginResponseType,  { profile: Partial<Profile>; profileId: string }>({
             query: ({ profile, profileId }) => ({
                 url: `profiles/${profileId}`,
                 method: 'PATCH',
@@ -51,5 +64,6 @@ export const profileApi = createApi({
 export const {
     useGetUserProfileQuery,
     useGetAllProfilesQuery,
+    useCreateProfileMutation,
     useUpdateProfileMutation,
 } = profileApi;

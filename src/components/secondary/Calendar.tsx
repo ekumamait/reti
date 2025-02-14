@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Calendar, Badge, Modal, Form, Input, DatePicker, Button, Select } from 'antd';
 import type { Dayjs } from 'dayjs';
 import dayjs from 'dayjs';
@@ -12,6 +12,7 @@ import { useGetAllUsersQuery } from '../../services/users';
 import { loginDetails } from '../../utils';
 import MentorshipSessionDetails from '../../layouts/DashboardPages/Forms/AddMentorshipSessionForm';
 import { toast } from 'react-toastify';
+import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 
 const { RangePicker } = DatePicker;
 const { TextArea } = Input;
@@ -28,6 +29,7 @@ const MentorshipCalendar = () => {
   const { data: usersData = [] } = useGetAllUsersQuery();
   const [createSession] = useCreateMentorshipSessionMutation();
   const [updateSession] = useUpdateMentorshipSessionMutation();
+  const panelChangingRef = useRef(false);
 
   const mentors = usersData?.data?.filter(user => user?.role === 'mentor');
 
@@ -69,8 +71,7 @@ const MentorshipCalendar = () => {
   };
 
   const handleDateSelect = (date: Dayjs) => {
-    if (date.isBefore(dayjs().startOf('day')) || userRole === 'mentor') return;
-    setSelectedDate(dayjs(date));
+    if (panelChangingRef.current || date.isBefore(dayjs().startOf('day')) || userRole === 'mentor') return;
     setSelectedDate(date);
     setIsModalVisible(true);
   };
@@ -90,7 +91,6 @@ const MentorshipCalendar = () => {
         sessionId: selectedSession.id,
         body: sessionData
       }).unwrap();
-      toast.success('Mentorship session updated successfully!');
       setIsModalVisible(false);
       form.resetFields();
       setSelectedSession(null);
@@ -139,10 +139,70 @@ const MentorshipCalendar = () => {
     setIsModalVisible(true);
   };
 
+  const customHeaderRender = ({
+    value,
+    onChange,
+  }: {
+    value: Dayjs;
+    onChange: (date: Dayjs) => void;
+  }) => {
+    const handleMonthChange = (e: React.MouseEvent, direction: 'prev' | 'next') => {
+      e.preventDefault();
+      e.stopPropagation();
+      panelChangingRef.current = true;
+      
+      const newDate = direction === 'prev' 
+        ? value.subtract(1, 'month')
+        : value.add(1, 'month');
+      
+      onChange(newDate);
+      
+      setTimeout(() => {
+        panelChangingRef.current = false;
+      }, 300);
+    };
+
+    return (
+      <div 
+        className="ant-picker-calendar-header" 
+        style={{ 
+          padding: 8, 
+          display: 'flex', 
+          justifyContent: 'space-between',
+          pointerEvents: 'auto'
+        }}
+        onMouseDown={e => e.stopPropagation()}
+        onClick={e => e.stopPropagation()}
+      >
+        <Button
+          icon={<LeftOutlined />}
+          onClick={(e) => handleMonthChange(e, 'prev')}
+          onMouseDown={e => e.stopPropagation()}
+        />
+        <div 
+          className="ant-picker-calendar-month-select"
+          onMouseDown={e => e.stopPropagation()}
+        >
+          {value.format('MMMM')}
+        </div>
+        <Button
+          icon={<RightOutlined />}
+          onClick={(e) => handleMonthChange(e, 'next')}
+          onMouseDown={e => e.stopPropagation()}
+        />
+      </div>
+    );
+  };
+
   return (
     <div className="px-2 text-center">
       <div className="mentorship-calendar">
-        <Calendar dateCellRender={dateCellRender} onSelect={handleDateSelect} />
+        <Calendar
+          dateCellRender={dateCellRender}
+          onSelect={handleDateSelect}
+          validRange={[dayjs().startOf('year'), dayjs().endOf('year')]}
+          headerRender={customHeaderRender}
+        />
         <Modal
           title={selectedSession ? 'Edit Mentorship Session' : 'Create Mentorship Session'}
           open={isModalVisible}
