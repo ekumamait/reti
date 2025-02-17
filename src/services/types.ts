@@ -299,6 +299,7 @@ export interface Profile {
   retiPartner: string;
   age: any;
   gender: string;
+  password?: string;
 }
 export const roles = ["youth", "mentor", "employer", "staff", "admin"];
 
