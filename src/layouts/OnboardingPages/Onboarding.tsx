@@ -4,6 +4,7 @@ import WelcomePage from './WelcomePage';
 import InformationPage from './InformationPage';
 import RetiCandidatePage from './RetiCandidatePage';
 import AdditionalInformationPage from './AdditionalInformationPage';
+import CitizenshipPage from './CitizenshipPage';
 import { useCreateProfileMutation } from "../../services/profiles.ts";
 import { userDetails } from "../../utils.ts";
 import OnboardSuccessPage from './OnboardSuccessPage';
@@ -26,19 +27,21 @@ const Onboarding: React.FC = () => {
         },
         {
             title: 'Second',
-            content: () => (
-                <InformationPage setFormData={setFormData} />),
+            content: () => <InformationPage setFormData={setFormData} />,
             key: 'informationData',
         },
         {
             title: 'Third',
-            content: () => (
-                <RetiCandidatePage formData={formData} setFormData={setFormData} />
-            ),
+            content: () => <RetiCandidatePage formData={formData} setFormData={setFormData} />,
             key: 'sectionsData',
         },
         {
-            title: 'four',
+            title: 'Citizenship Status',
+            content: () => <CitizenshipPage formData={formData} setFormData={setFormData} />,
+            key: 'citizenshipData',
+        },
+        {
+            title: 'Additional Information',
             content: () => <AdditionalInformationPage formData={formData} setFormData={setFormData} />,
             key: 'lastData',
         },
