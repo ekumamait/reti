@@ -36,7 +36,6 @@ const ChangePasswordSettings = () => {
         try {
             await updateUser({
                 profile: {
-                    oldPassword: values.oldPassword,
                     password: values.password
                 },
                 profileId: loginDetails()?.user.id,
@@ -81,13 +80,12 @@ const ChangePasswordSettings = () => {
                                         name="oldPassword"
                                         rules={[{ required: true, message: 'Please input your current password!' }]}
                                         labelCol={{ className: "text-xs sm:text-sm font-medium text-gray-600" }}
-                                        disabled
-                                        // value={data?.data.email}
                                     >
                                         <Input.Password
                                             size="middle"
                                             className="text-sm sm:text-base rounded-md"
                                             placeholder="Current password"
+                                            disabled
                                         />
                                     </Form.Item>
 
