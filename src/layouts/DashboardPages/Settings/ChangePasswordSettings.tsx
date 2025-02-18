@@ -4,6 +4,7 @@ import { Content } from "antd/es/layout/layout";
 import { useGetUserProfileQuery, useUpdateProfileMutation } from "../../../services/profiles";
 import { loginDetails } from "../../../utils";
 import { toast } from "react-toastify";
+import { useUpdateUserMutation } from "../../../services/users";
 
 const ChangePasswordSettings = () => {
     const [emailForm] = Form.useForm();
@@ -11,11 +12,12 @@ const ChangePasswordSettings = () => {
     const { data, refetch } = useGetUserProfileQuery(
         loginDetails().user.id
     );
-    const [updateUser] = useUpdateProfileMutation();
+    const [updateProfile] = useUpdateProfileMutation();
+    const [updateUser] = useUpdateUserMutation();
 
     const handleEmailUpdate = async (values) => {
         try {
-            await updateUser({
+            await updateProfile({
                 profile: { email: values.email },
                 profileId: loginDetails()?.user.id,
             }).unwrap();
@@ -35,10 +37,8 @@ const ChangePasswordSettings = () => {
     const handlePasswordUpdate = async (values) => {
         try {
             await updateUser({
-                profile: {
-                    password: values.password
-                },
-                profileId: loginDetails()?.user.id,
+                data: { password: values.password },
+                userId: loginDetails()?.user.id,
             }).unwrap();
             toast.success("Password updated successfully!");
             passwordForm.resetFields();
@@ -78,14 +78,14 @@ const ChangePasswordSettings = () => {
                                     <Form.Item
                                         label="Current Password"
                                         name="oldPassword"
-                                        rules={[{ required: true, message: 'Please input your current password!' }]}
                                         labelCol={{ className: "text-xs sm:text-sm font-medium text-gray-600" }}
                                     >
                                         <Input.Password
                                             size="middle"
                                             className="text-sm sm:text-base rounded-md"
-                                            placeholder="Current password"
+                                            placeholder="xxxxxxxxx"
                                             disabled
+                                            value={data?.data.password}
                                         />
                                     </Form.Item>
 
@@ -94,7 +94,6 @@ const ChangePasswordSettings = () => {
                                         name="password"
                                         rules={[{ 
                                             required: true,
-                                            message: 'Please input your new password!',
                                             min: 6,
                                             pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).*$/,
                                         }]}
