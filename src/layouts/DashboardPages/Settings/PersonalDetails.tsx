@@ -16,7 +16,7 @@ const PersonalDetailsSettings = () => {
   const { data, isLoading, isError, error, refetch } = useGetUserProfileQuery(
     loginDetails().user.id
   );
-  const [updateUser, { isSuccess }] = useUpdateProfileMutation();
+  const [updateUser] = useUpdateProfileMutation();
   const [form] = Form.useForm();
 
   const [, setUploadedImages] = useState<string[]>([]);
@@ -48,11 +48,7 @@ const PersonalDetailsSettings = () => {
       }
 
       await refetch();
-
-      notification.success({
-        message: "Success",
-        description: "Profile updated successfully!",
-      });
+      toast.success("Profile updated successfully");
     } catch (e) {
       let message = "Try again";
       if (typeof e.data.message === "string") {
@@ -69,12 +65,6 @@ const PersonalDetailsSettings = () => {
       setAvatarUrl(data.data.user.profilePicture);
     }
   }, [data]);
-
-  useEffect(() => {
-    if (isSuccess) {
-      toast.success("Profile updated successfully");
-    }
-  }, [isSuccess]);
 
   const handleAvatarClick = () => {
     fileInputRef.current?.click();

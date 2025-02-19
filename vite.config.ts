@@ -7,6 +7,7 @@ export default defineConfig({
   // server: {
   //   allowedHosts: [
   //     "reti-dev.up.railway.app",
+  //     "reti-production.up.railway.app",
   //     "localhost"
   //   ],
   //   port: 3000,
@@ -14,7 +15,7 @@ export default defineConfig({
   // },
   // preview: {
   //   allowedHosts: [
-  //     "reti.onrender.com",
+  //     "reti-production.up.railway.app",
   //     "reti-dev.up.railway.app",
   //     "localhost"
   //   ],
