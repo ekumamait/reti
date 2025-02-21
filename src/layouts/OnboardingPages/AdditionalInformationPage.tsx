@@ -8,11 +8,11 @@ const AdditionalInformationPage = ({ formData, setFormData }) => {
     const fileInputRef = useRef<HTMLInputElement>(null);
     const { TextArea } = Input;
     const [form] = Form.useForm();
-    const [avatarUrl, setAvatarUrl] = useState<string>(formData.profilePicture || "");
+    const [avatarUrl, setAvatarUrl] = useState<string>(formData.profileImage || "");
 
     useEffect(() => {
         form.setFieldsValue({
-            profilePicture: formData.profilePicture || "",
+            profileImage: formData.profileImage || "",
             bio: formData.bio || "",
         });
     }, [formData]);
@@ -31,8 +31,8 @@ const AdditionalInformationPage = ({ formData, setFormData }) => {
             const imageUrl = await uploadImage(file);
             if (imageUrl) {
                 setAvatarUrl(imageUrl);
-                setFormData((prev) => ({ ...prev, profilePicture: imageUrl }));
-                form.setFieldsValue({ profilePicture: imageUrl });
+                setFormData((prev) => ({ ...prev, profileImage: imageUrl }));
+                form.setFieldsValue({ profileImage: imageUrl });
             }
         } catch (error) {
             toast.error("Failed to upload image");
@@ -50,7 +50,7 @@ const AdditionalInformationPage = ({ formData, setFormData }) => {
             <Form
                 form={form}
                 layout="vertical"
-                initialValues={{ profilePicture: formData.profilePicture, bio: formData.bio }}
+                initialValues={{ profileImage: formData.profileImage, bio: formData.bio }}
                 onValuesChange={(allValues) => {
                     setFormData((prev) => ({ ...prev, ...allValues }));
                 }}

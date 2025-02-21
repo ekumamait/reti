@@ -86,11 +86,10 @@ const Onboarding: React.FC = () => {
         age: age,
       };
 
-      const response = await updateUser({
+      await updateUser({
         profile: profilePayload,
         profileId: userDetails()?.user.id,
       }).unwrap();
-      console.log(response);
       setSubmissionStatus("success");
       localStorage.removeItem("userDetails");
     }

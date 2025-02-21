@@ -23,7 +23,7 @@ const CitizenshipPage = ({ formData, setFormData }) => {
                     className="my-24"
                 >
                     <Select placeholder="Select your nationality" size="large">
-                        <Select.Option value="ugandan">National/Ugandan</Select.Option>
+                        <Select.Option value="ugandan">National - Ugandan</Select.Option>
                         <Select.Option value="south_sudan">Refugee - South Sudan</Select.Option>
                         <Select.Option value="congolese">Refugee - Congolese</Select.Option>
                         <Select.Option value="rwandese">Refugee - Rwandese</Select.Option>
