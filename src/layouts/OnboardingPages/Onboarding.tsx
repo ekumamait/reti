@@ -54,7 +54,7 @@ const Onboarding: React.FC = () => {
           setFormData={setFormData}
         />
       ),
-      key: "lastData",
+      key: "additionalInformation",
     },
   ];
   const [updateUser] = useCreateProfileMutation();
@@ -76,22 +76,24 @@ const Onboarding: React.FC = () => {
   };
 
   const handleFinish = async () => {
-    const finalValues = { ...formData, ...form.getFieldsValue() };
-    const { firstName, lastName, ...restData } = finalValues;
-    const age = moment().diff(finalValues.dateOfBirth, "years");
+    if (current === steps.length - 1) {
+      const finalValues = { ...formData, ...form.getFieldsValue() };
+      const { firstName, lastName, ...restData } = finalValues;
+      const age = moment().diff(finalValues.dateOfBirth, "years");
 
-    const profilePayload = {
-      ...restData,
-      age: age,
-    };
+      const profilePayload = {
+        ...restData,
+        age: age,
+      };
 
-    const response = await updateUser({
-      profile: profilePayload,
-      profileId: userDetails()?.user.id,
-    }).unwrap();
-    console.log(response);
-    setSubmissionStatus("success");
-    localStorage.removeItem("userDetails");
+      const response = await updateUser({
+        profile: profilePayload,
+        profileId: userDetails()?.user.id,
+      }).unwrap();
+      console.log(response);
+      setSubmissionStatus("success");
+      localStorage.removeItem("userDetails");
+    }
   };
 
   if (submissionStatus === "success") {
@@ -152,7 +154,11 @@ const Onboarding: React.FC = () => {
                     Next
                   </Button>
                 ) : (
-                  <Button className="w-24" type="primary" htmlType="submit">
+                  <Button
+                    className="w-24"
+                    type="primary"
+                    onClick={handleFinish}
+                  >
                     Finish
                   </Button>
                 )}
