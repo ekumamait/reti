@@ -26,7 +26,10 @@ import Loader from "../../loader.tsx";
 import { toast } from "react-toastify";
 import Chat from "../../../components/secondary/Chat.tsx";
 import { useCreateNotificationMutation } from "../../../services/notifications.ts";
-import { useSendJobEmailMutation, useHasUserAppliedQuery  } from "../../../services/jobEmail.ts";
+import {
+  useSendJobEmailMutation,
+  useHasUserAppliedQuery,
+} from "../../../services/jobEmail.ts";
 
 const OpportunitiesDetailsPage = () => {
   const { id } = useParams();
@@ -41,11 +44,13 @@ const OpportunitiesDetailsPage = () => {
   const [sendJobEmail, { isLoading: isSending }] = useSendJobEmailMutation();
   const [hasApplied, setHasApplied] = useState(false);
   const [isApplying, setIsApplying] = useState(false);
-  
 
-  const user_id = userDetails?.user.id
-  const jobId = data?.data?.id; 
-  const { data: hasAppliedData, refetch } = useHasUserAppliedQuery(jobId, user_id);
+  const user_id = userDetails?.user.id;
+  const jobId = data?.data?.id;
+  const { data: hasAppliedData, refetch } = useHasUserAppliedQuery(
+    jobId,
+    user_id
+  );
 
   useEffect(() => {
     if (hasAppliedData?.hasApplied !== undefined) {
@@ -105,8 +110,8 @@ const OpportunitiesDetailsPage = () => {
       refetch();
     } catch (error) {
       toast.error("Failed to send notification: " + error.message);
-    }finally {
-      setIsApplying(false); 
+    } finally {
+      setIsApplying(false);
     }
   };
 
@@ -207,19 +212,18 @@ const OpportunitiesDetailsPage = () => {
                   </div>
 
                   {loginDetails().user.role === "youth" && (
-                   <Button
-                   className="mt-4"
-                   type="primary"
-                   loading={isSending}
-                   onClick={handleApplyNow}
-                   disabled={hasApplied || isApplying}
-
-                        htmlType="submit"
-                        block
-                        size='large'
-                 >
-                   { hasApplied ? "Already Applied" : "Apply Now"}
-                 </Button>
+                    <Button
+                      className="mt-4"
+                      type="primary"
+                      loading={isSending}
+                      onClick={handleApplyNow}
+                      disabled={hasApplied || isApplying}
+                      htmlType="submit"
+                      block
+                      size="large"
+                    >
+                      {hasApplied ? "Already Applied" : "Apply Now"}
+                    </Button>
                   )}
                 </div>
               </div>
