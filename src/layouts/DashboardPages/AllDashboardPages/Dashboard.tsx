@@ -1,4 +1,4 @@
-import { Card, Avatar, Button, Dropdown, Menu } from "antd";
+import { Card, Avatar, Button, Dropdown, Menu} from "antd";
 import { useEffect, useState } from "react";
 import "tailwindcss/tailwind.css";
 import {
@@ -14,7 +14,11 @@ import {
   useGetNotificationsQuery,
   useMarkAsReadMutation,
 } from "../../../services/notifications";
-import { loginDetails, formatRelativeTime, formatTwitterTime } from "../../../utils";
+import {
+  loginDetails,
+  formatRelativeTime,
+  formatTwitterTime,
+} from "../../../utils";
 import { InspirationsType } from "../../../services/types";
 import {
   useGetInspirationsQuery,
@@ -22,7 +26,10 @@ import {
   useLikeInspirationMutation,
 } from "../../../services/inspirations";
 import Loader from "../../loader";
-import { useGetAllProfilesQuery, useGetUserProfileQuery } from "../../../services/profiles";
+import {
+  useGetAllProfilesQuery,
+  useGetUserProfileQuery,
+} from "../../../services/profiles";
 import Chat from "../../../components/secondary/Chat";
 import { toast } from "react-toastify";
 import MentorshipCalendar from "../../../components/secondary/Calendar";
@@ -74,12 +81,12 @@ const DashboardPage = () => {
       const updatedInspirations = inspirations.map((inspiration) =>
         inspiration.id === inspirationId
           ? {
-            ...inspiration,
-            isLiked: !inspiration.isLiked,
-            likesCount: inspiration.isLiked
-              ? inspiration.likesCount - 1
-              : inspiration.likesCount + 1,
-          }
+              ...inspiration,
+              isLiked: !inspiration.isLiked,
+              likesCount: inspiration.isLiked
+                ? inspiration.likesCount - 1
+                : inspiration.likesCount + 1,
+            }
           : inspiration
       );
       setInspirations(updatedInspirations);
@@ -154,11 +161,11 @@ const DashboardPage = () => {
     inspirations.filter((inspiration) => {
       const matchesSearch = filters.searchText
         ? inspiration.title
-          .toLowerCase()
-          .includes(filters.searchText.toLowerCase()) ||
-        inspiration.content
-          .toLowerCase()
-          .includes(filters.searchText.toLowerCase())
+            .toLowerCase()
+            .includes(filters.searchText.toLowerCase()) ||
+          inspiration.content
+            .toLowerCase()
+            .includes(filters.searchText.toLowerCase())
         : true;
 
       const matchesMentor =
@@ -166,14 +173,14 @@ const DashboardPage = () => {
           ? user?.user.role === "youth"
             ? selectedMentor
               ? `${inspiration.mentor.firstName} ${inspiration.mentor.lastName}` ===
-              selectedMentor
+                selectedMentor
               : true
             : inspiration.mentor.id === user?.user.id
           : true;
 
       const matchesDate = filters.dateRange
         ? new Date(inspiration.createdAt) >= filters.dateRange[0] &&
-        new Date(inspiration.createdAt) <= filters.dateRange[1]
+          new Date(inspiration.createdAt) <= filters.dateRange[1]
         : true;
 
       return matchesSearch && matchesMentor && matchesDate;
@@ -253,23 +260,30 @@ const DashboardPage = () => {
                   {paginatedNotifications?.map((notification) => (
                     <li
                       key={notification.id}
-                      className={`p-3 rounded-lg transition-all cursor-pointer ${!notification.isRead
+                      className={`p-3 rounded-lg transition-all cursor-pointer ${
+                        !notification.isRead
                           ? "bg-blue-50 border-l-4 border-blue-600 font-medium"
                           : "bg-gray-50 hover:bg-gray-100"
-                        }`}
+                      }`}
                       onClick={() => handleNotificationClick(notification)}
                     >
                       <div className="flex justify-between items-start">
                         <div className="flex-1 pr-4">
                           <p
-                            className={`text-sm ${!notification.isRead ? "text-blue-900" : "text-gray-700"
-                              }`}
+                            className={`text-sm ${
+                              !notification.isRead
+                                ? "text-blue-900"
+                                : "text-gray-700"
+                            }`}
                           >
                             {notification.title}
                           </p>
                           <p
-                            className={`text-sm mt-1 ${!notification.isRead ? "text-blue-800" : "text-gray-600"
-                              }`}
+                            className={`text-sm mt-1 ${
+                              !notification.isRead
+                                ? "text-blue-800"
+                                : "text-gray-600"
+                            }`}
                           >
                             {notification.message}
                           </p>
@@ -359,20 +373,27 @@ const DashboardPage = () => {
             <div className="space-y-2 p-2 overflow-y-auto h-[330px]">
               {paginatedInspirations?.map((inspiration) => {
                 const mentorProfile = userProfiles?.data?.find(
-                  profile => profile.user.id === inspiration.mentor.id
+                  (profile) => profile.user.id === inspiration.mentor.id
                 );
                 return (
-                  <div key={inspiration.id} className="border-b p-4 hover:bg-gray-50 transition-colors">
+                  <div
+                    key={inspiration.id}
+                    className="border-b p-4 hover:bg-gray-50 transition-colors"
+                  >
                     {/* Poster Header */}
                     <div className="flex items-start gap-3">
                       <Avatar
-                        src={mentorProfile?.profileImage || "https://via.placeholder.com/50"}
+                        src={
+                          mentorProfile?.profileImage ||
+                          "https://via.placeholder.com/50"
+                        }
                         className="shrink-0"
                       />
                       <div className="flex-1">
                         <div className="flex items-center gap-2">
                           <h4 className="font-semibold">
-                            {inspiration.mentor.firstName} {inspiration.mentor.lastName}
+                            {inspiration.mentor.firstName}{" "}
+                            {inspiration.mentor.lastName}
                           </h4>
                           <span className="text-gray-500">·</span>
                           <span className="text-gray-500 text-sm">
@@ -404,17 +425,26 @@ const DashboardPage = () => {
                           <div className="flex items-center gap-1 hover:text-blue-500 cursor-pointer">
                             <div
                               className="flex items-center cursor-pointer group"
-                              onClick={() => handleInspirationLike(inspiration.id)}
+                              onClick={() =>
+                                handleInspirationLike(inspiration.id)
+                              }
                             >
-                              {inspiration.likedBy.some(user => user.id === currentUserId) ? (
+                              {inspiration.likedBy.some(
+                                (user) => user.id === currentUserId
+                              ) ? (
                                 <LikeFilled className="text-red-500 mr-1 transition-colors animate-[bounce_0.4s_ease-in-out]" />
                               ) : (
                                 <LikeOutlined className="mr-1 text-gray-500 group-hover:text-red-400 transition-colors" />
                               )}
-                              <span className={`${inspiration.likedBy.some(user => user.id === currentUserId)
-                                  ? 'text-red-500 font-semibold'
-                                  : 'text-gray-600 group-hover:text-red-400'
-                                } transition-colors`}>
+                              <span
+                                className={`${
+                                  inspiration.likedBy.some(
+                                    (user) => user.id === currentUserId
+                                  )
+                                    ? "text-red-500 font-semibold"
+                                    : "text-gray-600 group-hover:text-red-400"
+                                } transition-colors`}
+                              >
                                 {inspiration.likesCount}
                               </span>
                             </div>
@@ -424,15 +454,18 @@ const DashboardPage = () => {
                         {/* Mentor Actions */}
                         {user?.user.role === "mentor" && (
                           <div className="flex gap-4">
-                            <EditOutlined
-                              className="text-gray-500 hover:text-blue-500 cursor-pointer"
-                              onClick={() => handleEdit(inspiration)}
-                            />
-                            <DeletePopconfirm
-                              title="Delete Inspiration"
-                              description="Are you sure to delete this inspiration?"
-                              onConfirm={() => handleDelete(inspiration.id)}
-                            />
+                            {currentUserId === inspiration.mentor.id && (
+                              <>
+                                <EditOutlined
+                                  className="text-gray-500 hover:text-blue-500 cursor-pointer"
+                                  onClick={() => handleEdit(inspiration)}
+                                />
+                                <DeletePopconfirm
+                                  title="Are you sure you want to delete this post?"
+                                  onConfirm={() => handleDelete(inspiration.id)}
+                                />
+                              </>
+                            )}
                           </div>
                         )}
                       </div>
