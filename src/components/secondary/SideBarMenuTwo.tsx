@@ -163,12 +163,14 @@ const SiderTwo = ({ closeDrawer }) => {
           }
         />
         <div className="ml-2">
+          <span className="text-sm text-red-600 capitalize mr-2">
+            {user?.user?.role === 'youth' ? 'YP' : user?.user?.role} 
+          </span>
           <Tag color="#f50">
             <label className="block text-white">
               {`${user?.user?.firstName} ${user?.user?.lastName}`}{" "}
             </label>
           </Tag>
-          <span className="text-sm text-red-600 capitalize">{user?.user?.role}</span>
           <div className="flex items-center gap-1 text-white">
             <PhoneOutlined className="text-white" />
             <label>{user?.user?.phoneNumber}</label>
