@@ -7,12 +7,7 @@ import {
   ExperimentOutlined,
   RocketOutlined,
 } from "@ant-design/icons";
-import { loginDetails } from "../../../utils";
-
 const ProfileDetailsExt = ({ profileData }) => {
-  const userRole = loginDetails().user.role;
-  const isAdmin = userRole === "super" || userRole === "staff" || userRole === "admin";
-
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingType, setEditingType] = useState<
     | "trainingCentreDetails"
@@ -94,12 +89,11 @@ const ProfileDetailsExt = ({ profileData }) => {
               <BankOutlined className="text-blue-500" />
               Institution Details
             </h2>
-            {isAdmin && (
-              <EditOutlined
-                className="cursor-pointer text-blue-500 hover:text-blue-700"
-                onClick={() => openEditModal("trainingCentreDetails")}
-              />
-            )}
+
+            <EditOutlined
+              className="cursor-pointer text-blue-500 hover:text-blue-700"
+              onClick={() => openEditModal("trainingCentreDetails")}
+            />
           </div>
           <div className="space-y-3">
             {Object.entries(details.trainingCentreDetails).map(
@@ -127,12 +121,11 @@ const ProfileDetailsExt = ({ profileData }) => {
               <CalendarOutlined className="text-green-500" />
               Cohort Details
             </h2>
-            {isAdmin && (
-              <EditOutlined
-                className="cursor-pointer text-blue-500 hover:text-blue-700"
-                onClick={() => openEditModal("trainingCohorts")}
-              />
-            )}
+
+            <EditOutlined
+              className="cursor-pointer text-blue-500 hover:text-blue-700"
+              onClick={() => openEditModal("trainingCohorts")}
+            />
           </div>
           <div className="space-y-3">
             {Object.entries(details.trainingCohorts).map(([key, value]) => (
@@ -158,12 +151,11 @@ const ProfileDetailsExt = ({ profileData }) => {
               <ExperimentOutlined className="text-purple-500" />
               RETI Program Details
             </h2>
-            {isAdmin && (
-              <EditOutlined
-                className="cursor-pointer text-blue-500 hover:text-blue-700"
-                onClick={() => openEditModal("retiTrainingDetails")}
-              />
-            )}
+
+            <EditOutlined
+              className="cursor-pointer text-blue-500 hover:text-blue-700"
+              onClick={() => openEditModal("retiTrainingDetails")}
+            />
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {Object.entries(details.retiTrainingDetails).map(([key, value]) => (
@@ -184,12 +176,11 @@ const ProfileDetailsExt = ({ profileData }) => {
               <RocketOutlined className="text-red-500" />
               Internship & Startup
             </h2>
-            {isAdmin && (
-              <EditOutlined
-                className="cursor-pointer text-blue-500 hover:text-blue-700"
-                onClick={() => openEditModal("internshipAndStartupDetails")}
-              />
-            )}
+
+            <EditOutlined
+              className="cursor-pointer text-blue-500 hover:text-blue-700"
+              onClick={() => openEditModal("internshipAndStartupDetails")}
+            />
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {Object.entries(details.internshipAndStartupDetails).map(
