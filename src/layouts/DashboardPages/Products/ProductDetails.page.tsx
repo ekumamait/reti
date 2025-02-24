@@ -150,13 +150,15 @@ const ProductDetailsPage = () => {
                     {data?.data.description}
                   </p>
 
-                  <Button
-                    className="mt-4"
-                    type="primary"
-                    onClick={handleSendMessage}
-                  >
-                    Start Chat
-                  </Button>
+                  {data?.data?.userId && data?.data?.userId?.toString() !== user?.user?.id?.toString() && (
+                    <Button
+                      className="mt-4"
+                      type="primary"
+                      onClick={handleSendMessage}
+                    >
+                      Start Chat
+                    </Button>
+                  )}
                 </div>
               </div>
 
