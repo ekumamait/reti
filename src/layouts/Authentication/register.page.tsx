@@ -1,6 +1,6 @@
 import reti from "../../assets/reti.png";
 
-import youth from "../../assets/youth3.jpg";
+import youth from "../../assets/youth.jpg";
 import RegisterForm from "../../components/secondary/RegisterForm";
 
 export default function RegisterPage() {
@@ -14,13 +14,13 @@ export default function RegisterPage() {
                 <img
                   alt="Your Company"
                   src={reti}
-                  className="h-30 w-auto mx-auto"
+                  className="h-20 w-auto mx-auto"
                 />
                 <h2 className="mt-4 text-2xl/9 font-bold tracking-tight text-gray-900">
-                  JOIN RETi
+                  JOIN ReTivate
                 </h2>
                 <p className="mt-2 text-sm/6 text-gray-500 mb-4">
-                  Unlock a world of opportunities by joining the RETi community.
+                  Unlock a world of opportunities by joining the ReTivate community.
                 </p>
               </div>
 

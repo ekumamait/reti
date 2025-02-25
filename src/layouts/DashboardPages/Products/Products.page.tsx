@@ -7,6 +7,7 @@ import { loginDetails } from "../../../utils";
 import AllProductsPage from "./AllProducts.tsx";
 import Chat from "../../../components/secondary/Chat.tsx";
 import { SearchOutlined } from "@ant-design/icons";
+import { useGetProductsQuery } from "../../../services/products.ts";
 
 const { Search } = Input;
 const { Option } = Select;
@@ -42,11 +43,16 @@ const ProductsPage = () => {
     setProductPage(1);
   };
 
+  const { data: products, isLoading } = useGetProductsQuery();
+
+
+
   return (
     <>
       <Header pageTitle="Products" />
       <CustomDashboardLayout>
         <div className="mb-4 flex flex-col sm:flex-row gap-4">
+        {products?.data?.length === 0 ? null : (
           <div className="flex flex-1 gap-4">
             <Search
               placeholder="Search by name or description"
@@ -64,6 +70,7 @@ const ProductsPage = () => {
               <Option value="outOfStock">Out of Stock</Option>
             </Select>
           </div>
+           )}
 
           {loginDetails().user.role === "youth" && (
             <div className="flex items-center justify-end mb-4">
@@ -97,6 +104,8 @@ const ProductsPage = () => {
             onPageSizeChange={handleProductPageSizeChange}
             searchText={searchText}
             stockFilter={stockFilter}
+            products ={products}
+            isLoading= {isLoading}
           />
         </Layout>
       </CustomDashboardLayout>

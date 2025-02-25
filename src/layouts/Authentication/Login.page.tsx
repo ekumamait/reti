@@ -1,7 +1,7 @@
 import Sign from "../../components/secondary/LoginForm";
 import "tailwindcss/tailwind.css";
 import reti from "../../assets/reti.png";
-import youth from "../../assets/youth3.jpg";
+import youth from "../../assets/youth.jpg";
 
 const LoginPage = () => {
   return (
@@ -14,7 +14,7 @@ const LoginPage = () => {
                 <img
                   alt="Your Company"
                   src={reti}
-                  className="h-30 w-auto mx-auto"
+                  className="h-20 w-auto mx-auto"
                 />
                 <h2 className="mt-4 text-2xl/9 font-bold tracking-tight text-gray-900">
                   Login

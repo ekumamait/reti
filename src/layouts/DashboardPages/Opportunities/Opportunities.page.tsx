@@ -10,6 +10,8 @@ import Chat from "../../../components/secondary/Chat";
 import { Select } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 
+import { useGetOpportunitiesQuery } from "../../../services/opportunities.ts";
+
 const { Search } = Input;
 const { Option } = Select;
 
@@ -39,28 +41,32 @@ const OpportunitiesPage = () => {
     setOpportunityPage(1);
   };
 
+  const { data: opportunities, isLoading, refetch } = useGetOpportunitiesQuery();
+
   return (
     <>
       <Header pageTitle="Opportunities" />
       <CustomDashboardLayout>
         <div className="mb-4 flex flex-col sm:flex-row gap-4">
-          <div className="flex flex-1 gap-4">
-            <Search
-              placeholder="Search by title or company"
-              onChange={(e) => setSearchText(e.target.value)}
-              style={{ width: 300 }}
-              prefix={<SearchOutlined />}
-            />
-            <Select
-              defaultValue="all"
-              style={{ width: 120 }}
-              onChange={setStatusFilter}
-            >
-              <Option value="all">Show All</Option>
-              <Option value="active">Active</Option>
-              <Option value="inactive">Inactive</Option>
-            </Select>
-          </div>
+          {opportunities?.data?.length === 0 ? null : (
+            <div className="flex flex-1 gap-4">
+              <Search
+                placeholder="Search by title or company"
+                onChange={(e) => setSearchText(e.target.value)}
+                style={{ width: 300 }}
+                prefix={<SearchOutlined />}
+              />
+              <Select
+                defaultValue="all"
+                style={{ width: 120 }}
+                onChange={setStatusFilter}
+              >
+                <Option value="all">Show All</Option>
+                <Option value="active">Active</Option>
+                <Option value="inactive">Inactive</Option>
+              </Select>
+            </div>
+          )}
 
           {loginDetails().user.role === "employer" && (
             <div className="flex items-center justify-end mb-4">
@@ -87,6 +93,9 @@ const OpportunitiesPage = () => {
             onPageSizeChange={handleOpportunityPageSizeChange}
             searchText={searchText}
             statusFilter={statusFilter}
+            opportunities={opportunities}
+            isLoading={isLoading}
+            refetch={refetch}
           />
         </Layout>
       </CustomDashboardLayout>
