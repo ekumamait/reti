@@ -87,8 +87,9 @@ const UsersPage = () => {
       const excludeSuperRole = ["admin", "staff"].includes(loggedInUserRole)
         ? profile.role !== "super"
         : true;
+      const excludeCurrentUser = profile.id !== loggedInUser;
 
-      return matchesSearch && matchesRole && matchesPartner && excludeSuperRole;
+      return matchesSearch && matchesRole && matchesPartner && excludeSuperRole && excludeCurrentUser;
     });
 
   const paginatedUsers = filteredData?.slice(
@@ -110,6 +111,7 @@ const UsersPage = () => {
       title: "Id",
       dataIndex: "id",
       key: "id",
+      render: (_, _record, index) => (userPage - 1) * userPageSize + index + 1,
     },
     {
       title: "Name",
