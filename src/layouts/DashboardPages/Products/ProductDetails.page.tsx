@@ -24,6 +24,7 @@ import { loginDetails } from "../../../utils";
 import { toast } from "react-toastify";
 import Loader from "../../loader";
 import Chat from "../../../components/secondary/Chat";
+import { useGetUserProfileQuery } from "../../../services/profiles";
 
 const ProductDetailsPage = () => {
   const { id } = useParams();
@@ -35,6 +36,7 @@ const ProductDetailsPage = () => {
   const user = loginDetails();
   const [receiverId, setReceiverId] = useState(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const { data: userProfile } = useGetUserProfileQuery(data?.data?.userId);
 
   console.log("Product Creator ID:", data?.data?.userId);
   console.log("Current User ID:", user?.user?.id);
@@ -153,7 +155,7 @@ const ProductDetailsPage = () => {
                     {data?.data.description}
                   </p>
 
-                  {data?.data?.userId && data?.data?.userId?.toString() !== user?.user?.id?.toString() && (
+                  {data?.data?.userId !== user?.user?.id && (
                     <Button
                       className="mt-4"
                       type="primary"
@@ -177,8 +179,9 @@ const ProductDetailsPage = () => {
                         {data?.data.name}
                       </h4>
                       <p className="text-md text-gray-600">
-                        Posted {formatDistanceToNow(productCreatedDate)}
+                        Posted by {userProfile?.data?.user?.firstName} {userProfile?.data?.user?.lastName}
                       </p>
+                      <p className="text-md text-gray-600">{formatDistanceToNow(productCreatedDate)}</p>
                     </div>
                   </div>
 
