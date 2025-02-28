@@ -6,6 +6,7 @@ export default defineConfig({
   plugins: [react()],
   // server: {
   //   allowedHosts: [
+  //     "retivate.com",
   //     "reti-dev.up.railway.app",
   //     "reti-production.up.railway.app",
   //     "localhost"
@@ -15,6 +16,7 @@ export default defineConfig({
   // },
   // preview: {
   //   allowedHosts: [
+  //     "retivate.com",
   //     "reti-production.up.railway.app",
   //     "reti-dev.up.railway.app",
   //     "localhost"
