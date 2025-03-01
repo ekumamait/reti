@@ -1,4 +1,4 @@
-import { Space, Table, Tag, Input, Select } from "antd";
+import { Space, Table, Tag, Input, Select, Empty } from "antd";
 import type { TableProps } from "antd";
 import CustomDashboardLayout from "../../../components/secondary/CustomDashboardPagesLayout";
 import Header from "../../../components/secondary/Header";
@@ -173,52 +173,63 @@ const UsersPage = () => {
   return (
     <>
       <Header pageTitle="Profiles" />
+
+
       <CustomDashboardLayout>
-        <div className="mb-4 flex gap-4">
-          <Search
-            placeholder="Search by name or phone"
-            onChange={(e) => setSearchText(e.target.value)}
-            style={{ width: 300 }}
-            prefix={<SearchOutlined />}
-          />
-          <Select
-            defaultValue="all"
-            style={{ width: 120 }}
-            onChange={setRoleFilter}
-          >
-            <Option value="all">All Roles</Option>
-            <Option value="super">Admin</Option>
-            <Option value="youth">Youth</Option>
-            <Option value="mentor">Mentor</Option>
-            <Option value="employer">Employer</Option>
-          </Select>
-        </div>
-        {isLoading ? (
-          <Loader />
-        ) : (
-          <>
-            <Table
-              columns={columns}
-              dataSource={paginatedUsers}
-              loading={isLoading}
-              rowKey="id"
-              pagination={false}
-            />
-            {filteredData && filteredData.length > userPageSize && (
-              <div className="mt-4 fixed bottom-0 p-4 sm:block w-full">
-                <Pagination
-                  currentPage={userPage}
-                  totalPages={Math.ceil(filteredData.length / userPageSize)}
-                  pageSize={userPageSize}
-                  onPageChange={handleUserPageChange}
-                  onPageSizeChange={handleUserPageSizeChange}
+        {filteredData && filteredData?.length === 0 ? (
+          <div className="mt-32">
+            <Empty />
+          </div>) :
+          (
+            <>
+              <div className="mb-4 flex gap-4">
+                <Search
+                  placeholder="Search by name or phone"
+                  onChange={(e) => setSearchText(e.target.value)}
+                  style={{ width: 300 }}
+                  prefix={<SearchOutlined />}
                 />
+                <Select
+                  defaultValue="all"
+                  style={{ width: 120 }}
+                  onChange={setRoleFilter}
+                >
+                  <Option value="all">All Roles</Option>
+                  <Option value="super">Admin</Option>
+                  <Option value="youth">Youth</Option>
+                  <Option value="mentor">Mentor</Option>
+                  <Option value="employer">Employer</Option>
+                </Select>
               </div>
-            )}
-          </>
-        )}
+              {isLoading ? (
+                <Loader />
+              ) : (
+                <>
+                  <Table
+                    columns={columns}
+                    dataSource={paginatedUsers}
+                    loading={isLoading}
+                    rowKey="id"
+                    pagination={false}
+                  />
+                  {filteredData && filteredData.length > userPageSize && (
+                    <div className="mt-4 fixed bottom-0 p-4 sm:block w-full">
+                      <Pagination
+                        currentPage={userPage}
+                        totalPages={Math.ceil(filteredData.length / userPageSize)}
+                        pageSize={userPageSize}
+                        onPageChange={handleUserPageChange}
+                        onPageSizeChange={handleUserPageSizeChange}
+                      />
+                    </div>
+                  )}
+                </>
+              )}
+            </>
+          )}
       </CustomDashboardLayout>
     </>
+
   );
 };
 

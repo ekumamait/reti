@@ -3,6 +3,7 @@ import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, Li
 import 'tailwindcss/tailwind.css';
 import { useGetOpportunitiesQuery } from '../../../../services/opportunities';
 import Loader from '../../../loader';
+import { Empty } from 'antd';
 
 ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale);
 
@@ -60,12 +61,20 @@ const JobOpportunitiesStatistics = () => {
 
   return (
     <>
-      {isLoading ? (
-        <Loader />
+      {data === null ? (
+        <div className="mt-[142px]">
+          <Empty />
+        </div>
       ) : (
-        <div className="p-4">
-          <Bar data={data} options={options} />
-        </div>)}
+        <>
+          {isLoading ? (
+            <Loader />
+          ) : (
+            <div className="p-4">
+              <Bar data={data} options={options} />
+            </div>)}
+        </>
+      )}
     </>
   );
 };
