@@ -3,6 +3,7 @@ import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, Li
 import 'tailwindcss/tailwind.css';
 import { useGetAllUsersQuery } from '../../../../services/users';
 import Loader from '../../../loader';
+import { Empty } from 'antd';
 
 ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale);
 
@@ -58,14 +59,25 @@ const UserStatistics = () => {
     },
   };
 
+
+
+
   return (
     <>
-      {isLoading ? (
-        <Loader />
-      ) : (
-        <div className="p-4">
-          <Bar data={data} options={options} />
+      {data === null ? (
+        <div className="mt-[142px]">
+          <Empty />
         </div>
+      ) : (
+        <>
+          {isLoading ? (
+            <Loader />
+          ) : (
+            <div className="p-4">
+              <Bar data={data} options={options} />
+            </div>
+          )}
+        </>
       )}
     </>
   );
