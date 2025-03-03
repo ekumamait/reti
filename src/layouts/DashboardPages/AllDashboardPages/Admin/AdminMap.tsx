@@ -2,6 +2,7 @@
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import { LatLngTuple } from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import { Empty } from 'antd';
 
 // Updated locations with latitude and longitude
 const locations = [
@@ -34,21 +35,29 @@ const locations = [
 
 const MapComponent = () => {
   return (
-    <div style={{ height: '500px' }}>
-      <MapContainer center={[1.3733, 32.2903]} zoom={7} style={{ width: '100%', height: '100%' }}>
-        <TileLayer
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        />
-        
-        {/* Render markers for each location */}
-        {locations.map((location, index) => (
-          <Marker key={index} position={location.position}>
-            <Popup>{location.name} {location.user}</Popup>
-          </Marker>
-        ))}
-      </MapContainer>
-    </div>
+    <>
+      {locations.length === 0 ? (
+        <div className="mt-[142px]">
+          <Empty />
+        </div>
+      ) : (
+        <div style={{ height: '500px' }}>
+          <MapContainer center={[1.3733, 32.2903]} zoom={7} style={{ width: '100%', height: '100%' }}>
+            <TileLayer
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            />
+
+            {/* Render markers for each location */}
+            {locations.map((location, index) => (
+              <Marker key={index} position={location.position}>
+                <Popup>{location.name} {location.user}</Popup>
+              </Marker>
+            ))}
+          </MapContainer>
+        </div>
+      )}
+    </>
   );
 };
 

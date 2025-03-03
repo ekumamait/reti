@@ -10,6 +10,7 @@ import MapComponent from "./AdminMap";
 
 const AdminDashboardPage = () => {
   const user = loginDetails();
+  
 
   return (
     <>
