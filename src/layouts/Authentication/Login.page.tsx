@@ -1,7 +1,16 @@
 import Sign from "../../components/secondary/LoginForm";
 import "tailwindcss/tailwind.css";
+import { Swiper, SwiperSlide } from "swiper/react";
+import "swiper/css";
+import "swiper/css/pagination";
+import { Autoplay, Pagination } from "swiper/modules";
+
 import reti from "../../assets/reti.png";
 import youth from "../../assets/youth.jpg";
+import youth1 from "../../assets/youth1.png";
+import youth2 from "../../assets/youth2.png";
+
+export const images = [youth, youth1, youth2];
 
 const LoginPage = () => {
   return (
@@ -27,13 +36,26 @@ const LoginPage = () => {
               </div>
             </div>
           </div>
-          <div className="relative hidden w-0 flex-1 lg:block">
-            <img
-              alt=""
-              src={youth}
-              className="absolute inset-0 size-full object-cover"
-            />
-          </div>
+
+        <div className="relative hidden w-0 flex-1 lg:block">
+          <Swiper
+            modules={[Autoplay, Pagination]}
+            autoplay={{ delay: 5000 }}
+            pagination={{ clickable: true }}
+            loop={true}
+            className="absolute inset-0 size-full"
+          >
+            {images.map((img, index) => (
+              <SwiperSlide key={index}>
+                <img
+                  src={img}
+                  alt={`Slide ${index + 1}`}
+                  className="size-full object-cover"
+                />
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        </div>
         </div>
       </div>
     </div>
