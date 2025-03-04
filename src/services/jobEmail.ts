@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery, BaseQueryFn, FetchArgs } from "@reduxjs/toolkit/query/react";
 import { customError } from "./types.ts";
-import { getAccessToken, getHeaders } from "../utils.ts";
+import { getAccessToken } from "../utils.ts";
 
 export const jobEmailApi = createApi({
     reducerPath: 'jobEmailApi',
