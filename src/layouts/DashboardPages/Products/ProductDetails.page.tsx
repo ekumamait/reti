@@ -36,6 +36,9 @@ const ProductDetailsPage = () => {
   const [receiverId, setReceiverId] = useState(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
+  console.log("Product Creator ID:", data?.data?.userId);
+  console.log("Current User ID:", user?.user?.id);
+
   const handleSendMessage = () => {
     const creatorId = data?.data?.userId;
     if (creatorId) {
@@ -150,13 +153,15 @@ const ProductDetailsPage = () => {
                     {data?.data.description}
                   </p>
 
-                  <Button
-                    className="mt-4"
-                    type="primary"
-                    onClick={handleSendMessage}
-                  >
-                    Start Chat
-                  </Button>
+                  {data?.data?.userId && data?.data?.userId?.toString() !== user?.user?.id?.toString() && (
+                    <Button
+                      className="mt-4"
+                      type="primary"
+                      onClick={handleSendMessage}
+                    >
+                      Start Chat
+                    </Button>
+                  )}
                 </div>
               </div>
 
