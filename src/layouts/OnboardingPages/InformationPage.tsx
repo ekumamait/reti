@@ -48,8 +48,7 @@ const InformationPage = ({ setFormData }) => {
                         style={{ display: 'inline-block', width: '50%', margin: '0' }}
                         label="Date of birth"
                         name="dateOfBirth"
-                        rules={[{
-                            validator: (_, value) => validateDOB(_, value?.format('YYYY-MM-DD')), required: true }]}
+                        rules={[{ validator: validateDOB, required: true }]}
                     >
                         <DatePicker size="large" className="w-full" />
                     </Form.Item>
