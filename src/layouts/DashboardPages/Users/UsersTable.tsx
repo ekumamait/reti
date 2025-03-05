@@ -24,6 +24,7 @@ interface User {
   phoneNumber: string;
   role: string;
   status: string;
+  isRetiCandidate: string;
 }
 
 const UsersPage = () => {
@@ -70,6 +71,7 @@ const UsersPage = () => {
       lastName: profile.user?.lastName || "N/A",
       phoneNumber: profile.user?.phoneNumber || "N/A",
       role: profile.user?.role || "N/A",
+      isRetiCandidate: profile.isRetiCandidate ? 'Yes' : 'No',
       partnerResponsible:
         profile.geoLocationDetails?.partnerResponsible || "N/A",
     }))
@@ -123,6 +125,21 @@ const UsersPage = () => {
       title: "Phone",
       dataIndex: "phoneNumber",
       key: "phone",
+    },
+    {
+      title: "Reti",
+      dataIndex: "isRetiCandidate",
+      key: "status",
+      render: (status) => (
+        <Tag color={status === 'Yes' ? 'blue' : 'red'}>
+          {status}
+        </Tag>
+      ),
+      filters: [
+        { text: 'Yes', value: 'Yes' },
+        { text: 'No', value: 'No' },
+      ],
+      onFilter: (value, record) => record.isRetiCandidate === value,
     },
     {
       title: "Role",

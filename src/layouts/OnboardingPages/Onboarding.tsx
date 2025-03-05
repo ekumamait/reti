@@ -79,12 +79,20 @@ const Onboarding: React.FC = () => {
     if (current === steps.length - 1) {
       const finalValues = { ...formData, ...form.getFieldsValue() };
       const { firstName, lastName, ...restData } = finalValues;
-      const age = moment().diff(finalValues.dateOfBirth, "years");
+      
+      // Correct age calculation
+      const age = moment().diff(moment(finalValues.dateOfBirth), 'years', false);
 
+      // Prepare payload without retiPartner if not a RETI candidate
       const profilePayload = {
         ...restData,
         age: age,
       };
+
+      // Only include retiPartner if isRetiCandidate is true
+      if (finalValues.isRetiCandidate) {
+        profilePayload.retiPartner = finalValues.retiPartner;
+      }
 
       await updateUser({
         profile: profilePayload,

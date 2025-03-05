@@ -46,14 +46,24 @@ const CitizenshipPage = ({ formData, setFormData }) => {
                 )}
 
                 {form.getFieldValue('nationality') !== 'ugandan' && (
-                    <Form.Item
-                        name="uniqueIdNo"
-                        label="Unique Identification No."
-                        rules={[{ required: true, message: 'Please enter your Unique Identification Number' }]}
-                        className="mb-6"
-                    >
-                        <Input size="large" placeholder="Enter your Unique Identification Number" />
-                    </Form.Item>
+                    <>
+                        <Form.Item
+                            name="groupNumber"
+                            label="Group Number"
+                            rules={[{ required: true, message: 'Please enter your Group Number' }]}
+                            className="my-20"
+                        >
+                            <Input size="large" placeholder="Enter your Group Number" />
+                        </Form.Item>
+                        <Form.Item
+                            name="individualNumber"
+                            label="Individual Number"
+                            rules={[{ required: true, message: 'Please enter your Individual Number' }]}
+                            className="my-20"
+                        >
+                            <Input size="large" placeholder="Enter your Individual Number" />
+                        </Form.Item>
+                    </>
                 )}
             </Form>
         </div>
