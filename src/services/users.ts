@@ -1,6 +1,7 @@
 import {createApi, fetchBaseQuery} from "@reduxjs/toolkit/query/react"
 import {LoginResponseType, ProfileResponseType} from "./types.ts";
 import {getAccessToken, getRefreshToken, updateTokens, handleLogout, getHeaders} from "../utils.ts";
+import { profileApi } from "./profiles.ts";
 
 interface User {
     firstName?: string;
@@ -101,6 +102,13 @@ export const userApi = createApi({
                 method: "DELETE",
                 headers: getHeaders(),
             }),
+            invalidatesTags: ['Users'],
+            async onQueryStarted(_, { dispatch, queryFulfilled }) {
+                await queryFulfilled;
+                dispatch(
+                    profileApi.util.invalidateTags(['Profiles'])
+                );
+            },
         }),
         updateUser: mutation<User, { userId: number; data: Partial<User> }>({
             query: ({ userId, data }) => ({
