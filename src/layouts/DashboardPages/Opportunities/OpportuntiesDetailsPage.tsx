@@ -26,6 +26,7 @@ import Loader from "../../loader.tsx";
 import { toast } from "react-toastify";
 import Chat from "../../../components/secondary/Chat.tsx";
 import { useCreateNotificationMutation } from "../../../services/notifications.ts";
+import { useSendJobEmailMutation } from "../../../services/jobEmail.ts";
 
 const OpportunitiesDetailsPage = () => {
   const { id } = useParams();
@@ -36,6 +37,7 @@ const OpportunitiesDetailsPage = () => {
   const jobCreatedDate = new Date(data?.data.createdAt);
   const [receiverId, setReceiverId] = useState(null);
   const [createNotification] = useCreateNotificationMutation();
+  const [sendJobEmail] = useSendJobEmailMutation();
 
   const handleDeleteJob = async () => {
     try {
@@ -71,8 +73,17 @@ const OpportunitiesDetailsPage = () => {
       message: `${firstName} ${lastName} has applied for the job: ${data?.data?.title}.`,
       userId: employerId,
     };
+    const emailData = {
+      employerEmail: data?.data?.contactEmail,
+    jobTitle: data?.data?.title,
+    employerName: data?.data?.employer?.firstName + ' ' + data?.data?.employer?.lastName,
+    applicantName: userDetails?.user.firstName + ' ' + userDetails?.user.lastName,
+    applicantPhone: userDetails?.user.phoneNumber
+    }
+
     try {
       await createNotification(notificationData).unwrap();
+      await sendJobEmail(emailData)
       toast.success(
         "Application submitted and notification sent to the employer."
       );
