@@ -1,9 +1,12 @@
-import { Space, Table, Tag, Input, Select, Empty } from "antd";
+import { Space, Table, Tag, Input, Select} from "antd";
 import type { TableProps } from "antd";
 import CustomDashboardLayout from "../../../components/secondary/CustomDashboardPagesLayout";
 import Header from "../../../components/secondary/Header";
 import { useDeleteUserMutation } from "../../../services/users";
-import { DeleteOutlined, SearchOutlined } from "@ant-design/icons";
+import {
+  DeleteOutlined,
+  SearchOutlined,
+} from "@ant-design/icons";
 import DeletePopconfirm from "../../../components/secondary/CustomDeletePopUp";
 import { useEffect, useState } from "react";
 import Loader from "../../loader.tsx";
@@ -12,6 +15,7 @@ import { useNavigate } from "react-router-dom";
 import Pagination from "../../../components/secondary/Pagination";
 import { useGetAllProfilesQuery } from "../../../services/profiles.ts";
 import { loginDetails } from "../../../utils.ts";
+import { handleDownloadBulkData } from "../../../utils.ts";
 
 const { Search } = Input;
 const { Option } = Select;
@@ -29,7 +33,7 @@ interface User {
 }
 
 const UsersPage = () => {
-  const { data: profdata, isLoading, refetch } = useGetAllProfilesQuery();
+  const { data: profileData, isLoading, refetch } = useGetAllProfilesQuery();
   const [deleteUser] = useDeleteUserMutation();
   const [searchText, setSearchText] = useState("");
   const [roleFilter, setRoleFilter] = useState("all");
@@ -39,12 +43,25 @@ const UsersPage = () => {
   const user = loginDetails();
   const loggedInUser = user?.user.id;
 
-  const loggedInUserProfile = profdata?.data.find(
+  const loggedInUserProfile = profileData?.data.find(
     (profile: any) => profile.user.id === loggedInUser
   );
   const loggedInUserRole = loggedInUserProfile?.user?.role || "";
   const loggedInUserPartner =
     loggedInUserProfile?.geoLocationDetails?.partnerResponsible || "";
+
+let usersWithMatchingPartner;
+
+  if(loggedInUserRole === "super"){
+     usersWithMatchingPartner = profileData?.data;
+     console.log("User with", usersWithMatchingPartner);
+  }else{
+     usersWithMatchingPartner = profileData?.data.filter(
+      (profile: any) =>
+        profile.geoLocationDetails?.partnerResponsible === loggedInUserPartner
+    )
+    console.log("User with", usersWithMatchingPartner);
+  }
 
   const handleViewUser = (userId: string) => {
     navigate(`/users/${userId}`);
@@ -60,12 +77,12 @@ const UsersPage = () => {
   };
 
   useEffect(() => {
-    if (profdata) {
+    if (profileData) {
       refetch();
     }
-  }, [profdata, refetch]);
+  }, [profileData, refetch]);
 
-  const filteredData = profdata?.data
+  const filteredData = profileData?.data
     ?.map((profile: any) => ({
       id: profile.id,
       firstName: profile.user?.firstName || "N/A",
@@ -95,6 +112,8 @@ const UsersPage = () => {
 
       return matchesSearch && matchesRole && matchesPartner && excludeSuperRole && excludeCurrentUser;
     });
+
+
 
   const paginatedUsers = filteredData?.slice(
     (userPage - 1) * userPageSize,
@@ -220,64 +239,60 @@ const UsersPage = () => {
     },
   ];
 
+  
   return (
     <>
       <Header pageTitle="Profiles" />
 
 
       <CustomDashboardLayout>
-        {filteredData && filteredData?.length === 0 ? (
-          <div className="mt-32">
-            <Empty />
-          </div>) :
-          (
-            <>
-              <div className="mb-4 flex gap-4">
-                <Search
-                  placeholder="Search by name or phone"
-                  onChange={(e) => setSearchText(e.target.value)}
-                  style={{ width: 300 }}
-                  prefix={<SearchOutlined />}
-                />
-                <Select
-                  defaultValue="all"
-                  style={{ width: 120 }}
-                  onChange={setRoleFilter}
-                >
-                  <Option value="all">All Roles</Option>
-                  <Option value="super">Admin</Option>
-                  <Option value="youth">Youth</Option>
-                  <Option value="mentor">Mentor</Option>
-                  <Option value="employer">Employer</Option>
-                </Select>
-              </div>
-              {isLoading ? (
-                <Loader />
-              ) : (
-                <>
-                  <Table
-                    columns={columns}
-                    dataSource={paginatedUsers}
-                    loading={isLoading}
-                    rowKey="id"
-                    pagination={false}
-                  />
-                  {filteredData && filteredData.length > userPageSize && (
-                    <div className="mt-4 fixed bottom-0 p-4 sm:block w-full">
-                      <Pagination
-                        currentPage={userPage}
-                        totalPages={Math.ceil(filteredData.length / userPageSize)}
-                        pageSize={userPageSize}
-                        onPageChange={handleUserPageChange}
-                        onPageSizeChange={handleUserPageSizeChange}
-                      />
-                    </div>
-                  )}
-                </>
-              )}
-            </>
+      <div className="mb-4 flex items-center gap-4 justify-between">
+        <div className="flex gap-4">
+          <Search
+            placeholder="Search by name or phone"
+            onChange={(e) => setSearchText(e.target.value)}
+            style={{ width: 300 }}
+            prefix={<SearchOutlined />}
+          />
+          <Select defaultValue="all" style={{ width: 120 }} onChange={setRoleFilter}>
+            <Option value="all">All Roles</Option>
+            <Option value="super">Admin</Option>
+            <Option value="youth">Youth</Option>
+            <Option value="mentor">Mentor</Option>
+            <Option value="employer">Employer</Option>
+          </Select>
+        </div>
+        <Select
+          defaultValue="Download"
+          style={{ width: 150 }}
+          onChange={(format) =>
+            handleDownloadBulkData(format as "csv" | "excel", usersWithMatchingPartner)
+          }
+        >
+          <Option value="csv">As CSV</Option>
+          <Option value="excel">As Excel</Option>
+        </Select>
+      </div>
+
+      {isLoading ? (
+        <Loader />
+      ) : (
+        <>
+          <Table columns={columns} dataSource={paginatedUsers} loading={isLoading} rowKey="id" pagination={false} />
+          {filteredData && filteredData.length > userPageSize && (
+            <div className="mt-4 fixed bottom-0 p-4 sm:block w-full">
+              <Pagination
+                currentPage={userPage}
+                totalPages={Math.ceil(filteredData.length / userPageSize)}
+                pageSize={userPageSize}
+                onPageChange={handleUserPageChange}
+                onPageSizeChange={handleUserPageSizeChange}
+              />
+            </div>
           )}
-      </CustomDashboardLayout>
+        </>
+      )}
+    </CustomDashboardLayout>
     </>
 
   );

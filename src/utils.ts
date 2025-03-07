@@ -1,6 +1,9 @@
 import jsPDF from "jspdf";
 import moment from "moment";
 import { toast } from "react-toastify";
+import * as XLSX from "xlsx";
+import Papa from "papaparse";
+import { saveAs } from "file-saver";
 
 export const handleLogout = () => {
   localStorage.removeItem("loginDetails");
@@ -299,4 +302,163 @@ export const formatTwitterTime = (createdAt: string) => {
     year: 'numeric'
   });
 };
+
+
+
+const flattenObject = (obj: any, parentKey = ""): Record<string, any> => {
+    let result: Record<string, any> = {};
+
+    Object.entries(obj || {}).forEach(([key, value]) => {
+      const fullKey = parentKey ? `${parentKey}.${key}` : key;
+
+      if (
+        typeof value === "object" &&
+        value !== null &&
+        !Array.isArray(value)
+      ) {
+        result = { ...result, ...flattenObject(value, fullKey) };
+      } else if (Array.isArray(value)) {
+        result[fullKey] = value.length > 0 ? value.join(", ") : "N/A";
+      } else {
+        result[fullKey] = value ?? "N/A";
+      }
+    });
+
+    return result;
+  };
+
+  export const handleDownloadBulkData = (
+    format: "csv" | "excel",
+    usersWithMatchingPartner: any[]
+  ) => {
+    if (!usersWithMatchingPartner || usersWithMatchingPartner.length === 0) {
+      console.warn("No data to export");
+      return;
+    }
+
+    const EXCLUDED_FIELDS = [
+      "theme",
+      "user.id",
+      "user.createdAt",
+      "user.password",
+      "userId",
+      "updatedAt",
+      "createdAt",
+      "phoneNumber",
+      "user.isOnboarded",
+    ];
+
+    const headerMap: Record<string, string> = {
+      id: "ID",
+      profileImage: "Profile Image",
+      isRetiCandidate: "Reti Candidate",
+      retiPartner: "Reti Partner",
+      skills: "Skills",
+      "stakeholderLinks.mentors": "Mentors",
+      "stakeholderLinks.employers": "Employers",
+      bio: "Bio",
+      location: "Location",
+      dateOfBirth: "Date of Birth",
+      gender: "Gender",
+      email: "Email",
+      "skillsAndTraining.traineeCategory": "Trainee Category",
+      "skillsAndTraining.trainingDuration": "Training Duration",
+      "skillsAndTraining.trainingLocation": "Training Location",
+
+      "artisanDetails.nameOfHost": "Name of Host",
+      "artisanDetails.hostContact": "Host Contact",
+      "artisanDetails.villageOfArtisan": "Village of Artisan",
+      "artisanDetails.categoryOfArtisan": "Category of Artisan",
+      "artisanDetails.subcountyOfArtisan": "Subcounty of Artisan",
+      "artisanDetails.centerRefugeeSettlement": "Center Refugee Settlement",
+
+      "geoLocationDetails.region": "Region",
+      "geoLocationDetails.village": "Village",
+      "geoLocationDetails.district": "District",
+      "geoLocationDetails.subCounty": "Subcounty",
+      "geoLocationDetails.settlement": "Settlement",
+      "geoLocationDetails.parishZoneCluster": "Parish Zone Cluster",
+      "geoLocationDetails.partnerResponsible": "Partner Responsible",
+
+      "participantDetails.age": "Age",
+      "participantDetails.nin": "NIN",
+      "participantDetails.sex": "Sex",
+      "participantDetails.uniqueIdNo": "Unique ID No",
+      "participantDetails.groupNumber": "Group Number",
+      "participantDetails.maritalStatus": "Marital Status",
+      "participantDetails.disabilityType": "Disability Type",
+      "participantDetails.individualNumber": "Individual Number",
+      "participantDetails.nameOfParticipant": "Name Of Participant",
+      "participantDetails.nationalityCategory": "Nationality Category",
+      "participantDetails.numberOfDisabilities": "Number of Disabilities",
+      "participantDetails.mainDisabilityDetails": "Main Disability Details",
+      "participantDetails.specialInterestCategory": "Special Interest Category",
+
+      "trainingCentreDetails.locationVillage": "Location Village",
+      "trainingCentreDetails.locationSubCounty": "Location Subcounty",
+      "trainingCentreDetails.locationSettlement": "Location Settlement",
+      "trainingCentreDetails.mainTelephoneContact": "Main Telephone Contact",
+      "trainingCentreDetails.nameOfTrainingCentre": "Name of Training Centre",
+      "trainingCentreDetails.alternativeTelephoneContact":
+        "Alternative Telephone Contact",
+
+      "trainingCohorts.cohort": "Cohort",
+      "trainingCohorts.tradeTakenDuringTraining": "Trade Taken During Training",
+
+      "retiTrainingDetails.startTime": "Start Time",
+      "retiTrainingDetails.monthsSpent": "Months Spent",
+      "retiTrainingDetails.completionStatus": "Completion Status",
+      "retiTrainingDetails.certificationStatus": "Certification Status",
+      "retiTrainingDetails.reasonForDroppingOut": "Reason for Dropping Out",
+
+      "internshipAndStartupDetails.completionTime": "Completion Time",
+      "internshipAndStartupDetails.startupKitReceived": "Startup Kit Received",
+      "internshipAndStartupDetails.internshipPlacement": "Internship Placement",
+      "internshipAndStartupDetails.startupGrantReceived":
+        "Startup Grant Received",
+
+      "user.firstName": "First Name",
+      "user.lastName": "Last Name",
+      "user.phoneNumber": "Phone Number",
+      "user.role": "Role",
+    };
+
+    const flattenAndCleanObject = (obj: any) => {
+      return Object.fromEntries(
+        Object.entries(flattenObject(obj))
+          .filter(([key]) => !EXCLUDED_FIELDS.includes(key))
+          .map(([key, value]) => [
+            headerMap[key] || key.replace(/\./g, " "),
+            value,
+          ])
+      );
+    };
+
+    const exportData = usersWithMatchingPartner.map(flattenAndCleanObject);
+
+    if (format === "csv") {
+      const csv = Papa.unparse({
+        fields: Object.values(headerMap),
+        data: exportData.map((obj) => Object.values(obj)),
+      });
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+      saveAs(blob, "user_profiles.csv");
+    } else if (format === "excel") {
+      const worksheet = XLSX.utils.json_to_sheet(exportData);
+      XLSX.utils.sheet_add_aoa(worksheet, [Object.values(headerMap)], {
+        origin: "A1",
+      });
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Users");
+      const excelBuffer = XLSX.write(workbook, {
+        bookType: "xlsx",
+        type: "array",
+      });
+      const excelBlob = new Blob([excelBuffer], {
+        type: "application/octet-stream",
+      });
+      saveAs(excelBlob, "user_profiles.xlsx");
+    }
+  };
+
 
