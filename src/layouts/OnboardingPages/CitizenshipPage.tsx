@@ -46,6 +46,7 @@ const CitizenshipPage = ({ formData, setFormData }) => {
                 )}
 
                 {form.getFieldValue('nationality') !== 'ugandan' && (
+                    <>
                     <Form.Item
                         name="uniqueIdNo"
                         label="Unique Identification No."
@@ -54,6 +55,7 @@ const CitizenshipPage = ({ formData, setFormData }) => {
                     >
                         <Input size="large" placeholder="Enter your Unique Identification Number" />
                     </Form.Item>
+                    </>
                 )}
             </Form>
         </div>
