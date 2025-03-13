@@ -18,7 +18,7 @@ import {
   useDeleteOpportunityMutation,
 } from "../../../services/opportunities.ts";
 import DeletePopconfirm from "../../../components/secondary/CustomDeletePopUp";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AddOpportunitiesForm from "../Forms/AddOpportunityForm.tsx";
 import { loginDetails } from "../../../utils";
 import moment from "moment";
@@ -26,10 +26,11 @@ import Loader from "../../loader.tsx";
 import { toast } from "react-toastify";
 import Chat from "../../../components/secondary/Chat.tsx";
 import { useCreateNotificationMutation } from "../../../services/notifications.ts";
-import { useSendJobEmailMutation } from "../../../services/jobEmail.ts";
+import { useSendJobEmailMutation, useHasUserAppliedQuery  } from "../../../services/jobEmail.ts";
 
 const OpportunitiesDetailsPage = () => {
   const { id } = useParams();
+  const userDetails = loginDetails();
   const [isEditOpen, setIsEditOpen] = useState(false);
   const { data, isLoading } = useGetOpportunityDetailsQuery(id);
   const [deleteJob] = useDeleteOpportunityMutation();
@@ -37,7 +38,20 @@ const OpportunitiesDetailsPage = () => {
   const jobCreatedDate = new Date(data?.data.createdAt);
   const [receiverId, setReceiverId] = useState(null);
   const [createNotification] = useCreateNotificationMutation();
-  const [sendJobEmail] = useSendJobEmailMutation();
+  const [sendJobEmail, { isLoading: isSending }] = useSendJobEmailMutation();
+  const [hasApplied, setHasApplied] = useState(false);
+  const [isApplying, setIsApplying] = useState(false);
+  
+
+  const user_id = userDetails?.user.id
+  const jobId = data?.data?.id; 
+  const { data: hasAppliedData, refetch } = useHasUserAppliedQuery(jobId, user_id);
+
+  useEffect(() => {
+    if (hasAppliedData?.hasApplied !== undefined) {
+      setHasApplied(hasAppliedData.hasApplied);
+    }
+  }, [hasAppliedData]);
 
   const handleDeleteJob = async () => {
     try {
@@ -62,7 +76,6 @@ const OpportunitiesDetailsPage = () => {
 
   const handleApplyNow = async () => {
     const employerId = data?.data?.employer?.id;
-    const userDetails = loginDetails();
     const { firstName, lastName } = userDetails.user;
     if (!employerId) {
       toast.error("Unable to find employer information.");
@@ -75,20 +88,25 @@ const OpportunitiesDetailsPage = () => {
     };
     const emailData = {
       employerEmail: data?.data?.contactEmail,
-    jobTitle: data?.data?.title,
-    employerName: data?.data?.employer?.firstName + ' ' + data?.data?.employer?.lastName,
-    applicantName: userDetails?.user.firstName + ' ' + userDetails?.user.lastName,
-    applicantPhone: userDetails?.user.phoneNumber
-    }
+      jobTitle: data?.data?.title,
+      employerName:
+        data?.data?.employer?.firstName + " " + data?.data?.employer?.lastName,
+      applicantName:
+        userDetails?.user.firstName + " " + userDetails?.user.lastName,
+      applicantPhone: userDetails?.user.phoneNumber,
+      jobId: data?.data?.id,
+    };
 
     try {
+      setIsApplying(true);
       await createNotification(notificationData).unwrap();
-      await sendJobEmail(emailData)
-      toast.success(
-        "Application submitted and notification sent to the employer."
-      );
+      await sendJobEmail(emailData).unwrap();
+      toast.success("Your Application has been submitted");
+      refetch();
     } catch (error) {
       toast.error("Failed to send notification: " + error.message);
+    }finally {
+      setIsApplying(false); 
     }
   };
 
@@ -189,13 +207,19 @@ const OpportunitiesDetailsPage = () => {
                   </div>
 
                   {loginDetails().user.role === "youth" && (
-                    <Button
-                      className="mt-4"
-                      type="primary"
-                      onClick={handleApplyNow}
-                    >
-                      Apply now
-                    </Button>
+                   <Button
+                   className="mt-4"
+                   type="primary"
+                   loading={isSending}
+                   onClick={handleApplyNow}
+                   disabled={hasApplied || isApplying}
+
+                        htmlType="submit"
+                        block
+                        size='large'
+                 >
+                   { hasApplied ? "Already Applied" : "Apply Now"}
+                 </Button>
                   )}
                 </div>
               </div>
