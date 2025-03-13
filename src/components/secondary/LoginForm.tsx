@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { QuestionCircleOutlined } from "@ant-design/icons";
 import { toast } from 'react-toastify';
 import HelpandsupportForm from "../../layouts/DashboardPages/Forms/HelpAndSupportForm.tsx";
+import logos from "../../constants/logos.ts"
 
 const LoginForm = () => {
     const [form] = Form.useForm();
@@ -83,8 +84,8 @@ const LoginForm = () => {
                     label={
                         <div className="flex justify-between w-full">
                             <span className="text-left">Password</span>
-                            <Link 
-                                className="text-red-500 hover:text-red-700 hover:underline text-sm ml-24" 
+                            <Link
+                                className="text-red-500 hover:text-red-700 hover:underline text-sm ml-24"
                                 to="/reset-password"
                             >
                                 Forgot your password?
@@ -122,6 +123,11 @@ const LoginForm = () => {
                     <Tag color="red" onClick={showModal} className="cursor-pointer">
                         <QuestionCircleOutlined /> Help & Support
                     </Tag>
+                </div>
+                <div className="grid grid-cols-5 gap-3 mt-10">
+                    {logos.map((logo, index) => (
+                        <img key={index} src={logo} alt={`Logo ${index + 1}`} className="w-30 h-20 object-contain" />
+                    ))}
                 </div>
             </Form>
 
