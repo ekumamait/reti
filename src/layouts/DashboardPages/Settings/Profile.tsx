@@ -65,7 +65,7 @@ const ProfileSettings = () => {
     if (userRole === "staff") return ["youth", "mentor", "employer"];
     return [];
   };
-  const assignableRoles = getAssignableRoles(loginDetails().user.role);
+  const assignableRoles = getAssignableRoles(loginDetails()?.user?.role);
 
   useEffect(() => {
     if (isError) {
