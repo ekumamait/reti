@@ -24,6 +24,8 @@ interface User {
   phoneNumber: string;
   role: string;
   status: string;
+  isRetiCandidate: string;
+  mentorshipStatus: string;
 }
 
 const UsersPage = () => {
@@ -70,6 +72,8 @@ const UsersPage = () => {
       lastName: profile.user?.lastName || "N/A",
       phoneNumber: profile.user?.phoneNumber || "N/A",
       role: profile.user?.role || "N/A",
+      isRetiCandidate: profile.isRetiCandidate ? 'Yes' : 'No',
+      mentorshipStatus: profile.mentorshipStatus || 'Not Started',
       partnerResponsible:
         profile.geoLocationDetails?.partnerResponsible || "N/A",
     }))
@@ -125,6 +129,21 @@ const UsersPage = () => {
       key: "phone",
     },
     {
+      title: "Reti",
+      dataIndex: "isRetiCandidate",
+      key: "status",
+      render: (status) => (
+        <Tag color={status === 'Yes' ? 'blue' : 'red'}>
+          {status}
+        </Tag>
+      ),
+      filters: [
+        { text: 'Yes', value: 'Yes' },
+        { text: 'No', value: 'No' },
+      ],
+      onFilter: (value, record) => record.isRetiCandidate === value,
+    },
+    {
       title: "Role",
       dataIndex: "role",
       key: "role",
@@ -142,6 +161,35 @@ const UsersPage = () => {
         { text: "Staff", value: "staff" },
       ],
       onFilter: (value, record) => record.role === value,
+    },
+    {
+      title: "Mentorship",
+      dataIndex: "mentorshipStatus",
+      key: "mentorship",
+      render: (status) => {
+        let color = 'default';
+        let text = 'Not Started';
+        
+        if (status === 'Completed') {
+          color = 'green';
+          text = 'Finished';
+        } else if (status === 'In Progress') {
+          color = 'blue';
+          text = 'In Progress';
+        } else if (status === 'Dropped Out') {
+          color = 'red';
+          text = 'Didn\'t Complete';
+        }
+
+        return <Tag color={color}>{text}</Tag>;
+      },
+      filters: [
+        { text: 'Finished', value: 'Completed' },
+        { text: 'In Progress', value: 'In Progress' },
+        { text: 'Didn\'t Complete', value: 'Dropped Out' },
+        { text: 'Not Started', value: 'Not Started' },
+      ],
+      onFilter: (value, record) => record.mentorshipStatus === value,
     },
     {
       title: "Action",

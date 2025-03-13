@@ -2,7 +2,7 @@ import { Form } from 'antd';
 
 const partners = [
     'Bishop Stuart University (BSU)',
-    'CEFORD (CEF)',
+    'CEFORD',
     'Dan Church Aid (DCA)',
     'Finn Church Aid (FCA)',
     'Gulu University (GUN)',
