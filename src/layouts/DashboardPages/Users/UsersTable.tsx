@@ -89,8 +89,8 @@ let usersWithMatchingPartner;
       lastName: profile.user?.lastName || "N/A",
       phoneNumber: profile.user?.phoneNumber || "N/A",
       role: profile.user?.role || "N/A",
-      isRetiCandidate: profile.isRetiCandidate ? 'Yes' : 'No',
-      mentorshipStatus: profile.mentorshipStatus || 'Not Started',
+      isRetiCandidate: profile.isRetiCandidate ? "Yes" : "No",
+      mentorshipStatus: profile.mentorshipStatus || "Not Started",
       partnerResponsible:
         profile.geoLocationDetails?.partnerResponsible || "N/A",
     }))
@@ -110,7 +110,13 @@ let usersWithMatchingPartner;
         : true;
       const excludeCurrentUser = profile.id !== loggedInUser;
 
-      return matchesSearch && matchesRole && matchesPartner && excludeSuperRole && excludeCurrentUser;
+      return (
+        matchesSearch &&
+        matchesRole &&
+        matchesPartner &&
+        excludeSuperRole &&
+        excludeCurrentUser
+      );
     });
 
 
@@ -152,13 +158,11 @@ let usersWithMatchingPartner;
       dataIndex: "isRetiCandidate",
       key: "status",
       render: (status) => (
-        <Tag color={status === 'Yes' ? 'blue' : 'red'}>
-          {status}
-        </Tag>
+        <Tag color={status === "Yes" ? "blue" : "red"}>{status}</Tag>
       ),
       filters: [
-        { text: 'Yes', value: 'Yes' },
-        { text: 'No', value: 'No' },
+        { text: "Yes", value: "Yes" },
+        { text: "No", value: "No" },
       ],
       onFilter: (value, record) => record.isRetiCandidate === value,
     },
@@ -186,27 +190,27 @@ let usersWithMatchingPartner;
       dataIndex: "mentorshipStatus",
       key: "mentorship",
       render: (status) => {
-        let color = 'default';
-        let text = 'Not Started';
-        
-        if (status === 'Completed') {
-          color = 'green';
-          text = 'Finished';
-        } else if (status === 'In Progress') {
-          color = 'blue';
-          text = 'In Progress';
-        } else if (status === 'Dropped Out') {
-          color = 'red';
-          text = 'Didn\'t Complete';
+        let color = "default";
+        let text = "Pending";
+
+        if (status === "COMPLETED") {
+          color = "green";
+          text = "Completed";
+        } else if (status === "CONFIRMED") {
+          color = "blue";
+          text = "Confirmed";
+        } else if (status === "CANCELED") {
+          color = "red";
+          text = "Canceled";
         }
 
         return <Tag color={color}>{text}</Tag>;
       },
       filters: [
-        { text: 'Finished', value: 'Completed' },
-        { text: 'In Progress', value: 'In Progress' },
-        { text: 'Didn\'t Complete', value: 'Dropped Out' },
-        { text: 'Not Started', value: 'Not Started' },
+        { text: "Completed", value: "COMPLETED" },
+        { text: "Confirmed", value: "CONFIRMED" },
+        { text: "Canceled", value: "CANCELED" },
+        { text: "Pending", value: "PENDING" },
       ],
       onFilter: (value, record) => record.mentorshipStatus === value,
     },
@@ -243,7 +247,6 @@ let usersWithMatchingPartner;
   return (
     <>
       <Header pageTitle="Profiles" />
-
 
       <CustomDashboardLayout>
       <div className="mb-4 flex items-center gap-4 justify-between">
@@ -294,7 +297,6 @@ let usersWithMatchingPartner;
       )}
     </CustomDashboardLayout>
     </>
-
   );
 };
 
