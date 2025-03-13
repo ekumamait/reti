@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import { useRegisterMutation } from "../../services/users.ts";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { RegisterUserDto } from "../../services/types.ts"
+import { RegisterUserDto } from "../../services/types.ts";
+import logos from "../../constants/logos.ts";
 
 const RegisterForm = () => {
     const [passwordVisible, setPasswordVisible] = useState(false);
@@ -18,11 +19,11 @@ const RegisterForm = () => {
         try {
             const fullPhoneNumber = `+256${values.phoneNumber.replace(/^0/, '')}`;
             await registerUser(
-                { 
-                    phoneNumber: fullPhoneNumber, 
-                    password: values.password, 
-                    firstName: values.firstName, 
-                    lastName: values.lastName 
+                {
+                    phoneNumber: fullPhoneNumber,
+                    password: values.password,
+                    firstName: values.firstName,
+                    lastName: values.lastName
                 } as RegisterUserDto).unwrap();
         } catch (e) {
             if (e) {
@@ -121,7 +122,7 @@ const RegisterForm = () => {
                         size='large'
                         loading={isLoading}
                         style={{ backgroundColor: '#FF0000' }}
-                        >
+                    >
                         Sign up
                     </Button>
                 </div>
@@ -132,6 +133,11 @@ const RegisterForm = () => {
                 <Link className="text-red-500 hover:text-red-700 hover:underline" to="/login">Sign
                     in</Link>
             </p>
+            <div className="grid grid-cols-5 gap-3 mt-10">
+                {logos.map((logo, index) => (
+                    <img key={index} src={logo} alt={`Logo ${index + 1}`} className="w-25 h-20 object-contain" />
+                ))}
+            </div>
         </>
     )
 }
