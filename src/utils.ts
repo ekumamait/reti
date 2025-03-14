@@ -360,7 +360,7 @@ export const handleDownloadData = (data: any) => {
 
     // Add line above logos with margin bottom
     doc.setLineWidth(0.5);
-    doc.line(margin, Math.floor(footerY) - 60, pageWidth - margin, Math.floor(footerY) - 60);
+    doc.line(margin, Math.floor(footerY) - 60, pageWidth - margin, Math.floor(footerY) - 60); // Use Math.floor for straight line
 
     // Display logos in a grid format
     const logoWidth = 20;
@@ -373,7 +373,7 @@ export const handleDownloadData = (data: any) => {
       const row = Math.floor(index / columns);
       const col = index % columns;
       const logoX = margin + col * spacingX;
-      const logoY = footerY - row * spacingY - 30;
+      const logoY = footerY - row * spacingY - 30; // Adjusted for margin
 
       doc.addImage(logo, "PNG", logoX, logoY, logoWidth, logoHeight);
     });
@@ -414,6 +414,13 @@ export const handleDownloadData = (data: any) => {
   centerText(userProfile?.user.phoneNumber, 12, 15);
   currentY += 30;
 
+  // Add Personal Information on the right side
+  const personalInfoX = pageWidth / 2 + 30; // Start position for personal info (right of the image)
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(16);
+  doc.text("Personal Information", personalInfoX, currentY);
+  currentY += 10;
+
   const addText = (label: string, value: string | null | undefined, align: "left" | "right" = "left") => {
     if (!value) return;
     if (currentY + 10 > pageHeight - margin) {
@@ -446,7 +453,7 @@ export const handleDownloadData = (data: any) => {
 
   // Add Profile Information
   doc.setLineWidth(0.5);
-  doc.line(margin, Math.floor(currentY) - 10, pageWidth - margin, Math.floor(currentY) - 10);
+  doc.line(margin, Math.floor(currentY) - 10, pageWidth - margin, Math.floor(currentY) - 10); // Use Math.floor for straight line
   doc.setFont("helvetica", "bold");
   doc.setFontSize(22);
   doc.text("Profile Information", margin, currentY);
@@ -455,10 +462,9 @@ export const handleDownloadData = (data: any) => {
   addSectionHeader("Profile Summary", "left");
   addText("Bio", userProfile?.bio || "No bio provided.", "left");
 
-  addSectionHeader("Personal Information", "left");
-  addText("Date of Birth", new Date(userProfile?.dateOfBirth).toLocaleDateString(), "left");
-  addText("Gender", userProfile?.gender, "left");
-  addText("Location", userProfile?.location, "left");
+  addText("Date of Birth", new Date(userProfile?.dateOfBirth).toLocaleDateString(), "right");
+  addText("Gender", userProfile?.gender, "right");
+  addText("Location", userProfile?.location, "right");
 
   addSectionHeader("Skills", "right");
   const skills = userProfile?.skills || [];
