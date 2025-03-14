@@ -15,7 +15,7 @@ export const jobEmailApi = createApi({
         },
     }) as BaseQueryFn<string | FetchArgs, unknown, customError>,
     tagTypes: ['JobEmail'],
-    endpoints: ({ mutation }) => ({
+    endpoints: ({ mutation, query }) => ({
         sendJobEmail: mutation<any, { employerEmail: string; jobTitle: string; }>({
             query: (requestBody) => ({
                 url: `jobemail`,
@@ -24,9 +24,16 @@ export const jobEmailApi = createApi({
             }),
             invalidatesTags: ['JobEmail'],
         }),
+        hasUserApplied: query<{ hasApplied: boolean }, number>({
+            query: (jobId) => ({
+                url: `jobemail/applied/${jobId}`, 
+                method: "GET",
+            }),
+        }),
     }),
 });
 
 export const {
     useSendJobEmailMutation,
+    useHasUserAppliedQuery
 } = jobEmailApi;
