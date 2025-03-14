@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import Sign from "../../components/secondary/LoginForm";
 import "tailwindcss/tailwind.css";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -34,28 +35,46 @@ const LoginPage = () => {
               <div>
                 <Sign />
               </div>
+              <div className="absolute top-0 left-0 p-4">
+                <Link to="/" className="text-red-500 hover:text-red-700">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-6 w-6"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M15 19l-7-7 7-7"
+                    />
+                  </svg>
+                </Link>
+              </div>
             </div>
           </div>
 
-        <div className="relative hidden w-0 flex-1 lg:block">
-          <Swiper
-            modules={[Autoplay, Pagination]}
-            autoplay={{ delay: 5000 }}
-            pagination={{ clickable: true }}
-            loop={true}
-            className="absolute inset-0 size-full"
-          >
-            {images.map((img, index) => (
-              <SwiperSlide key={index}>
-                <img
-                  src={img}
-                  alt={`Slide ${index + 1}`}
-                  className="size-full object-cover"
-                />
-              </SwiperSlide>
-            ))}
-          </Swiper>
-        </div>
+          <div className="relative hidden w-0 flex-1 lg:block">
+            <Swiper
+              modules={[Autoplay, Pagination]}
+              autoplay={{ delay: 5000 }}
+              pagination={{ clickable: true }}
+              loop={true}
+              className="absolute inset-0 size-full"
+            >
+              {images.map((img, index) => (
+                <SwiperSlide key={index}>
+                  <img
+                    src={img}
+                    alt={`Slide ${index + 1}`}
+                    className="size-full object-cover"
+                  />
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          </div>
         </div>
       </div>
     </div>
