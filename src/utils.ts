@@ -397,11 +397,42 @@ export const handleDownloadData = (data: any) => {
 
   console.log(userProfile?.profileImage);
 
-  // Add User Image
+  // Create grid layout for bio, image, and profile summary
+  const columnWidth = pageWidth / 3;
+  const padding = 10;
+  const gridY = currentY;
+
+  // Bio Section (Left Column)
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(12);
+  doc.text("Bio", padding, gridY);
+  doc.setFont("helvetica", "normal");
+  const bioText = doc.splitTextToSize(userProfile?.bio || "No bio provided.", columnWidth - 2 * padding);
+  doc.text(bioText, padding, gridY + 10);
+
+  // Centered Image (Middle Column)
   if (userProfile?.profileImage) {
-    addImage(userProfile.profileImage, pageWidth / 2 - 25, 10, 50, 50);
-    currentY += 60;
+    const imageWidth = 50;
+    const imageHeight = 50;
+    const imageX = columnWidth + (columnWidth - imageWidth) / 2; // Center the image in the middle column
+    const imageY = gridY;
+    addImage(userProfile.profileImage, imageX, imageY, imageWidth, imageHeight);
   }
+
+  // Profile Summary (Right Column)
+  const summaryX = 2 * columnWidth + padding;
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(12);
+  doc.text("Profile Summary", summaryX, gridY);
+  doc.setFont("helvetica", "normal");
+  doc.text(`Date of Birth: ${new Date(userProfile?.dateOfBirth).toLocaleDateString()}`, summaryX, gridY + 10);
+  doc.text(`Gender: ${userProfile?.gender}`, summaryX, gridY + 20);
+  doc.text(`Location: ${userProfile?.location}`, summaryX, gridY + 30);
+
+  // Update currentY position based on the tallest column
+  const bioHeight = bioText.length * 5 + 10;
+  const summaryHeight = 40;
+  currentY += Math.max(bioHeight, summaryHeight) + 20;
 
   // Add Name & Contact
   doc.setFont("helvetica", "bold");
