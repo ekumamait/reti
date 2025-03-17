@@ -5,7 +5,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { QuestionCircleOutlined } from "@ant-design/icons";
 import { toast } from 'react-toastify';
 import HelpandsupportForm from "../../layouts/DashboardPages/Forms/HelpAndSupportForm.tsx";
-import logos from "../../constants/logos.ts"
 
 const LoginForm = () => {
     const [form] = Form.useForm();
@@ -45,7 +44,7 @@ const LoginForm = () => {
             const isOnboarded = user?.isOnboarded;
             if (isOnboarded) {
                 toast.info(`Welcome back, ${user?.firstName}`);
-                navigate("/");
+                navigate("/dashboard");
             } else {
                 toast.info(`Let's complete your onboarding`);
                 navigate("/onboarding");
@@ -123,11 +122,6 @@ const LoginForm = () => {
                     <Tag color="red" onClick={showModal} className="cursor-pointer">
                         <QuestionCircleOutlined /> Help & Support
                     </Tag>
-                </div>
-                <div className="grid grid-cols-5 gap-3 mt-10">
-                    {logos.map((logo, index) => (
-                        <img key={index} src={logo} alt={`Logo ${index + 1}`} className="w-30 h-20 object-contain" />
-                    ))}
                 </div>
             </Form>
 
