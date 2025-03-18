@@ -6,6 +6,9 @@ const { Header, Content, Footer } = Layout
 import logos from "../../constants/logos.ts"
 import reti from "../../assets/reti.png"
 import background from "../../assets/background.png"
+import mastercardLogo from "../../assets/logos/MasterCard.png";
+import muniLogo from "../../assets/logos/muni.png";
+
 
 export default function LandingPage() {
   return (
@@ -81,7 +84,7 @@ export default function LandingPage() {
                   <div className="rounded-2xl bg-gray-200  shadow-xl p-6 relative z-10">
                     <div className="aspect-video bg-white rounded-lg mb-4 overflow-hidden flex items-center justify-center">
                       <img
-                        src="/src/assets/logos/muni.png"
+                        src={muniLogo}
                         alt="Muni University"
                         className="max-width-full max-height-full object-contain"
                         style={{ maxHeight: "400px" }}
@@ -162,8 +165,8 @@ export default function LandingPage() {
                   <div className="rounded-2xl bg-white shadow-xl p-6 relative z-10">
                     <div className="aspect-video bg-gray-200 rounded-lg mb-4 overflow-hidden">
                       <img
-                        src="/src/assets/logos/MasterCard.png"
-                        alt="Retivate Donor"
+                        src={mastercardLogo}
+                        alt="MasterCard"
                         className="w-full h-full object-cover"
                       />
                     </div>
