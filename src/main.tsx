@@ -21,6 +21,7 @@ import RegisterPage from "./layouts/Authentication/register.page.tsx";
 import MessagesPage from "./layouts/DashboardPages/Messaging/Messages.page.tsx";
 import LoginPage from "./layouts/Authentication/Login.page.tsx";
 import Onboarding from "./layouts/OnboardingPages/Onboarding.tsx";
+import LandingPage from "./layouts/Authentication/landing.page.tsx";
 import SuccessOnboardPage from "./layouts/OnboardingPages/OnboardSuccessPage.tsx";
 import SettingsPage from "./layouts/DashboardPages/Settings/Settings.page.tsx";
 import OpportunitiesPage from "./layouts/DashboardPages/Opportunities/Opportunities.page.tsx";
@@ -69,6 +70,11 @@ async function loginLoader() {
 const router = createBrowserRouter([
   {
     path: "/",
+    errorElement: <ErrorPage />,
+    element: <LandingPage />,
+  },
+  {
+    path: "/dashboard",
     loader: protectedLoader,
     element: (
       <CustomAppLayout>

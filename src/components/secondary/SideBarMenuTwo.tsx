@@ -58,7 +58,7 @@ const SiderTwo = ({ closeDrawer }) => {
         key: "dashboard",
         icon: <HomeOutlined />,
         label: (
-          <Link to="/" onClick={closeDrawer}>
+          <Link to="/dashboard" onClick={closeDrawer}>
             Dashboard
           </Link>
         ),
