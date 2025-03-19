@@ -337,19 +337,140 @@ export const handleDownloadData = (data: any) => {
   const doc = new jsPDF();
   const pageHeight = doc.internal.pageSize.height;
   const pageWidth = doc.internal.pageSize.width;
-  const margin = 10;
-  let currentY = 20; // Start position for content
+  const margin = 15;
 
-  const centerText = (text: string, fontSize = 12, yOffset = 0) => {
-    if (!text) return;
+  // Define colors for NovoResume style
+  const primaryColor = [41, 128, 185]; // Blue color for headers
+  const secondaryColor = [52, 73, 94]; // Dark blue-gray for text
+  const lightGrayColor = [189, 195, 199]; // Light gray for lines
+
+  // Set text color to secondary by default
+  doc.setTextColor(secondaryColor[0], secondaryColor[1], secondaryColor[2]);
+
+  // Define column widths for the three-column header layout
+  const headerColWidth = (pageWidth - 2 * margin) / 3;
+
+  // Define column widths for the two-column body layout
+  const leftColWidth = pageWidth * 0.4; // Increased from 0.35
+  const rightColWidth = pageWidth * 0.3; // Increased from 0.65
+  const rightColStart = pageWidth - margin - rightColWidth; // Adjusted for extreme right
+
+  // Start positions
+  let headerY = 30; // Start position for header content
+  let leftColY = 0; // Will be set after header
+  let rightColY = 0; // Will be set after header
+
+  // Helper functions
+  const addSectionHeader = (
+    title: string,
+    x: number,
+    y: number,
+    align: "left" | "center" = "left"
+  ) => {
+    // Set color to primary for headers
+    doc.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(14);
+
+    if (align === "center") {
+      const textWidth =
+        (doc.getStringUnitWidth(title) * 14) / doc.internal.scaleFactor;
+      x = (pageWidth - textWidth) / 2;
+    }
+
+    doc.text(title.toUpperCase(), x, y);
+
+    // Add underline with primary color
+    const textWidth =
+      (doc.getStringUnitWidth(title) * 14) / doc.internal.scaleFactor;
+    doc.setDrawColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+    doc.setLineWidth(0.5);
+    doc.line(x, y + 1, x + textWidth, y + 1);
+
+    // Reset text color to secondary
+    doc.setTextColor(secondaryColor[0], secondaryColor[1], secondaryColor[2]);
+
+    return y + 8; // Return new Y position
+  };
+
+  const addText = (
+    text: string,
+    x: number,
+    y: number,
+    fontSize = 10,
+    fontStyle = "normal"
+  ) => {
+    if (!text) return y;
+    doc.setFont("helvetica", fontStyle);
     doc.setFontSize(fontSize);
-    const scaleFactor = doc.internal.getScaleFactor
-      ? doc.internal.getScaleFactor()
-      : doc.internal.scaleFactor || 1;
-    const textWidth = (doc.getStringUnitWidth(text) * fontSize) / scaleFactor;
-    const textX = (pageWidth - textWidth) / 2;
-    if (!isNaN(textX) && isFinite(textX)) {
-      doc.text(text, textX, currentY + yOffset);
+    doc.text(text, x, y);
+    return y + fontSize * 0.3; // Reduced from 0.4
+  };
+
+  const addWrappedText = (
+    text: string,
+    x: number,
+    y: number,
+    maxWidth: number,
+    fontSize = 10,
+    fontStyle = "normal"
+  ) => {
+    if (!text) return y;
+    doc.setFont("helvetica", fontStyle);
+    doc.setFontSize(fontSize);
+    const lines = doc.splitTextToSize(text, maxWidth);
+    doc.text(lines, x, y);
+    return y + lines.length * fontSize * 0.4; // Reduced from 0.5
+  };
+
+  const addLabelValue = (
+    label: string,
+    value: any,
+    x: number,
+    y: number,
+    maxWidth: number,
+    fontSize = 10
+  ) => {
+    if (!value) return y;
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(fontSize);
+    doc.text(`${label}: `, x, y);
+
+    const labelWidth =
+      (doc.getStringUnitWidth(`${label}: `) * fontSize) /
+      doc.internal.scaleFactor;
+
+    doc.setFont("helvetica", "normal");
+    const valueText = value.toString();
+    const lines = doc.splitTextToSize(valueText, maxWidth - labelWidth);
+
+    if (lines.length === 1) {
+      doc.text(valueText, x + labelWidth, y);
+      return y + fontSize * 0.4; // Reduced from 0.5
+    } else {
+      doc.text(lines, x, y + fontSize * 0.4); // Reduced from 0.5
+      return y + lines.length * fontSize * 0.4 + fontSize * 0.4; // Reduced from 0.5
+    }
+  };
+
+  const addImage = (
+    imageUrl: string,
+    x: number,
+    y: number,
+    width: number,
+    height: number
+  ) => {
+    if (imageUrl) {
+      try {
+        // Draw a circle mask
+        doc.setFillColor(255, 255, 255); // White background
+        doc.circle(x + width / 2, y + height / 2, width / 2, "F");
+
+        // Add the image with the circle mask
+        doc.addImage(imageUrl, "JPEG", x, y, width, height, undefined, "mask");
+      } catch (error) {
+        console.error("Error adding image:", error);
+      }
     }
   };
 
@@ -357,11 +478,21 @@ export const handleDownloadData = (data: any) => {
     const footerY = pageHeight - 30;
     doc.setFont("helvetica", "normal");
     doc.setFontSize(10);
-    doc.text("Generated by Retivate", margin, footerY);
+    doc.setTextColor(255, 0, 0); // Set text color to red
+    const text = "Generated by Retivate";
+    const textWidth = (doc.getStringUnitWidth(text) * 10) / doc.internal.scaleFactor;
+    const textX = (pageWidth - textWidth) / 2; // Center the text
+    doc.text(text, textX, footerY);
 
     // Add line above logos with margin bottom
-    doc.setLineWidth(0.5);
-    doc.line(margin, Math.floor(footerY) - 60, pageWidth - margin, Math.floor(footerY) - 60); // Use Math.floor for straight line
+    doc.setDrawColor(lightGrayColor[0], lightGrayColor[1], lightGrayColor[2]);
+    doc.setLineWidth(0.3);
+    doc.line(
+      margin,
+      Math.floor(footerY) - 60,
+      pageWidth - margin,
+      Math.floor(footerY) - 60
+    );
 
     // Display logos in a grid format
     const logoWidth = 20;
@@ -380,169 +511,415 @@ export const handleDownloadData = (data: any) => {
     });
   };
 
-  const addImage = (
-    imageUrl: string,
-    x: number,
-    y: number,
-    width: number,
-    height: number
-  ) => {
-    if (imageUrl) {
-      try {
-        doc.addImage(imageUrl, "JPEG", x, y, width, height);
-      } catch (error) {
-        console.error("Error adding image:", error);
-      }
-    }
-  };
-
-  console.log(userProfile?.profileImage);
-
-  // Create grid layout for bio, image, and profile summary
-  const columnWidth = pageWidth / 3;
-  const padding = 10;
-  const gridY = currentY;
-
-  // Bio Section (Left Column)
+  // Add name at the top
+  doc.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]); // Primary color for name
   doc.setFont("helvetica", "bold");
-  doc.setFontSize(12);
-  doc.text("", padding, gridY);
-  doc.setFont("helvetica", "normal");
-  const bioText = doc.splitTextToSize(userProfile?.bio || "No bio provided.", columnWidth - 2 * padding);
-  doc.text(bioText, padding, gridY + 10);
+  doc.setFontSize(24);
+  const nameText = `${userProfile?.user.firstName} ${userProfile?.user.lastName}`;
+  const nameWidth =
+    (doc.getStringUnitWidth(nameText) * 24) / doc.internal.scaleFactor;
+  const nameX = (pageWidth - nameWidth) / 2;
+  doc.text(nameText, nameX, 13);
+  headerY -= 8;
 
-  // Centered Image (Middle Column)
-  if (userProfile?.profileImage) {
-    const imageWidth = 50;
-    const imageHeight = 50;
-    const imageX = columnWidth + (columnWidth - imageWidth) / 2; // Center the image in the middle column
-    const imageY = gridY;
-    addImage(userProfile.profileImage, imageX, imageY, imageWidth, imageHeight);
-  }
-
-  // Profile Summary (Right Column)
-  const summaryX = 2 * columnWidth + padding;
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(12);
-  doc.text("", summaryX, gridY);
-  doc.setFont("helvetica", "normal");
-  doc.text(`Date of Birth: ${new Date(userProfile?.dateOfBirth).toLocaleDateString()}`, summaryX, gridY + 10);
-  doc.text(`Gender: ${userProfile?.gender}`, summaryX, gridY + 20);
-  doc.text(`Location: ${userProfile?.location}`, summaryX, gridY + 30);
-
-  // Update currentY position based on the tallest column
-  const bioHeight = bioText.length * 5 + 10;
-  const summaryHeight = 40;
-  currentY += Math.max(bioHeight, summaryHeight) + 20;
-
-  // Add Name & Contact
-  doc.setFont("helvetica", "bold");
-  centerText(
-    `${userProfile?.user.firstName} ${userProfile?.user.lastName}`,
-    18
-  );
-  doc.setFont("helvetica", "normal");
-  centerText(userProfile?.user.email, 12, 10);
-  centerText(userProfile?.user.phoneNumber, 12, 15);
-  currentY += 30;
-
-  // Add Personal Information on the right side
-  const personalInfoX = pageWidth / 2 + 30; // Start position for personal info (right of the image)
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(16);
-  doc.text("", personalInfoX, currentY);
-  currentY += 10;
-
-  const addText = (label: string, value: string | null | undefined, align: "left" | "right" = "left") => {
-    if (!value) return;
-    if (currentY + 10 > pageHeight - margin) {
-      doc.addPage();
-      currentY = margin;
-      addFooter();
-    }
+  // Add title/role if available
+  if (userProfile?.user.role) {
     doc.setFont("helvetica", "normal");
-    doc.setFontSize(12);
-    
-    const text = `${label}: ${value}`;
-    const xPosition = align === "left" ? margin + 5 : pageWidth - margin - 5 - doc.getStringUnitWidth(text) * doc.internal.getFontSize() / doc.internal.scaleFactor;
-    
-    doc.text(text, xPosition, currentY);
-    currentY += 8;
-  };
-
-  const addSectionHeader = (title: string, align: "left" | "right" = "left") => {
-    if (currentY + 10 > pageHeight - margin) {
-      doc.addPage();
-      currentY = margin;
-      addFooter();
-    }
-    doc.setFont("helvetica", "bold");
     doc.setFontSize(16);
-    const xPosition = align === "left" ? margin : pageWidth - margin - doc.getStringUnitWidth(title) * doc.internal.getFontSize() / doc.internal.scaleFactor;
-    doc.text(title, xPosition, currentY);
-    currentY += 10;
-  };
-
-  // Add Profile Information
-  doc.setLineWidth(0.5);
-  doc.line(margin, Math.floor(currentY) - 10, pageWidth - margin, Math.floor(currentY) - 10); // Use Math.floor for straight line
-  // doc.setFont("helvetica", "bold");
-  // doc.setFontSize(22);
-  // doc.text("", margin, currentY);
-  // currentY += 15;
-
-  addSectionHeader("Skills", "right");
-  const skills = userProfile?.skills || [];
-  if (skills.length > 0) {
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(12);
-    skills.forEach((skill, index) => {
-      const text = `• ${skill}`;
-      const xPosition = pageWidth - margin - 5 - doc.getStringUnitWidth(text) * doc.internal.getFontSize() / doc.internal.scaleFactor;
-      doc.text(text, xPosition, currentY + index * 10);
-    });
-    currentY += skills.length * 10 + 5;
+    const roleText = userProfile.user.role;
+    const roleWidth =
+      (doc.getStringUnitWidth(roleText) * 13) / doc.internal.scaleFactor;
+    const roleX = (pageWidth - roleWidth) / 2;
+    doc.text(roleText, roleX, headerY);
+    headerY += 4;
   } else {
-    addText("Skills", "No skills provided.", "right");
+    headerY += 5;
   }
 
-  addSectionHeader("Skills and Training Details", "right");
-  addText("Trainee Category", userProfile?.skillsAndTraining?.traineeCategory || "N/A", "right");
-  addText("Training Duration", userProfile?.skillsAndTraining?.trainingDuration || "N/A", "right");
-  addText("Training Location", userProfile?.skillsAndTraining?.trainingLocation || "N/A", "right");
+  // Reset text color to secondary
+  doc.setTextColor(secondaryColor[0], secondaryColor[1], secondaryColor[2]);
 
-  addSectionHeader("Artisan Details");
-  addText("Category of Artisan", userProfile?.artisanDetails?.categoryOfArtisan || "N/A", "left");
-  addText("Name of Host", userProfile?.artisanDetails?.nameOfHost || "N/A", "left");
-  addText("Village of Artisan", userProfile?.artisanDetails?.villageOfArtisan || "N/A", "left");
-  addText("SubCounty of Artisan", userProfile?.artisanDetails?.subcountyOfArtisan || "N/A", "left");
-  addText("Center Refugee Settlement", userProfile?.artisanDetails?.centerRefugeeSettlement || "N/A", "left");
+  // THREE-COLUMN HEADER LAYOUT
 
-  addSectionHeader("GeoLocation Details");
-  addText("Partner Responsible", userProfile?.geoLocationDetails?.partnerResponsible || "N/A", "left");
-  addText("Region", userProfile?.geoLocationDetails?.region || "N/A", "left");
-  addText("District", userProfile?.geoLocationDetails?.district || "N/A", "left");
-  addText("SubCounty", userProfile?.geoLocationDetails?.subCounty || "N/A", "left");
+  // Calculate positions for the three columns
+  const leftHeaderCol = margin + 1;
+  const middleHeaderCol = margin + headerColWidth;
+  const rightHeaderCol = margin + 2 * headerColWidth;
 
-  addSectionHeader("Participants' Demographic and Social Characteristics");
-  addText("Nationality", userProfile?.participantDetails?.nationalityCategory || "N/A", "left");
-  addText("Gender", userProfile?.participantDetails?.sex || "N/A", "left");
-  addText("Marital Status", userProfile?.participantDetails?.maritalStatus || "N/A", "left");
-  addText("Disability Type", userProfile?.participantDetails?.disabilityType || "N/A", "left");
+  // Left column: Bio
+  if (userProfile?.bio) {
+    const bioText = doc.splitTextToSize(userProfile.bio, headerColWidth - 10);
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10);
+    doc.text(bioText, leftHeaderCol, headerY);
+  }
 
-  addSectionHeader("Training Centre Details");
-  addText("Institution", userProfile?.trainingCentre?.institutionName || "N/A", "left");
-  addText("Location", userProfile?.trainingCentre?.location || "N/A", "left");
+  // Middle column: Profile Image
+  if (userProfile?.profileImage) {
+    const imageSize = 40;
+    const imageX = middleHeaderCol + (headerColWidth - imageSize) / 2;
+    addImage(userProfile.profileImage, imageX, headerY, imageSize, imageSize);
+  }
 
-  addSectionHeader("Training Cohorts and Trades");
-  addText("Cohort", userProfile?.trainingCohorts?.cohort || "N/A", "left");
-  addText("Trade Taken", userProfile?.trainingCohorts?.tradeTakenDuringTraining || "N/A", "left");
+  // Right column: Personal Summary
+  let summaryY = headerY;
+  if (userProfile?.dateOfBirth) {
+    summaryY = addText(
+      ` ${new Date(userProfile.dateOfBirth).toLocaleDateString()}`,
+      rightHeaderCol,
+      summaryY,
+      10
+    );
+    summaryY += 3;
+  }
+  if (userProfile?.gender) {
+    summaryY = addText(` ${userProfile.gender}`, rightHeaderCol, summaryY, 10);
+    summaryY += 3;
+  }
+  if (userProfile?.location) {
+    summaryY = addText(
+      ` ${userProfile.location}`,
+      rightHeaderCol,
+      summaryY,
+      10
+    );
+    summaryY += 3;
+  }
+  if (userProfile?.user.email) {
+    summaryY = addText(
+      ` ${userProfile.user.email}`,
+      rightHeaderCol,
+      summaryY,
+      10
+    );
+    summaryY += 3;
+  }
+  if (userProfile?.user.phoneNumber) {
+    summaryY = addText(
+      ` ${userProfile.user.phoneNumber}`,
+      rightHeaderCol,
+      summaryY,
+      10
+    );
+  }
 
-  addSectionHeader("Internships and Start-Up Kits");
-  addText("Internship Placement", userProfile?.internshipAndStartupDetails?.internshipPlacement || "N/A", "left");
-  addText("Startup Grant", userProfile?.internshipAndStartupDetails?.startupGrantReceived || "N/A", "left");
+  // Calculate the height of the header section
+  const headerHeight = Math.max(
+    userProfile?.bio
+      ? doc.splitTextToSize(userProfile.bio, headerColWidth - 10).length * 5
+      : 0,
+    userProfile?.profileImage ? 45 : 0,
+    summaryY - headerY + 10
+  );
 
+  // Set starting positions for the two-column body layout
+  leftColY = headerY + headerHeight + 20;
+  rightColY = leftColY;
+
+  // Add a horizontal line to separate header from body
+  doc.setDrawColor(lightGrayColor[0], lightGrayColor[1], lightGrayColor[2]);
+  doc.setLineWidth(0.3);
+  doc.line(margin, leftColY - 10, pageWidth - margin, leftColY - 10);
+
+  // TWO-COLUMN BODY LAYOUT
+
+  // LEFT COLUMN CONTENT
+
+  // Skills
+  if (userProfile?.skills && userProfile.skills.length > 0) {
+    leftColY = addSectionHeader("SKILLS", margin, leftColY);
+    leftColY -= 6;
+
+    userProfile.skills.forEach((skill: string) => {
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(9);
+      doc.text(`• ${skill}`, margin, leftColY + 5);
+      leftColY += 6;
+    });
+    leftColY += 8;
+  }
+
+  // Artisan Details
+  if (userProfile?.artisanDetails) {
+    leftColY = addSectionHeader("ARTISAN DETAILS", margin, leftColY);
+    leftColY -= 6;
+
+    if (userProfile.artisanDetails.categoryOfArtisan) {
+      leftColY = addLabelValue(
+        "Category",
+        userProfile.artisanDetails.categoryOfArtisan,
+        margin,
+        leftColY + 3,
+        leftColWidth - 5
+      );
+    }
+    if (userProfile.artisanDetails.nameOfHost) {
+      leftColY = addLabelValue(
+        "Host Name",
+        userProfile.artisanDetails.nameOfHost,
+        margin,
+        leftColY + 3,
+        leftColWidth - 5
+      );
+    }
+    if (userProfile.artisanDetails.villageOfArtisan) {
+      leftColY = addLabelValue(
+        "Village",
+        userProfile.artisanDetails.villageOfArtisan,
+        margin,
+        leftColY + 3,
+        leftColWidth - 5
+      );
+    }
+    if (userProfile.artisanDetails.subcountyOfArtisan) {
+      leftColY = addLabelValue(
+        "Subcounty",
+        userProfile.artisanDetails.subcountyOfArtisan,
+        margin,
+        leftColY + 3,
+        leftColWidth - 5
+      );
+    }
+    if (userProfile.artisanDetails.centerRefugeeSettlement) {
+      leftColY = addLabelValue(
+        "Settlement",
+        userProfile.artisanDetails.centerRefugeeSettlement,
+        margin,
+        leftColY + 3,
+        leftColWidth - 5
+      );
+    }
+
+    leftColY += 8;
+  }
+
+  // GeoLocation Details
+  if (userProfile?.geoLocationDetails) {
+    leftColY = addSectionHeader("GEOLOCATION DETAILS", margin, leftColY);
+    leftColY -= 6;
+
+    if (userProfile.geoLocationDetails.partnerResponsible) {
+      leftColY = addLabelValue(
+        "Partner",
+        userProfile.geoLocationDetails.partnerResponsible,
+        margin,
+        leftColY + 3,
+        leftColWidth - 5
+      );
+    }
+    if (userProfile.geoLocationDetails.region) {
+      leftColY = addLabelValue(
+        "Region",
+        userProfile.geoLocationDetails.region,
+        margin,
+        leftColY + 3,
+        leftColWidth - 5
+      );
+    }
+    if (userProfile.geoLocationDetails.district) {
+      leftColY = addLabelValue(
+        "District",
+        userProfile.geoLocationDetails.district,
+        margin,
+        leftColY + 3,
+        leftColWidth - 5
+      );
+    }
+    if (userProfile.geoLocationDetails.subCounty) {
+      leftColY = addLabelValue(
+        "Subcounty",
+        userProfile.geoLocationDetails.subCounty,
+        margin,
+        leftColY + 3,
+        leftColWidth - 5
+      );
+    }
+
+    leftColY += 8;
+  }
+
+  // RIGHT COLUMN CONTENT
+
+  // Participant Details
+  if (userProfile?.participantDetails) {
+    rightColY = addSectionHeader(
+      "PARTICIPANT DETAILS",
+      rightColStart,
+      rightColY
+    );
+    rightColY -= 6;
+    if (userProfile.participantDetails.nationalityCategory) {
+      rightColY = addLabelValue(
+        "Nationality",
+        userProfile.participantDetails.nationalityCategory,
+        rightColStart,
+        rightColY + 3,
+        rightColWidth - 5
+      );
+    }
+    if (userProfile.participantDetails.sex) {
+      rightColY = addLabelValue(
+        "Gender",
+        userProfile.participantDetails.sex,
+        rightColStart,
+        rightColY + 3,
+        rightColWidth - 5
+      );
+    }
+    if (userProfile.participantDetails.maritalStatus) {
+      rightColY = addLabelValue(
+        "Marital Status",
+        userProfile.participantDetails.maritalStatus,
+        rightColStart,
+        rightColY + 3,
+        rightColWidth - 5
+      );
+    }
+    if (userProfile.participantDetails.disabilityType) {
+      rightColY = addLabelValue(
+        "Disability Type",
+        userProfile.participantDetails.disabilityType,
+        rightColStart,
+        rightColY + 3,
+        rightColWidth - 5
+      );
+    }
+
+    rightColY += 8;
+  }
+
+  // Training Centre Details
+  if (userProfile?.trainingCentre) {
+    rightColY = addSectionHeader(
+      "TRAINING CENTRE DETAILS",
+      rightColStart,
+      rightColY
+    );
+    rightColY -= 6;
+    if (userProfile.trainingCentre.institutionName) {
+      rightColY = addLabelValue(
+        "Institution",
+        userProfile.trainingCentre.institutionName,
+        rightColStart,
+        rightColY + 3,
+        rightColWidth - 5
+      );
+    }
+    if (userProfile.trainingCentre.location) {
+      rightColY = addLabelValue(
+        "Location",
+        userProfile.trainingCentre.location,
+        rightColStart,
+        rightColY + 3,
+        rightColWidth - 5
+      );
+    }
+
+    rightColY += 8;
+  }
+
+  // Skills and Training Details
+  if (userProfile?.skillsAndTraining) {
+    rightColY = addSectionHeader(
+      "SKILLS AND TRAINING",
+      rightColStart,
+      rightColY
+    );
+    rightColY -= 6;
+
+    if (userProfile.skillsAndTraining.traineeCategory) {
+      rightColY = addLabelValue(
+        "Trainee Category",
+        userProfile.skillsAndTraining.traineeCategory,
+        rightColStart,
+        rightColY + 3,
+        rightColWidth - 5
+      );
+    }
+    if (userProfile.skillsAndTraining.trainingDuration) {
+      rightColY = addLabelValue(
+        "Duration",
+        userProfile.skillsAndTraining.trainingDuration,
+        rightColStart,
+        rightColY + 3,
+        rightColWidth - 5
+      );
+    }
+    if (userProfile.skillsAndTraining.trainingLocation) {
+      rightColY = addLabelValue(
+        "Location",
+        userProfile.skillsAndTraining.trainingLocation,
+        rightColStart,
+        rightColY + 3,
+        rightColWidth - 5
+      );
+    }
+
+    rightColY += 8;
+  }
+
+  // Training Cohorts
+  if (userProfile?.trainingCohorts) {
+    rightColY = addSectionHeader("TRAINING COHORTS", rightColStart, rightColY);
+    rightColY -= 6;
+
+    if (userProfile.trainingCohorts.cohort) {
+      rightColY = addLabelValue(
+        "Cohort",
+        userProfile.trainingCohorts.cohort,
+        rightColStart,
+        rightColY + 3,
+        rightColWidth - 5
+      );
+    }
+    if (userProfile.trainingCohorts.tradeTakenDuringTraining) {
+      rightColY = addLabelValue(
+        "Trade Taken",
+        userProfile.trainingCohorts.tradeTakenDuringTraining,
+        rightColStart,
+        rightColY + 3,
+        rightColWidth - 5
+      );
+    }
+
+    rightColY += 8;
+  }
+
+  // Internship and Startup Details
+  if (userProfile?.internshipAndStartupDetails) {
+    rightColY = addSectionHeader(
+      "INTERNSHIP AND STARTUP",
+      rightColStart,
+      rightColY
+    );
+    rightColY -= 6;
+
+    if (userProfile.internshipAndStartupDetails.internshipPlacement) {
+      rightColY = addLabelValue(
+        "Internship",
+        userProfile.internshipAndStartupDetails.internshipPlacement,
+        rightColStart,
+        rightColY + 3,
+        rightColWidth - 5
+      );
+    }
+    if (userProfile.internshipAndStartupDetails.startupGrantReceived) {
+      rightColY = addLabelValue(
+        "Startup Grant",
+        userProfile.internshipAndStartupDetails.startupGrantReceived,
+        rightColStart,
+        rightColY + 3,
+        rightColWidth - 5
+      );
+    }
+
+    rightColY += 8;
+  }
+
+  // Add footer
   addFooter();
+
+  // Save the PDF
   const fileName = `${userProfile?.user.firstName}_${userProfile?.user.lastName}.pdf`;
   doc.save(fileName);
 };
