@@ -407,22 +407,6 @@ export const handleDownloadData = (data: any) => {
     return y + fontSize * 0.3; // Reduced from 0.4
   };
 
-  const addWrappedText = (
-    text: string,
-    x: number,
-    y: number,
-    maxWidth: number,
-    fontSize = 10,
-    fontStyle = "normal"
-  ) => {
-    if (!text) return y;
-    doc.setFont("helvetica", fontStyle);
-    doc.setFontSize(fontSize);
-    const lines = doc.splitTextToSize(text, maxWidth);
-    doc.text(lines, x, y);
-    return y + lines.length * fontSize * 0.4; // Reduced from 0.5
-  };
-
   const addLabelValue = (
     label: string,
     value: any,
@@ -450,31 +434,6 @@ export const handleDownloadData = (data: any) => {
     } else {
       doc.text(lines, x, y + fontSize * 0.4); // Reduced from 0.5
       return y + lines.length * fontSize * 0.4 + fontSize * 0.4; // Reduced from 0.5
-    }
-  };
-
-  const addImage = (
-    imageUrl: string,
-    x: number,
-    y: number,
-    width: number,
-    height: number
-  ) => {
-    if (imageUrl) {
-      try {
-        // Add border radius and adjust dimensions
-        doc.roundedRect(x, y, width, height, 10, 10, 'F'); // 10 is the border radius
-        doc.addImage(
-          imageUrl, 
-          "JPEG", 
-          x, 
-          y, 
-          width, 
-          height
-        );
-      } catch (error) {
-        console.error("Error adding image:", error);
-      }
     }
   };
 
@@ -564,15 +523,15 @@ export const handleDownloadData = (data: any) => {
   if (userProfile?.profileImage) {
     const imageSize = 40; // You can adjust this size as needed
     const imageX = middleHeaderCol + (headerColWidth - imageSize) / 2;
-    
+
     // Add border radius and adjust dimensions
-    doc.roundedRect(imageX, headerY, imageSize, imageSize, 25, 25, 'F'); // 10 is the border radius
+    doc.roundedRect(imageX, headerY, imageSize, imageSize, 25, 25, "F"); // 10 is the border radius
     doc.addImage(
-      userProfile.profileImage, 
-      "JPEG", 
-      imageX, 
-      headerY, 
-      imageSize, 
+      userProfile.profileImage,
+      "JPEG",
+      imageX,
+      headerY,
+      imageSize,
       imageSize
     );
   }
@@ -836,11 +795,7 @@ export const handleDownloadData = (data: any) => {
 
   // Skills and Training Details
   if (userProfile?.skillsAndTraining) {
-    rightColY = addSectionHeader(
-      "TRAINING",
-      rightColStart,
-      rightColY
-    );
+    rightColY = addSectionHeader("TRAINING", rightColStart, rightColY);
     rightColY -= 6;
 
     if (userProfile.skillsAndTraining.traineeCategory) {
