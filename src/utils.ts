@@ -480,10 +480,8 @@ export const handleDownloadData = (data: any) => {
   doc.setFont("helvetica", "bold");
   doc.setFontSize(24);
   const nameText = `${userProfile?.user.firstName} ${userProfile?.user.lastName}`;
-  const nameWidth =
-    (doc.getStringUnitWidth(nameText) * 24) / doc.internal.scaleFactor;
-  const nameX = (pageWidth - nameWidth) / 2;
-  doc.text(nameText, nameX, 13);
+ 
+  doc.text(nameText,  margin, 26);
   headerY -= 8;
 
   // Add title/role if available
@@ -491,11 +489,9 @@ export const handleDownloadData = (data: any) => {
     doc.setFont("helvetica", "normal");
     doc.setFontSize(16);
     const roleText = userProfile.user.role;
-    const roleWidth =
-      (doc.getStringUnitWidth(roleText) * 13) / doc.internal.scaleFactor;
-    const roleX = (pageWidth - roleWidth) / 2;
-    doc.text(roleText, roleX, headerY);
-    headerY += 4;
+    
+    doc.text(roleText, margin, 34);
+    headerY += 2;
   } else {
     headerY += 5;
   }
@@ -514,7 +510,7 @@ export const handleDownloadData = (data: any) => {
   if (userProfile?.bio) {
     doc.setFont("helvetica", "normal");
     doc.setFontSize(10);
-    doc.text(userProfile.bio, leftHeaderCol, headerY, {
+    doc.text(userProfile.bio, leftHeaderCol, 44, {
       maxWidth: headerColWidth - 10,
     });
   }
@@ -605,12 +601,45 @@ export const handleDownloadData = (data: any) => {
     leftColY = addSectionHeader("SKILLS", margin, leftColY);
     leftColY -= 6;
 
-    userProfile.skills.forEach((skill: string) => {
+    const darkGrayColor = [150, 150, 150]; // Dark gray color
+    const tabPadding = 4; // Horizontal padding for tabs
+    const tabSpacing = 4; // Space between tabs
+    const maxTabsPerRow = 3;
+    let currentX = margin;
+
+    userProfile.skills.forEach((skill: string, index: number) => {
       doc.setFont("helvetica", "normal");
       doc.setFontSize(9);
-      doc.text(`• ${skill}`, margin, leftColY + 5);
-      leftColY += 6;
+      
+      // Calculate text width
+      const textWidth = (doc.getStringUnitWidth(skill) * 9) / doc.internal.scaleFactor;
+      const tabWidth = textWidth + tabPadding * 2;
+      
+      // Add background tab
+      doc.setFillColor(darkGrayColor[0], darkGrayColor[1], darkGrayColor[2]);
+      doc.roundedRect(currentX - 2, leftColY + 1, tabWidth, 6, 2, 2, 'F');
+      
+      // Add text with white color
+      doc.setTextColor(255, 255, 255);
+      doc.text(skill, currentX, leftColY + 5);
+      
+      // Reset text color
+      doc.setTextColor(secondaryColor[0], secondaryColor[1], secondaryColor[2]);
+      
+      // Update position for next tab
+      currentX += tabWidth + tabSpacing;
+      
+      // Move to next row after 3 tabs
+      if ((index + 1) % maxTabsPerRow === 0) {
+        leftColY += 8;
+        currentX = margin;
+      }
     });
+
+    // Add extra space if we didn't complete a full row
+    if (userProfile.skills.length % maxTabsPerRow !== 0) {
+      leftColY += 8;
+    }
     leftColY += 8;
   }
 
