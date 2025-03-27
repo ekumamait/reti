@@ -480,8 +480,8 @@ export const handleDownloadData = (data: any) => {
   doc.setFont("helvetica", "bold");
   doc.setFontSize(24);
   const nameText = `${userProfile?.user.firstName} ${userProfile?.user.lastName}`;
- 
-  doc.text(nameText,  margin, 26);
+
+  doc.text(nameText, margin, 26);
   headerY -= 8;
 
   // Add title/role if available
@@ -489,7 +489,7 @@ export const handleDownloadData = (data: any) => {
     doc.setFont("helvetica", "normal");
     doc.setFontSize(16);
     const roleText = userProfile.user.role;
-    
+
     doc.text(roleText, margin, 34);
     headerY += 2;
   } else {
@@ -519,8 +519,16 @@ export const handleDownloadData = (data: any) => {
   if (userProfile?.profileImage) {
     const imageSize = 40; // You can adjust this size as needed
     const imageX = middleHeaderCol + (headerColWidth - imageSize) / 2;
-
+    const centerX = imageX + imageSize / 2;
+    const centerY = headerY + imageSize / 2;
+    const radius = imageSize / 2;
     // Add border radius and adjust dimensions
+
+    // Create a circular clipping path
+    doc.saveGraphicsState();
+    doc.circle(centerX, centerY, radius, "S");
+    doc.clip();
+
     doc.roundedRect(imageX, headerY, imageSize, imageSize, 25, 25, "F"); // 10 is the border radius
     doc.addImage(
       userProfile.profileImage,
@@ -530,6 +538,14 @@ export const handleDownloadData = (data: any) => {
       imageSize,
       imageSize
     );
+
+    // Restore the graphics state
+    doc.restoreGraphicsState();
+
+    // Add a thicker white border around the circle
+    doc.setDrawColor(255, 255, 255); // White border
+    doc.setLineWidth(2);
+    doc.circle(centerX, centerY, radius, "S");
   }
 
   // Right column: Personal Summary
@@ -610,25 +626,26 @@ export const handleDownloadData = (data: any) => {
     userProfile.skills.forEach((skill: string, index: number) => {
       doc.setFont("helvetica", "normal");
       doc.setFontSize(9);
-      
+
       // Calculate text width
-      const textWidth = (doc.getStringUnitWidth(skill) * 9) / doc.internal.scaleFactor;
+      const textWidth =
+        (doc.getStringUnitWidth(skill) * 9) / doc.internal.scaleFactor;
       const tabWidth = textWidth + tabPadding * 2;
-      
+
       // Add background tab
       doc.setFillColor(darkGrayColor[0], darkGrayColor[1], darkGrayColor[2]);
-      doc.roundedRect(currentX - 2, leftColY + 1, tabWidth, 6, 2, 2, 'F');
-      
+      doc.roundedRect(currentX - 2, leftColY + 1, tabWidth, 6, 2, 2, "F");
+
       // Add text with white color
       doc.setTextColor(255, 255, 255);
       doc.text(skill, currentX, leftColY + 5);
-      
+
       // Reset text color
       doc.setTextColor(secondaryColor[0], secondaryColor[1], secondaryColor[2]);
-      
+
       // Update position for next tab
       currentX += tabWidth + tabSpacing;
-      
+
       // Move to next row after 3 tabs
       if ((index + 1) % maxTabsPerRow === 0) {
         leftColY += 8;
