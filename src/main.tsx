@@ -19,7 +19,7 @@ import ResetPasswordPage from "./layouts/Authentication/resetPassword.page.tsx";
 import ResetPasswordLinkPage from "./layouts/Authentication/resetPasswordLink.page.tsx";
 import RegisterPage from "./layouts/Authentication/register.page.tsx";
 import MessagesPage from "./layouts/DashboardPages/Messaging/Messages.page.tsx";
-import LoginPage from "./layouts/Authentication/login.page.tsx";
+import LoginPage from "./layouts/Authentication/Login.page.tsx";
 import Onboarding from "./layouts/OnboardingPages/Onboarding.tsx";
 import LandingPage from "./layouts/Authentication/landing.page.tsx";
 import SuccessOnboardPage from "./layouts/OnboardingPages/OnboardSuccessPage.tsx";
