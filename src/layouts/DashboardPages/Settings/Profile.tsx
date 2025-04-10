@@ -4,7 +4,7 @@ import {
   ShoppingOutlined,
   UserOutlined,
 } from "@ant-design/icons";
-import { Avatar, Button, Select, Space } from "antd";
+import { Avatar, Button, Select, Space, Input } from "antd";
 
 import { Content } from "antd/es/layout/layout";
 import { useGetUserProfileQuery } from "../../../services/profiles.ts";
@@ -17,13 +17,19 @@ import { useParams } from "react-router-dom";
 import { useUpdateUserMutation } from "../../../services/users.ts";
 import { roles } from "../../../services/types.ts";
 import { useCreateNotificationMutation } from "../../../services/notifications.ts";
+import { useShareProfileByEmailMutation } from "../../../services/jobEmail.ts";
 
 const ProfileSettings = () => {
+  const [recipientEmail, setRecipientEmail] = useState("");
+  const [showEmailInput, setShowEmailInput] = useState(false);
   const { userId: paramUserId } = useParams<{ userId: string }>();
   const userId = paramUserId ? Number(paramUserId) : loginDetails().user.id;
+  const userDetails = loginDetails();
   const { data, isError, error, refetch } = useGetUserProfileQuery(userId);
   const [updateUser] = useUpdateUserMutation();
   const [createNotification] = useCreateNotificationMutation();
+  const [shareProfileByEmail, { isLoading: isSharing }] =
+    useShareProfileByEmailMutation();
   const user = data?.data?.user;
   const currentRole = user?.role;
 
@@ -80,6 +86,39 @@ const ProfileSettings = () => {
       toast.error("Something went wrong");
     }
   }, [isError, error]);
+
+  const handleShareProfileByEmail = async () => {
+    if (!recipientEmail || recipientEmail.trim() === "") {
+      toast.error("Recipient email is required");
+      return;
+    }
+
+    try {
+      const pdfBlob = handleDownloadData(data, { mode: "blob" });
+
+      const formData = new FormData();
+      formData.append("recipientEmail", recipientEmail);
+      formData.append("subject", "Shared Profile Application");
+      formData.append(
+        "applicantName",
+        `${userDetails?.user.firstName} ${userDetails?.user.lastName}`
+      );
+      formData.append("applicantPhone", userDetails?.user.phoneNumber);
+      formData.append("file", pdfBlob);
+
+      await shareProfileByEmail(formData).unwrap();
+
+      toast.success(`Your profile has been shared with ${recipientEmail}`);
+      setRecipientEmail("");
+      setShowEmailInput(false);
+    } catch (error) {
+      toast.error(
+        `Failed to share profile: ${
+          error.message || error.data?.message || "Unknown error"
+        }`
+      );
+    }
+  };
 
   return (
     <Content className="px-4 py-4  bg-white border border-gray-900/10 rounded-lg">
@@ -138,10 +177,40 @@ const ProfileSettings = () => {
                 type="dashed"
                 className="px-4 text-red-500"
                 icon={<DownloadOutlined />}
-                onClick={() => handleDownloadData(data)}
+                onClick={() => handleDownloadData(data, { mode: "download" })}
               >
                 Download data
               </Button>
+
+              {showEmailInput ? (
+                <>
+                  <Input
+                    type="email"
+                    value={recipientEmail}
+                    onChange={(e) => setRecipientEmail(e.target.value)}
+                    placeholder="Enter recipient's email"
+                    className="w-64"
+                  />
+                  <Button
+                    className="bg-green-600 text-white hover:bg-green-700"
+                    type="primary"
+                    loading={isSharing}
+                    onClick={handleShareProfileByEmail}
+                    disabled={isSharing}
+                    htmlType="submit"
+                  >
+                    {isSharing ? "Sharing..." : "Send"}
+                  </Button>
+                </>
+              ) : (
+                <Button
+                  className="bg-green-600 text-white hover:bg-green-700"
+                  type="default"
+                  onClick={() => setShowEmailInput(true)}
+                >
+                  Share Profile
+                </Button>
+              )}
             </div>
           </div>
         </div>
