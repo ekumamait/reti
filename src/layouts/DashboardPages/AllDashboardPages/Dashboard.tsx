@@ -375,7 +375,7 @@ const DashboardPage = () => {
                 Sort <DownOutlined />
               </Button>
             </Dropdown>
-            {user?.user.role === "mentor" && (
+            {(user?.user.role === "mentor" || user?.user.role === "employer") && (
               <Button type="primary" onClick={() => setIsAddModalOpen(true)}>
                 Add Inspiration
               </Button>
@@ -477,7 +477,7 @@ const DashboardPage = () => {
                                     </div>
 
                                     {/* Mentor Actions */}
-                                    {user?.user.role === "mentor" && (
+                                    {(user?.user.role === "mentor" || user?.user.role === "employer") && (
                                       <div className="flex gap-4">
                                         {currentUserId === inspiration.mentor.id && (
                                           <>
