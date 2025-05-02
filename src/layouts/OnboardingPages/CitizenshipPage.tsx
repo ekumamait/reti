@@ -21,7 +21,7 @@ const CitizenshipPage = ({ form, formData, setFormData }) => {
           rules={[
             { required: true, message: "Please select your nationality" },
           ]}
-          className="mb-10"
+          className="my-24"
         >
           <Select placeholder="Select your nationality" size="large">
             <Select.Option value="ugandan">National - Ugandan</Select.Option>

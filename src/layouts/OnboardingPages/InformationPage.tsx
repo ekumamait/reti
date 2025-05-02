@@ -72,7 +72,7 @@ const InformationPage = ({ form, setFormData }) => {
                         style={{ display: 'inline-block', width: 'calc(50% - 8px)', margin: '0 0 0 8px' }}
                         label="Email address"
                         name="email"
-                        rules={[{ required: true }]}
+                        
                     >
                         <Input size="large" placeholder="Enter your email" type="email" />
                     </Form.Item>

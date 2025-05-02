@@ -87,7 +87,7 @@ const AdditionalInformationPage = ({ form, formData, setFormData }) => {
           label="About me"
           className="my-14"
           name="bio"
-          rules={[{ required: true, message: "Please tell us about yourself" }]}
+          
         >
           <TextArea placeholder="Write something about yourself" allowClear />
         </Form.Item>
