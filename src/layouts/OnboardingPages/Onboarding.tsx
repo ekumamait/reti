@@ -29,20 +29,28 @@ const Onboarding: React.FC = () => {
     },
     {
       title: "Second",
-      content: () => <InformationPage setFormData={setFormData} />,
+      content: () => <InformationPage form={form} setFormData={setFormData} />,
       key: "informationData",
     },
     {
       title: "Third",
       content: () => (
-        <RetiCandidatePage formData={formData} setFormData={setFormData} />
+        <RetiCandidatePage
+          form={form}
+          formData={formData}
+          setFormData={setFormData}
+        />
       ),
       key: "sectionsData",
     },
     {
       title: "Citizenship Status",
       content: () => (
-        <CitizenshipPage formData={formData} setFormData={setFormData} />
+        <CitizenshipPage
+          form={form}
+          formData={formData}
+          setFormData={setFormData}
+        />
       ),
       key: "citizenshipData",
     },
@@ -50,6 +58,7 @@ const Onboarding: React.FC = () => {
       title: "Additional Information",
       content: () => (
         <AdditionalInformationPage
+          form={form}
           formData={formData}
           setFormData={setFormData}
         />
@@ -79,9 +88,13 @@ const Onboarding: React.FC = () => {
     if (current === steps.length - 1) {
       const finalValues = { ...formData, ...form.getFieldsValue() };
       const { firstName, lastName, ...restData } = finalValues;
-      
+
       // Correct age calculation
-      const age = moment().diff(moment(finalValues.dateOfBirth), 'years', false);
+      const age = moment().diff(
+        moment(finalValues.dateOfBirth),
+        "years",
+        false
+      );
 
       // Prepare payload without retiPartner if not a RETI candidate
       const profilePayload = {
@@ -113,6 +126,7 @@ const Onboarding: React.FC = () => {
         <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
           <Form
             form={form}
+            scrollToFirstError
             onFinish={handleFinish}
             onValuesChange={handleFormChange}
             initialValues={formData}
@@ -164,7 +178,18 @@ const Onboarding: React.FC = () => {
                   <Button
                     className="w-24"
                     type="primary"
-                    onClick={handleFinish}
+                    onClick={() => {
+                      form
+                        .validateFields()
+                        .then(() => {
+                          handleFinish();
+                        })
+                        .catch((err) => {
+                          console.error("Validation Failed:", err?.errorFields);
+                          // Optionally, you can display a toast or message here
+                          // toast.error("Please fill in all required fields.");
+                        });
+                    }}
                   >
                     Finish
                   </Button>

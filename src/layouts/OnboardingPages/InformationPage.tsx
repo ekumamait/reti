@@ -1,8 +1,8 @@
 import { DatePicker, Form, Input, Select } from "antd";
 import { userDetails, validateDOB } from "../../utils.ts";
 
-const InformationPage = ({ setFormData }) => {
-    const [form] = Form.useForm();
+const InformationPage = ({ form, setFormData }) => {
+    
     const userDetailsData = userDetails();
     const user = userDetailsData?.user || {};
 
@@ -72,6 +72,7 @@ const InformationPage = ({ setFormData }) => {
                         style={{ display: 'inline-block', width: 'calc(50% - 8px)', margin: '0 0 0 8px' }}
                         label="Email address"
                         name="email"
+                        
                     >
                         <Input size="large" placeholder="Enter your email" type="email" />
                     </Form.Item>
