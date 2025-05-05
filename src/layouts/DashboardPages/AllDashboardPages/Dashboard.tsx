@@ -375,7 +375,8 @@ const DashboardPage = () => {
                 Sort <DownOutlined />
               </Button>
             </Dropdown>
-            {user?.user.role === "mentor" && (
+
+            {(user?.user.role === "mentor" || user?.user.role === "employer") && (
               <Button type="primary" onClick={() => setIsAddModalOpen(true)}>
                 Add Inspiration
               </Button>

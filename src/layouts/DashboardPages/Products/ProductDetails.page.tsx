@@ -161,7 +161,7 @@ const ProductDetailsPage = () => {
                       type="primary"
                       onClick={handleSendMessage}
                     >
-                      Start Chat
+                      Buy Now
                     </Button>
                   )}
                 </div>
