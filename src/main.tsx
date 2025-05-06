@@ -54,7 +54,27 @@ function protectedOnBoardingLoader() {
 async function loginLoader() {
   const loginDetails = localStorage.getItem("loginDetails");
   if (loginDetails) {
-    return redirect("/");
+    // Check if token is expired
+    const token = JSON.parse(loginDetails).access_token;
+    try {
+      const [, payload] = token.split(".");
+      const decodedPayload = JSON.parse(atob(payload));
+      const isExpired = Date.now() >= decodedPayload.exp * 1000;
+      
+      if (isExpired) {
+        // Clear storage if token is expired
+        localStorage.removeItem("loginDetails");
+        localStorage.removeItem("userDetails");
+        return null; // Allow access to login page
+      }
+      // Only redirect if token is valid
+      return redirect("/dashboard");
+    } catch {
+      // If token parsing fails, clear storage and allow login
+      localStorage.removeItem("loginDetails");
+      localStorage.removeItem("userDetails");
+      return null;
+    }
   }
   return null;
 }

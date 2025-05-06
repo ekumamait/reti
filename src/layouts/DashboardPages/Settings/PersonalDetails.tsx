@@ -50,13 +50,12 @@ const PersonalDetailsSettings = () => {
       await refetch();
       toast.success("Profile updated successfully");
     } catch (e) {
-      let message = "Try again";
-      if (typeof e.data.message === "string") {
-        message = e.data.message;
-      } else {
-        message = e.data.message[0];
+      console.log(e);
+      if (e.data.message) {
+        toast.error(e.data.message);
+      } else if (e.status === 400) {
+        toast.error("Bad request. Please check your input.");
       }
-      toast.error(`Something went wrong ${message}`);
     }
   };
 
