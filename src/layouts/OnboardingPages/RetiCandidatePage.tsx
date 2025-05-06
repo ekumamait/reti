@@ -37,7 +37,7 @@ const RetiCandidatePage = ({ form, formData, setFormData }) => {
       initialValues={{ isRetiCandidate: formData.isRetiCandidate }}
     >
       <div className="text-xl/8 font-semibold text-gray-900 sm:text-lg/9">
-        <p>Are you a RETI candidate?</p>
+        <p>RETI Partner?</p>
       </div>
 
       <Form.Item

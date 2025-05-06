@@ -1,6 +1,7 @@
 import { Form, Select, Input } from "antd";
 
 const CitizenshipPage = ({ form, formData, setFormData }) => {
+  const ninPattern = /^(CM|CF)[A-Z0-9]{12}$/;
   return (
     <div>
       <h1 className="text-xl/8 font-semibold text-gray-900 sm:text-lg/9 mb-6">
@@ -41,9 +42,36 @@ const CitizenshipPage = ({ form, formData, setFormData }) => {
           <Form.Item
             name="nin"
             label="National Identification Number (NIN)"
-            rules={[{ required: true, message: "Please enter your NIN" }]}
+            rules={[
+              { required: true, message: "Please enter your NIN" },
+              {
+                pattern: ninPattern,
+                message: "NIN must start with CM/CF followed by 12 characters",
+              },
+              {
+                len: 14,
+                message: "NIN must be exactly 14 characters",
+              },
+              {
+                validator: (_, value) => {
+                  if (!value) return Promise.resolve();
+
+                  const firstTwoChars = value.substring(0, 2).toUpperCase();
+                  if (firstTwoChars !== "CM" && firstTwoChars !== "CF") {
+                    return Promise.reject("NIN must start with CM or CF");
+                  }
+                  return Promise.resolve();
+                },
+              },
+            ]}
+            validateTrigger={["onChange", "onBlur"]}
           >
-            <Input size="large" placeholder="Enter your NIN" />
+            <Input
+              size="large"
+              placeholder="Enter your NIN (e.g., CM12345678901XE)"
+              maxLength={14}
+              style={{ textTransform: "uppercase" }}
+            />
           </Form.Item>
         )}
 

@@ -54,13 +54,11 @@ let usersWithMatchingPartner;
 
   if(loggedInUserRole === "super"){
      usersWithMatchingPartner = profileData?.data;
-     console.log("User with", usersWithMatchingPartner);
   }else{
      usersWithMatchingPartner = profileData?.data.filter(
       (profile: any) =>
         profile.geoLocationDetails?.partnerResponsible === loggedInUserPartner
     )
-    console.log("User with", usersWithMatchingPartner);
   }
 
   const handleViewUser = (userId: string) => {

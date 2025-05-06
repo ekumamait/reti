@@ -1,5 +1,5 @@
 import { EyeInvisibleOutlined, EyeOutlined } from "@ant-design/icons";
-import { Button, Input, Form } from "antd";
+import { Button, Input, Form, Checkbox } from "antd";
 import { useEffect, useState } from "react";
 import { useRegisterMutation } from "../../services/users.ts";
 import { Link, useNavigate } from "react-router-dom";
@@ -11,6 +11,7 @@ const RegisterForm = () => {
     const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
     const [registerUser, { isLoading, isSuccess, data }] = useRegisterMutation()
     const [form] = Form.useForm();
+    const [isTermsAccepted, setIsTermsAccepted] = useState(false);
 
     const navigate = useNavigate();
 
@@ -26,7 +27,7 @@ const RegisterForm = () => {
                 } as RegisterUserDto).unwrap();
         } catch (e) {
             if (e) {
-                toast.error('Something went wrong');
+                toast.error(`${e.data.message}`);
             }
         }
     }
@@ -113,6 +114,30 @@ const RegisterForm = () => {
                         }
                     />
                 </Form.Item>
+                <Form.Item 
+                    name="consent"
+                    valuePropName="checked"
+                    rules={[
+                        {
+                            validator: (_, value) =>
+                                value ? Promise.resolve() : Promise.reject(new Error('Please accept the terms and conditions to proceed')),
+                        },
+                    ]}
+                >
+                    <Checkbox 
+                        className="text-sm text-gray-600"
+                        onChange={(e) => setIsTermsAccepted(e.target.checked)}
+                    >
+                        I agree to RETI's{' '}
+                        <Link to="/terms" className="text-red-500 hover:text-red-700 hover:underline">
+                            Terms of Service
+                        </Link>{' '}
+                        and{' '}
+                        <Link to="/privacy" className="text-red-500 hover:text-red-700 hover:underline">
+                            Privacy Policy
+                        </Link>
+                    </Checkbox>
+                </Form.Item>
                 <div>
                     <Button
                         block
@@ -120,7 +145,11 @@ const RegisterForm = () => {
                         type="primary"
                         size='large'
                         loading={isLoading}
-                        style={{ backgroundColor: '#FF0000' }}
+                        disabled={!isTermsAccepted}
+                        style={{ 
+                            backgroundColor: isTermsAccepted ? '#FF0000' : '#ccc',
+                            cursor: isTermsAccepted ? 'pointer' : 'not-allowed'
+                        }}
                     >
                         Sign up
                     </Button>
