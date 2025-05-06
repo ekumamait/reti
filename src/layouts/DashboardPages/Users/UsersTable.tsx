@@ -1,12 +1,9 @@
-import { Space, Table, Tag, Input, Select} from "antd";
+import { Space, Table, Tag, Input, Select } from "antd";
 import type { TableProps } from "antd";
 import CustomDashboardLayout from "../../../components/secondary/CustomDashboardPagesLayout";
 import Header from "../../../components/secondary/Header";
 import { useDeleteUserMutation } from "../../../services/users";
-import {
-  DeleteOutlined,
-  SearchOutlined,
-} from "@ant-design/icons";
+import { DeleteOutlined, SearchOutlined } from "@ant-design/icons";
 import DeletePopconfirm from "../../../components/secondary/CustomDeletePopUp";
 import { useEffect, useState } from "react";
 import Loader from "../../loader.tsx";
@@ -47,18 +44,16 @@ const UsersPage = () => {
     (profile: any) => profile.user.id === loggedInUser
   );
   const loggedInUserRole = loggedInUserProfile?.user?.role || "";
-  const loggedInUserPartner =
-    loggedInUserProfile?.geoLocationDetails?.partnerResponsible || "";
+  const loggedInUserPartner = loggedInUserProfile?.retiPartner || "";
 
-let usersWithMatchingPartner;
+  let usersWithMatchingPartner;
 
-  if(loggedInUserRole === "super"){
-     usersWithMatchingPartner = profileData?.data;
-  }else{
-     usersWithMatchingPartner = profileData?.data.filter(
-      (profile: any) =>
-        profile.geoLocationDetails?.partnerResponsible === loggedInUserPartner
-    )
+  if (loggedInUserRole === "super") {
+    usersWithMatchingPartner = profileData?.data;
+  } else {
+    usersWithMatchingPartner = profileData?.data.filter(
+      (profile: any) => profile.retiPartner === loggedInUserPartner
+    );
   }
 
   const handleViewUser = (userId: string) => {
@@ -80,8 +75,7 @@ let usersWithMatchingPartner;
     }
   }, [profileData, refetch]);
 
-
-  const filteredData = profileData?.data
+  const filteredData = usersWithMatchingPartner
     ?.map((profile: any) => ({
       id: profile.user?.id,
       firstName: profile.user?.firstName || "N/A",
@@ -90,8 +84,7 @@ let usersWithMatchingPartner;
       role: profile.user?.role || "N/A",
       isRetiCandidate: profile.isRetiCandidate ? "Yes" : "No",
       mentorshipStatus: profile.mentorshipStatus || "Not Started",
-      partnerResponsible:
-        profile.geoLocationDetails?.partnerResponsible || "N/A",
+      partnerResponsible: profile.retiPartner || "N/A",
     }))
     .sort((a, b) => parseInt(a.id) - parseInt(b.id))
     .filter((profile) => {
@@ -118,9 +111,6 @@ let usersWithMatchingPartner;
         excludeCurrentUser
       );
     });
-
-
-
 
   const paginatedUsers = filteredData?.slice(
     (userPage - 1) * userPageSize,
@@ -243,59 +233,71 @@ let usersWithMatchingPartner;
     },
   ];
 
-  
   return (
     <>
       <Header pageTitle="Profiles" />
 
       <CustomDashboardLayout>
-      <div className="mb-4 flex items-center gap-4 justify-between">
-        <div className="flex gap-4">
-          <Search
-            placeholder="Search by name or phone"
-            onChange={(e) => setSearchText(e.target.value)}
-            style={{ width: 300 }}
-            prefix={<SearchOutlined />}
-          />
-          <Select defaultValue="all" style={{ width: 120 }} onChange={setRoleFilter}>
-            <Option value="all">All Roles</Option>
-            <Option value="super">Admin</Option>
-            <Option value="youth">Youth</Option>
-            <Option value="mentor">Mentor</Option>
-            <Option value="employer">Employer</Option>
+        <div className="mb-4 flex items-center gap-4 justify-between">
+          <div className="flex gap-4">
+            <Search
+              placeholder="Search by name or phone"
+              onChange={(e) => setSearchText(e.target.value)}
+              style={{ width: 300 }}
+              prefix={<SearchOutlined />}
+            />
+            <Select
+              defaultValue="all"
+              style={{ width: 120 }}
+              onChange={setRoleFilter}
+            >
+              <Option value="all">All Roles</Option>
+              <Option value="super">Admin</Option>
+              <Option value="youth">Youth</Option>
+              <Option value="mentor">Mentor</Option>
+              <Option value="employer">Employer</Option>
+            </Select>
+          </div>
+          <Select
+            defaultValue="Download"
+            style={{ width: 150 }}
+            onChange={(format) =>
+              handleDownloadBulkData(
+                format as "csv" | "excel",
+                usersWithMatchingPartner
+              )
+            }
+          >
+            <Option value="csv">As CSV</Option>
+            <Option value="excel">As Excel</Option>
           </Select>
         </div>
-        <Select
-          defaultValue="Download"
-          style={{ width: 150 }}
-          onChange={(format) =>
-            handleDownloadBulkData(format as "csv" | "excel", usersWithMatchingPartner)
-          }
-        >
-          <Option value="csv">As CSV</Option>
-          <Option value="excel">As Excel</Option>
-        </Select>
-      </div>
 
-      {isLoading ? (
-        <Loader />
-      ) : (
-        <>
-          <Table columns={columns} dataSource={paginatedUsers} loading={isLoading} rowKey="id" pagination={false} />
-          {filteredData && filteredData.length > userPageSize && (
-            <div className="mt-4 fixed bottom-0 p-4 sm:block w-full">
-              <Pagination
-                currentPage={userPage}
-                totalPages={Math.ceil(filteredData.length / userPageSize)}
-                pageSize={userPageSize}
-                onPageChange={handleUserPageChange}
-                onPageSizeChange={handleUserPageSizeChange}
-              />
-            </div>
-          )}
-        </>
-      )}
-    </CustomDashboardLayout>
+        {isLoading ? (
+          <Loader />
+        ) : (
+          <>
+            <Table
+              columns={columns}
+              dataSource={paginatedUsers}
+              loading={isLoading}
+              rowKey="id"
+              pagination={false}
+            />
+            {filteredData && filteredData.length > userPageSize && (
+              <div className="mt-4 fixed bottom-0 p-4 sm:block w-full">
+                <Pagination
+                  currentPage={userPage}
+                  totalPages={Math.ceil(filteredData.length / userPageSize)}
+                  pageSize={userPageSize}
+                  onPageChange={handleUserPageChange}
+                  onPageSizeChange={handleUserPageSizeChange}
+                />
+              </div>
+            )}
+          </>
+        )}
+      </CustomDashboardLayout>
     </>
   );
 };

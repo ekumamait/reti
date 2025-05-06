@@ -108,7 +108,7 @@ const ProfileSettings = () => {
               </p>
             </div>
             <p className="text-md text-gray-500">{data?.data?.bio}</p>
-            <p className="text-md text-green-600">{data?.data?.geoLocationDetails?.partnerResponsible}</p>
+            <p className="text-md text-green-600">{data?.data?.retiPartner}</p>
             <div className="flex flex-row items-center gap-4">
               {assignableRoles.length > 0 && (
                 <div>
