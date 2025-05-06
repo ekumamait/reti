@@ -19,7 +19,7 @@ const SuccessOnboardPage = () => {
                         <Button 
                             type="primary" 
                             className="flex w-full justify-center px-3 py-4 text-sm/6 font-semibold text-white"
-                            onClick={() => navigate('/settings')}
+                            onClick={() => navigate('/dashboard')}
                         >
                             Go to dashboard
                         </Button>
