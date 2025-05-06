@@ -80,9 +80,10 @@ let usersWithMatchingPartner;
     }
   }, [profileData, refetch]);
 
+
   const filteredData = profileData?.data
     ?.map((profile: any) => ({
-      id: profile.id,
+      id: profile.user?.id,
       firstName: profile.user?.firstName || "N/A",
       lastName: profile.user?.lastName || "N/A",
       phoneNumber: profile.user?.phoneNumber || "N/A",
@@ -92,6 +93,7 @@ let usersWithMatchingPartner;
       partnerResponsible:
         profile.geoLocationDetails?.partnerResponsible || "N/A",
     }))
+    .sort((a, b) => parseInt(a.id) - parseInt(b.id))
     .filter((profile) => {
       const matchesSearch =
         profile.firstName.toLowerCase().includes(searchText.toLowerCase()) ||
@@ -119,6 +121,7 @@ let usersWithMatchingPartner;
 
 
 
+
   const paginatedUsers = filteredData?.slice(
     (userPage - 1) * userPageSize,
     userPage * userPageSize
@@ -138,7 +141,6 @@ let usersWithMatchingPartner;
       title: "Id",
       dataIndex: "id",
       key: "id",
-      render: (_, _record, index) => (userPage - 1) * userPageSize + index + 1,
     },
     {
       title: "Name",
