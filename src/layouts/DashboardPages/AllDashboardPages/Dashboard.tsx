@@ -41,7 +41,8 @@ const DashboardPage = () => {
   const [markAsRead] = useMarkAsReadMutation();
   const [likeInspiration] = useLikeInspirationMutation();
   const user = loginDetails();
-  const { data: inspirationsData, isLoading: inspirationLoading } = useGetInspirationsQuery();
+  const { data: inspirationsData, isLoading: inspirationLoading } =
+    useGetInspirationsQuery();
   const { data: userProfile } = useGetUserProfileQuery(user?.user?.id);
   const [inspirations, setInspirations] = useState<InspirationsType[]>([]);
   const [deleteInspiration] = useDeleteInspirationMutation();
@@ -80,12 +81,12 @@ const DashboardPage = () => {
       const updatedInspirations = inspirations.map((inspiration) =>
         inspiration.id === inspirationId
           ? {
-            ...inspiration,
-            isLiked: !inspiration.isLiked,
-            likesCount: inspiration.isLiked
-              ? inspiration.likesCount - 1
-              : inspiration.likesCount + 1,
-          }
+              ...inspiration,
+              isLiked: !inspiration.isLiked,
+              likesCount: inspiration.isLiked
+                ? inspiration.likesCount - 1
+                : inspiration.likesCount + 1,
+            }
           : inspiration
       );
       setInspirations(updatedInspirations);
@@ -160,11 +161,11 @@ const DashboardPage = () => {
     inspirations.filter((inspiration) => {
       const matchesSearch = filters.searchText
         ? inspiration.title
-          .toLowerCase()
-          .includes(filters.searchText.toLowerCase()) ||
-        inspiration.content
-          .toLowerCase()
-          .includes(filters.searchText.toLowerCase())
+            .toLowerCase()
+            .includes(filters.searchText.toLowerCase()) ||
+          inspiration.content
+            .toLowerCase()
+            .includes(filters.searchText.toLowerCase())
         : true;
 
       const matchesMentor =
@@ -172,14 +173,14 @@ const DashboardPage = () => {
           ? user?.user.role === "youth"
             ? selectedMentor
               ? `${inspiration.mentor.firstName} ${inspiration.mentor.lastName}` ===
-              selectedMentor
+                selectedMentor
               : true
             : inspiration.mentor.id === user?.user.id
           : true;
 
       const matchesDate = filters.dateRange
         ? new Date(inspiration.createdAt) >= filters.dateRange[0] &&
-        new Date(inspiration.createdAt) <= filters.dateRange[1]
+          new Date(inspiration.createdAt) <= filters.dateRange[1]
         : true;
 
       return matchesSearch && matchesMentor && matchesDate;
@@ -214,8 +215,6 @@ const DashboardPage = () => {
     setNotificationPageSize(size);
     setNotificationPage(1);
   };
-
-
 
   return (
     <CustomDashboardLayout>
@@ -257,78 +256,82 @@ const DashboardPage = () => {
               {paginatedNotifications && paginatedNotifications?.length < 0 ? (
                 <div className="mt-6">
                   <Empty />
-                </div>) :
-                (
-                  <>
-                    <div className="space-y-2 p-2 overflow-y-auto h-[230px]">
-                      {isLoading ? (
-                        <div className="flex items-center justify-center mt-20">
-                          <Spin size="small" />
-                        </div>
-
-                      ) : (
-
-                        <ul className="space-y-4">
-                          {paginatedNotifications?.map((notification) => (
-                            <li
-                              key={notification.id}
-                              className={`p-3 rounded-lg transition-all cursor-pointer ${!notification.isRead
+                </div>
+              ) : (
+                <>
+                  <div className="space-y-2 p-2 overflow-y-auto h-[230px]">
+                    {isLoading ? (
+                      <div className="flex items-center justify-center mt-20">
+                        <Spin size="small" />
+                      </div>
+                    ) : (
+                      <ul className="space-y-4">
+                        {paginatedNotifications?.map((notification) => (
+                          <li
+                            key={notification.id}
+                            className={`p-3 rounded-lg transition-all cursor-pointer ${
+                              !notification.isRead
                                 ? "bg-blue-50 border-l-4 border-blue-600 font-medium"
                                 : "bg-gray-50 hover:bg-gray-100"
-                                }`}
-                              onClick={() => handleNotificationClick(notification)}
-                            >
-                              <div className="flex justify-between items-start">
-                                <div className="flex-1 pr-4">
-                                  <p
-                                    className={`text-sm ${!notification.isRead
+                            }`}
+                            onClick={() =>
+                              handleNotificationClick(notification)
+                            }
+                          >
+                            <div className="flex justify-between items-start">
+                              <div className="flex-1 pr-4">
+                                <p
+                                  className={`text-sm ${
+                                    !notification.isRead
                                       ? "text-blue-900"
                                       : "text-gray-700"
-                                      }`}
-                                  >
-                                    {notification.title}
-                                  </p>
-                                  <p
-                                    className={`text-sm mt-1 ${!notification.isRead
+                                  }`}
+                                >
+                                  {notification.title}
+                                </p>
+                                <p
+                                  className={`text-sm mt-1 ${
+                                    !notification.isRead
                                       ? "text-blue-800"
                                       : "text-gray-600"
-                                      }`}
-                                  >
-                                    {notification.message}
-                                  </p>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                  {!notification.isRead && (
-                                    <span className="w-2 h-2 bg-blue-600 rounded-full"></span>
-                                  )}
-                                  <span className="text-xs text-gray-500 whitespace-nowrap">
-                                    <ClockCircleOutlined className="mr-1" />
-                                    {formatRelativeTime(notification.createdAt)}
-                                  </span>
-                                </div>
+                                  }`}
+                                >
+                                  {notification.message}
+                                </p>
                               </div>
-                            </li>
-                          ))}
-                        </ul>
-                      )}
-                    </div>
+                              <div className="flex items-center gap-2">
+                                {!notification.isRead && (
+                                  <span className="w-2 h-2 bg-blue-600 rounded-full"></span>
+                                )}
+                                <span className="text-xs text-gray-500 whitespace-nowrap">
+                                  <ClockCircleOutlined className="mr-1" />
+                                  {formatRelativeTime(notification.createdAt)}
+                                </span>
+                              </div>
+                            </div>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
 
-                    {notificationsData?.data &&
-                      notificationsData?.data?.length > notificationPageSize && (
-                        <div className="mt-4">
-                          <Pagination
-                            currentPage={notificationPage}
-                            totalPages={Math.ceil(
-                              notificationsData?.data?.length / notificationPageSize
-                            )}
-                            pageSize={notificationPageSize}
-                            onPageChange={handleNotificationPageChange}
-                            onPageSizeChange={handleNotificationPageSizeChange}
-                          />
-                        </div>
-                      )}
-                  </>
-                )}
+                  {notificationsData?.data &&
+                    notificationsData?.data?.length > notificationPageSize && (
+                      <div className="mt-4">
+                        <Pagination
+                          currentPage={notificationPage}
+                          totalPages={Math.ceil(
+                            notificationsData?.data?.length /
+                              notificationPageSize
+                          )}
+                          pageSize={notificationPageSize}
+                          onPageChange={handleNotificationPageChange}
+                          onPageSizeChange={handleNotificationPageSizeChange}
+                        />
+                      </div>
+                    )}
+                </>
+              )}
             </>
           </Card>
           <div className="flex justify-between mb-4">
@@ -376,7 +379,8 @@ const DashboardPage = () => {
               </Button>
             </Dropdown>
 
-            {(user?.user.role === "mentor" || user?.user.role === "employer") && (
+            {(user?.user.role === "mentor" ||
+              user?.user.role === "employer") && (
               <Button type="primary" onClick={() => setIsAddModalOpen(true)}>
                 Add Inspiration
               </Button>
@@ -388,131 +392,142 @@ const DashboardPage = () => {
               {paginatedInspirations && paginatedInspirations?.length < 0 ? (
                 <div className="mt-6">
                   <Empty />
-                </div>) :
-                (
-                  <>
-                    <div className="space-y-2 p-2 overflow-y-auto h-[330px]">
-                      {inspirationLoading ? (
-                        <div className="flex items-center justify-center mt-20">
-                          <Spin size="small" />
-                        </div>
-                      ) : (
-                        <>
-                          {paginatedInspirations?.map((inspiration) => {
-                            const mentorProfile = userProfiles?.data?.find(
-                              (profile) => profile.user.id === inspiration.mentor.id
-                            );
-                            return (
-                              <div
-                                key={inspiration.id}
-                                className="border-b p-4 hover:bg-gray-50 transition-colors"
-                              >
-                                {/* Poster Header */}
-                                <div className="flex items-start gap-3">
-                                  <Avatar
-                                    src={
-                                      mentorProfile?.profileImage ||
-                                      "https://via.placeholder.com/50"
-                                    }
-                                    className="shrink-0"
-                                  />
-                                  <div className="flex-1">
-                                    <div className="flex items-center gap-2">
-                                      <h4 className="font-semibold">
-                                        {inspiration.mentor.firstName}{" "}
-                                        {inspiration.mentor.lastName}
-                                      </h4>
-                                      <span className="text-gray-500">·</span>
-                                      <span className="text-gray-500 text-sm">
-                                        {formatTwitterTime(inspiration.createdAt)}
-                                      </span>
-                                    </div>
-                                  </div>
-                                </div>
-
-                                {/* Content */}
-                                <div className="ml-12">
-                                  {/* <h3 className="font-bold text-lg mb-2">{inspiration.title}</h3> */}
-                                  <p className="text-gray-800 mb-4 whitespace-pre-line">
-                                    {inspiration.content}
-                                  </p>
-
-                                  {/* Image Preview */}
-                                  {inspiration.imageUrl && (
-                                    <img
-                                      src={inspiration.imageUrl}
-                                      alt="Inspiration visual"
-                                      className="rounded-xl mb-4 max-w-full h-auto max-h-96 object-cover"
-                                    />
-                                  )}
-
-                                  {/* Action Bar */}
-                                  <div className="flex items-center justify-between">
-                                    <div className="flex items-center gap-6 text-gray-500">
-                                      <div className="flex items-center gap-1 hover:text-blue-500 cursor-pointer">
-                                        <div
-                                          className="flex items-center cursor-pointer group"
-                                          onClick={() =>
-                                            handleInspirationLike(inspiration.id)
-                                          }
-                                        >
-                                          {inspiration.likedBy.some(
-                                            (user) => user.id === currentUserId
-                                          ) ? (
-                                            <LikeFilled className="text-red-500 mr-1 transition-colors animate-[bounce_0.4s_ease-in-out]" />
-                                          ) : (
-                                            <LikeOutlined className="mr-1 text-gray-500 group-hover:text-red-400 transition-colors" />
-                                          )}
-                                          <span
-                                            className={`${inspiration.likedBy.some(
-                                              (user) => user.id === currentUserId
-                                            )
-                                              ? "text-red-500 font-semibold"
-                                              : "text-gray-600 group-hover:text-red-400"
-                                              } transition-colors`}
-                                          >
-                                            {inspiration.likesCount}
-                                          </span>
-                                        </div>
-                                      </div>
-                                    </div>
-
-                                    {/* Mentor Actions */}
-                                    {user?.user.role === "mentor" && (
-                                      <div className="flex gap-4">
-                                        {currentUserId === inspiration.mentor.id && (
-                                          <>
-                                            <EditOutlined
-                                              className="text-gray-500 hover:text-blue-500 cursor-pointer"
-                                              onClick={() => handleEdit(inspiration)}
-                                            />
-                                            <DeletePopconfirm
-                                              title="Are you sure you want to delete this post?"
-                                              onConfirm={() => handleDelete(inspiration.id)}
-                                            />
-                                          </>
-                                        )}
-                                      </div>
-                                    )}
+                </div>
+              ) : (
+                <>
+                  <div className="space-y-2 p-2 overflow-y-auto h-[330px]">
+                    {inspirationLoading ? (
+                      <div className="flex items-center justify-center mt-20">
+                        <Spin size="small" />
+                      </div>
+                    ) : (
+                      <>
+                        {paginatedInspirations?.map((inspiration) => {
+                          const mentorProfile = userProfiles?.data?.find(
+                            (profile) =>
+                              profile.user.id === inspiration.mentor.id
+                          );
+                          return (
+                            <div
+                              key={inspiration.id}
+                              className="border-b p-4 hover:bg-gray-50 transition-colors"
+                            >
+                              {/* Poster Header */}
+                              <div className="flex items-start gap-3">
+                                <Avatar
+                                  src={
+                                    mentorProfile?.profileImage ||
+                                    "https://via.placeholder.com/50"
+                                  }
+                                  className="shrink-0"
+                                />
+                                <div className="flex-1">
+                                  <div className="flex items-center gap-2">
+                                    <h4 className="font-semibold">
+                                      {inspiration.mentor.firstName}{" "}
+                                      {inspiration.mentor.lastName}
+                                    </h4>
+                                    <span className="text-gray-500">·</span>
+                                    <span className="text-gray-500 text-sm">
+                                      {formatTwitterTime(inspiration.createdAt)}
+                                    </span>
                                   </div>
                                 </div>
                               </div>
-                            );
-                          })}
-                        </>
-                      )}
-                    </div>
-                    {filteredInspirations.length > pageSize && (
-                      <Pagination
-                        currentPage={currentPage}
-                        totalPages={Math.ceil(filteredInspirations.length / pageSize)}
-                        pageSize={pageSize}
-                        onPageChange={handlePageChange}
-                        onPageSizeChange={handlePageSizeChange}
-                      />
+
+                              {/* Content */}
+                              <div className="ml-12">
+                                {/* <h3 className="font-bold text-lg mb-2">{inspiration.title}</h3> */}
+                                <p className="text-gray-800 mb-4 whitespace-pre-line">
+                                  {inspiration.content}
+                                </p>
+
+                                {/* Image Preview */}
+                                {inspiration.imageUrl && (
+                                  <img
+                                    src={inspiration.imageUrl}
+                                    alt="Inspiration visual"
+                                    className="rounded-xl mb-4 max-w-full h-auto max-h-96 object-cover"
+                                  />
+                                )}
+
+                                {/* Action Bar */}
+                                <div className="flex items-center justify-between">
+                                  <div className="flex items-center gap-6 text-gray-500">
+                                    <div className="flex items-center gap-1 hover:text-blue-500 cursor-pointer">
+                                      <div
+                                        className="flex items-center cursor-pointer group"
+                                        onClick={() =>
+                                          handleInspirationLike(inspiration.id)
+                                        }
+                                      >
+                                        {inspiration.likedBy.some(
+                                          (user) => user.id === currentUserId
+                                        ) ? (
+                                          <LikeFilled className="text-red-500 mr-1 transition-colors animate-[bounce_0.4s_ease-in-out]" />
+                                        ) : (
+                                          <LikeOutlined className="mr-1 text-gray-500 group-hover:text-red-400 transition-colors" />
+                                        )}
+                                        <span
+                                          className={`${
+                                            inspiration.likedBy.some(
+                                              (user) =>
+                                                user.id === currentUserId
+                                            )
+                                              ? "text-red-500 font-semibold"
+                                              : "text-gray-600 group-hover:text-red-400"
+                                          } transition-colors`}
+                                        >
+                                          {inspiration.likesCount}
+                                        </span>
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                  {/* Mentor Actions */}
+                                  {(user?.user.role === "mentor" ||
+                                    user?.user.role === "employer") && (
+                                    <div className="flex gap-4">
+                                      {currentUserId ===
+                                        inspiration.mentor.id && (
+                                        <>
+                                          <EditOutlined
+                                            className="text-gray-500 hover:text-blue-500 cursor-pointer"
+                                            onClick={() =>
+                                              handleEdit(inspiration)
+                                            }
+                                          />
+                                          <DeletePopconfirm
+                                            title="Are you sure you want to delete this post?"
+                                            onConfirm={() =>
+                                              handleDelete(inspiration.id)
+                                            }
+                                          />
+                                        </>
+                                      )}
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </>
                     )}
-                  </>
-                )}
+                  </div>
+                  {filteredInspirations.length > pageSize && (
+                    <Pagination
+                      currentPage={currentPage}
+                      totalPages={Math.ceil(
+                        filteredInspirations.length / pageSize
+                      )}
+                      pageSize={pageSize}
+                      onPageChange={handlePageChange}
+                      onPageSizeChange={handlePageSizeChange}
+                    />
+                  )}
+                </>
+              )}
             </>
           </Card>
         </div>

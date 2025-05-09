@@ -2,6 +2,7 @@ import { Form, Select, Input } from "antd";
 
 const CitizenshipPage = ({ form, formData, setFormData }) => {
   const ninPattern = /^(CM|CF)[A-Z0-9]{12}$/;
+
   return (
     <div>
       <h1 className="text-xl/8 font-semibold text-gray-900 sm:text-lg/9 mb-6">
@@ -24,11 +25,9 @@ const CitizenshipPage = ({ form, formData, setFormData }) => {
           ]}
           className="my-24"
         >
-          <Select placeholder="Select your nationality" size="large">
+          <Select placeholder="Select your nationality" size="large" allowClear>
             <Select.Option value="ugandan">National - Ugandan</Select.Option>
-            <Select.Option value="south_sudan">
-              Refugee - South Sudan
-            </Select.Option>
+            <Select.Option value="south_sudan">Refugee - South Sudan</Select.Option>
             <Select.Option value="congolese">Refugee - Congolese</Select.Option>
             <Select.Option value="rwandese">Refugee - Rwandese</Select.Option>
             <Select.Option value="burundian">Refugee - Burundian</Select.Option>
@@ -38,63 +37,76 @@ const CitizenshipPage = ({ form, formData, setFormData }) => {
           </Select>
         </Form.Item>
 
-        {form.getFieldValue("nationality") === "ugandan" && (
-          <Form.Item
-            name="nin"
-            label="National Identification Number (NIN)"
-            rules={[
-              { required: true, message: "Please enter your NIN" },
-              {
-                pattern: ninPattern,
-                message: "NIN must start with CM/CF followed by 12 characters",
-              },
-              {
-                len: 14,
-                message: "NIN must be exactly 14 characters",
-              },
-              {
-                validator: (_, value) => {
-                  if (!value) return Promise.resolve();
+        {/* NIN Field */}
+        <Form.Item
+          name="nin"
+          label="National Identification Number (NIN)"
+          rules={
+            form.getFieldValue("nationality") === "ugandan"
+              ? [
+                  { required: true, message: "Please enter your NIN" },
+                  {
+                    pattern: ninPattern,
+                    message: "NIN must start with CM/CF followed by 12 characters",
+                  },
+                  {
+                    len: 14,
+                    message: "NIN must be exactly 14 characters",
+                  },
+                  {
+                    validator: (_, value) => {
+                      if (!value) return Promise.resolve();
+                      const firstTwoChars = value.substring(0, 2).toUpperCase();
+                      if (firstTwoChars !== "CM" && firstTwoChars !== "CF") {
+                        return Promise.reject("NIN must start with CM or CF");
+                      }
+                      return Promise.resolve();
+                    },
+                  },
+                ]
+              : []
+          }
+          validateTrigger={["onChange", "onBlur"]}
+          style={{
+            display: form.getFieldValue("nationality") === "ugandan" ? "block" : "none",
+          }}
+        >
+          <Input
+            size="large"
+            placeholder="Enter your NIN (e.g., CM12345678901XE)"
+            maxLength={14}
+            style={{ textTransform: "uppercase" }}
+          />
+        </Form.Item>
 
-                  const firstTwoChars = value.substring(0, 2).toUpperCase();
-                  if (firstTwoChars !== "CM" && firstTwoChars !== "CF") {
-                    return Promise.reject("NIN must start with CM or CF");
-                  }
-                  return Promise.resolve();
-                },
-              },
-            ]}
-            validateTrigger={["onChange", "onBlur"]}
-          >
-            <Input
-              size="large"
-              placeholder="Enter your NIN (e.g., CM12345678901XE)"
-              maxLength={14}
-              style={{ textTransform: "uppercase" }}
-            />
-          </Form.Item>
-        )}
-
-        {form.getFieldValue("nationality") !== "ugandan" && (
-          <>
-            <Form.Item
-              name="uniqueIdNo"
-              label="Unique Identification No."
-              rules={[
-                {
-                  required: true,
-                  message: "Please enter your Unique Identification Number",
-                },
-              ]}
-              className="my-24"
-            >
-              <Input
-                size="large"
-                placeholder="Enter your Unique Identification Number"
-              />
-            </Form.Item>
-          </>
-        )}
+        {/* Unique ID Field */}
+        <Form.Item
+          name="uniqueIdNo"
+          label="Unique Identification No."
+          rules={
+            form.getFieldValue("nationality") && form.getFieldValue("nationality") !== "ugandan"
+              ? [
+                  {
+                    required: true,
+                    message: "Please enter your Unique Identification Number",
+                  },
+                ]
+              : []
+          }
+          className="my-24"
+          style={{
+            display:
+              form.getFieldValue("nationality") &&
+              form.getFieldValue("nationality") !== "ugandan"
+                ? "block"
+                : "none",
+          }}
+        >
+          <Input
+            size="large"
+            placeholder="Enter your Unique Identification Number"
+          />
+        </Form.Item>
       </Form>
     </div>
   );
