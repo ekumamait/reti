@@ -39,6 +39,14 @@ const ProfileSettings = () => {
 
   const handleRoleUpdate = async (newRole: string) => {
     if (!user?.id) return;
+    console.log(data?.data?.retiPartner);
+    if (["staff", "admin"].includes(newRole) && !data?.data?.retiPartner) {
+      toast.error(
+        "User must be assigned to a RETI partner before becoming staff or admin"
+      );
+      setSelectedRole(currentRole);
+      return;
+    }
     const notificationData = {
       title: "Role Update",
       message: `Your role has been updated to ${newRole}.`,
