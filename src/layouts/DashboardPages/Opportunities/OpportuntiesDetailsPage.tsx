@@ -2,7 +2,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import CustomAppTitle from "../../../components/secondary/CustomAppTitle";
 import { Avatar, Button } from "antd";
 import { Content } from "antd/es/layout/layout";
-import { formatDistanceToNow } from "../../../utils";
+import { formatDistanceToNow, handleDownloadData } from "../../../utils";
 import {
   EditOutlined,
   EnvironmentOutlined,
@@ -25,11 +25,12 @@ import moment from "moment";
 import Loader from "../../loader.tsx";
 import { toast } from "react-toastify";
 import Chat from "../../../components/secondary/Chat.tsx";
-import { useCreateNotificationMutation } from "../../../services/notifications.ts";
 import {
   useSendJobEmailMutation,
   useHasUserAppliedQuery,
 } from "../../../services/jobEmail.ts";
+import { skipToken } from "@reduxjs/toolkit/query";
+import { useGetUserProfileQuery } from "../../../services/profiles.ts";
 
 const OpportunitiesDetailsPage = () => {
   const { id } = useParams();
@@ -40,15 +41,18 @@ const OpportunitiesDetailsPage = () => {
   const navigate = useNavigate();
   const jobCreatedDate = new Date(data?.data.createdAt);
   const [receiverId, setReceiverId] = useState(null);
-  const [createNotification] = useCreateNotificationMutation();
   const [sendJobEmail, { isLoading: isSending }] = useSendJobEmailMutation();
   const [hasApplied, setHasApplied] = useState(false);
   const [isApplying, setIsApplying] = useState(false);
 
   const user_id = userDetails?.user.id;
   const jobId = data?.data?.id;
+  const { data: userProfileData } = useGetUserProfileQuery(user_id, {
+    skip: !user_id,
+  });
+
   const { data: hasAppliedData, refetch } = useHasUserAppliedQuery(
-    jobId,
+    jobId ?? skipToken,
     user_id
   );
 
@@ -81,35 +85,41 @@ const OpportunitiesDetailsPage = () => {
 
   const handleApplyNow = async () => {
     const employerId = data?.data?.employer?.id;
-    const { firstName, lastName } = userDetails.user;
     if (!employerId) {
       toast.error("Unable to find employer information.");
       return;
     }
-    const notificationData = {
-      title: "New Application Received",
-      message: `${firstName} ${lastName} has applied for the job: ${data?.data?.title}.`,
-      userId: employerId,
-    };
     const emailData = {
       employerEmail: data?.data?.contactEmail,
       jobTitle: data?.data?.title,
       employerName:
         data?.data?.employer?.firstName + " " + data?.data?.employer?.lastName,
       applicantName:
-        userDetails?.user.firstName + " " + userDetails?.user.lastName,
-      applicantPhone: userDetails?.user.phoneNumber,
+        userProfileData?.data?.user.firstName +
+        " " +
+        userProfileData?.data?.user.lastName,
+      applicantPhone: userProfileData?.data?.user.phoneNumber,
       jobId: data?.data?.id,
     };
 
     try {
       setIsApplying(true);
-      await createNotification(notificationData).unwrap();
-      await sendJobEmail(emailData).unwrap();
+      const pdfBlob = handleDownloadData(userProfileData, { mode: "blob" });
+
+      const formData = new FormData();
+      formData.append("employerEmail", emailData.employerEmail);
+      formData.append("jobTitle", emailData.jobTitle);
+      formData.append("employerName", emailData.employerName);
+      formData.append("applicantName", emailData.applicantName);
+      formData.append("applicantPhone", emailData.applicantPhone);
+      formData.append("jobId", emailData.jobId.toString());
+      formData.append("file", pdfBlob);
+
+      await sendJobEmail(formData).unwrap();
       toast.success("Your Application has been submitted");
       refetch();
     } catch (error) {
-      toast.error("Failed to send notification: " + error.message);
+      toast.error("Failed to send application: " + error.message);
     } finally {
       setIsApplying(false);
     }
