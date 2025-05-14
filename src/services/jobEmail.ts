@@ -30,10 +30,20 @@ export const jobEmailApi = createApi({
                 method: "GET",
             }),
         }),
+        shareProfileByEmail: mutation<any, FormData>({
+            query: (formData) => ({
+              url: `jobemail/share-profile`,
+              method: "POST",
+              body: formData,
+            }),
+          }),
+          
+          
     }),
 });
 
 export const {
     useSendJobEmailMutation,
-    useHasUserAppliedQuery
+    useHasUserAppliedQuery,
+    useShareProfileByEmailMutation
 } = jobEmailApi;
