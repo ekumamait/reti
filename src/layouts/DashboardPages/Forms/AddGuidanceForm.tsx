@@ -9,57 +9,56 @@ import { validateFile, uploadImage } from '../../../utils/uploadImage';
 const { TextArea } = Input;
 
 type FormProps =
-    | {
-        isEdit: true;
-        initialData: { id: number; images: string; content: string };
-        onOk: () => void;
-        onCancel: () => void;
-        open: boolean;
-        loading: boolean;
+  | {
+      isEdit: true;
+      initialData: { id: number; imageUrl?: string; content: string } | null;
+      onOk: () => void;
+      onCancel: () => void;
+      open: boolean;
+      loading: boolean;
     }
-    | {
-        isEdit?: false;
-        initialData?: never;
-        onOk: () => void;
-        onCancel: () => void;
-        open: boolean;
-        loading: boolean;
+  | {
+      isEdit?: false;
+      initialData?: undefined;
+      onOk: () => void;
+      onCancel: () => void;
+      open: boolean;
+      loading: boolean;
     };
 
-const AddInspirationsForm = ({ onOk, onCancel, open, loading, initialData, isEdit = false }: FormProps) => {
+const AddInspirationsForm = (props: FormProps) => {
     const [form] = Form.useForm();
     const [addInspiration] = useAddInspirationMutation();
     const [updateInspiration] = useUpdateInspirationMutation();
-    const [uploadedImages, setUploadedImages] = useState<string>('');
+    const [imageUrl, setImageUrl] = useState<string>("");
     const fileInputRef = useRef<HTMLInputElement>(null);
-    const MAX_IMAGES = 1;
 
     useEffect(() => {
-        if (isEdit && open && initialData) {
+        if (props.isEdit && props.initialData) {
             form.setFieldsValue({
-                inspirationDescription: initialData.content,
-                images: initialData.images || ''
+                content: props.initialData.content,
+                imageUrl: props.initialData.imageUrl || "",
             });
-            setUploadedImages(initialData.images || '');
+            setImageUrl(props.initialData.imageUrl || "");
         } else {
             form.resetFields();
-            setUploadedImages('');
+            setImageUrl("");
         }
-    }, [form, initialData, open, isEdit]);
+    }, [props.isEdit, props.initialData, form]);
 
     const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
         if (!file) return;
-        if (uploadedImages) {
+        if (imageUrl) {
             toast.error(`You can only upload 1 image`);
             return;
         }
         if (!validateFile(file)) return;
         try {
-            const imageUrl = await uploadImage(file);
-            if (imageUrl) {
-                setUploadedImages(imageUrl);
-                form.setFieldsValue({ images: imageUrl });
+            const uploadedImageUrl = await uploadImage(file);
+            if (uploadedImageUrl) {
+                setImageUrl(uploadedImageUrl);
+                form.setFieldsValue({ imageUrl: uploadedImageUrl });
                 toast.success('Image uploaded successfully!');
             }
         } catch (error) {
@@ -68,51 +67,54 @@ const AddInspirationsForm = ({ onOk, onCancel, open, loading, initialData, isEdi
     };
 
     const handleRemoveImage = () => {
-        setUploadedImages('');
-        form.setFieldsValue({ images: '' });
+        setImageUrl('');
+        form.setFieldsValue({ imageUrl: '' });
     };
 
     const handleSubmit = async () => {
         try {
             const values = await form.validateFields();
             const payload = {
-                imageUrl: uploadedImages,
-                content: values.inspirationDescription,
+                ...values,
+                imageUrl: imageUrl,
             };
-            if (isEdit) {
+
+            if (props.isEdit && props.initialData) {
                 await updateInspiration({
-                    id: initialData.id,
-                    body: payload
+                    ...payload,
+                    id: props.initialData.id,
                 }).unwrap();
                 toast.success('Inspiration updated successfully');
             } else {
                 await addInspiration(payload).unwrap();
                 toast.success('Inspiration added successfully');
             }
+
+            props.onOk();
             form.resetFields();
-            onOk();
+            setImageUrl("");
         } catch (error) {
             console.error('Operation failed:', error);
-            toast.error(`Failed to ${isEdit ? 'update' : 'add'} inspiration`);
+            toast.error(`Failed to ${props.isEdit ? 'update' : 'add'} inspiration`);
         }
     };
 
     return (
         <Modal
-            open={open}
-            onCancel={onCancel}
-            title={isEdit ? "Edit Inspiration" : "Create an Inspiration"}
+            open={props.open}
+            onCancel={props.onCancel}
+            title={props.isEdit ? "Edit Inspiration" : "Create an Inspiration"}
             footer={[
-                <Button key="back" onClick={onCancel}>Cancel</Button>,
-                <Button key="submit" type="primary" loading={loading} onClick={handleSubmit}>
-                    {isEdit ? 'Save Changes' : 'Submit'}
+                <Button key="back" onClick={props.onCancel}>Cancel</Button>,
+                <Button key="submit" type="primary" loading={props.loading} onClick={handleSubmit}>
+                    {props.isEdit ? 'Save Changes' : 'Submit'}
                 </Button>
             ]}
         >
             <Form form={form} layout="vertical">
                 <Form.Item
                     label="Inspiration Description"
-                    name="inspirationDescription"
+                    name="content"
                     rules={[{ required: true, message: 'Please enter the description' }]}
                 >
                     <TextArea rows={4} placeholder="Enter description" />
@@ -121,10 +123,10 @@ const AddInspirationsForm = ({ onOk, onCancel, open, loading, initialData, isEdi
                 <Form.Item label="">
                     <div className="space-y-4">
                         <div className="flex gap-4 flex-wrap">
-                            {uploadedImages && (
+                            {imageUrl && (
                                 <div className="relative">
                                     <Image
-                                        src={uploadedImages}
+                                        src={imageUrl}
                                         alt="Inspiration image"
                                         width={100}
                                         height={100}
@@ -140,7 +142,7 @@ const AddInspirationsForm = ({ onOk, onCancel, open, loading, initialData, isEdi
                             )}
                         </div>
 
-                        {uploadedImages?.length < MAX_IMAGES && (
+                        {!imageUrl && (
                             <>
                                 <input
                                     type="file"

@@ -38,9 +38,6 @@ const ProductDetailsPage = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const { data: userProfile } = useGetUserProfileQuery(data?.data?.userId);
 
-  console.log("Product Creator ID:", data?.data?.userId);
-  console.log("Current User ID:", user?.user?.id);
-
   const handleSendMessage = () => {
     const creatorId = data?.data?.userId;
     if (creatorId) {
@@ -83,6 +80,10 @@ const ProductDetailsPage = () => {
         imageUrl: data.data.imageUrl,
       }
     : null;
+
+  const canEditOrDelete = 
+    user?.user?.id === data?.data?.userId && user?.user?.role === "youth" || 
+    user?.user?.role === "super";
 
   return (
     <div>
@@ -225,29 +226,27 @@ const ProductDetailsPage = () => {
               </div>
             </div>
 
-            {(user?.user?.id === data?.data?.userId &&
-              user?.user?.role === "youth") ||
-              (user?.user?.role === "super" && (
-                <div className="absolute bottom-4 right-4 space-y-2">
-                  <div>
-                    <DeletePopconfirm
-                      title="Delete Product"
-                      description="Are you sure to delete this product?"
-                      onConfirm={handleDeleteProduct}
-                      onConfirmMessage="Product deleted successfully"
-                      onCancelMessage="Product deletion cancelled"
-                      okText="Yes"
-                      cancelText="No"
-                    />
-                  </div>
-                  <div>
-                    <EditOutlined
-                      onClick={() => setIsEditOpen(true)}
-                      className="text-blue-500 cursor-pointer text-lg"
-                    />
-                  </div>
+            {canEditOrDelete && (
+              <div className="absolute bottom-4 right-4 space-y-2">
+                <div>
+                  <DeletePopconfirm
+                    title="Delete Product"
+                    description="Are you sure to delete this product?"
+                    onConfirm={handleDeleteProduct}
+                    onConfirmMessage="Product deleted successfully"
+                    onCancelMessage="Product deletion cancelled"
+                    okText="Yes"
+                    cancelText="No"
+                  />
                 </div>
-              ))}
+                <div>
+                  <EditOutlined
+                    onClick={() => setIsEditOpen(true)}
+                    className="text-blue-500 cursor-pointer text-lg"
+                  />
+                </div>
+              </div>
+            )}
 
             {user?.user?.role === "youth" && (
               <AddProductForm

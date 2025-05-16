@@ -144,6 +144,11 @@ const OpportunitiesDetailsPage = () => {
       }
     : null;
 
+  const user = loginDetails();
+  const canEditOrDelete = 
+    user?.user?.role === "employer" || 
+    user?.user?.role === "super";
+
   return (
     <div>
       <Header pageTitle="Opportunity Details" />
@@ -298,28 +303,27 @@ const OpportunitiesDetailsPage = () => {
                 </div>
               </div>
             </div>
-            {loginDetails().user.role === "employer" ||
-              (loginDetails().user.role === "super" && (
-                <div className="absolute bottom-4 right-4 space-y-2">
-                  <div>
-                    <DeletePopconfirm
-                      title="Delete"
-                      description="Are you sure to delete this job?"
-                      onConfirm={handleDeleteJob}
-                      onConfirmMessage="Job deleted successfully"
-                      onCancelMessage="Job deletion cancelled"
-                      okText="Yes"
-                      cancelText="No"
-                    />
-                  </div>
-                  <div>
-                    <EditOutlined
-                      onClick={() => setIsEditOpen(true)}
-                      className="text-blue-500 cursor-pointer text-lg"
-                    />
-                  </div>
+            {canEditOrDelete && (
+              <div className="absolute bottom-4 right-4 space-y-2">
+                <div>
+                  <DeletePopconfirm
+                    title="Delete"
+                    description="Are you sure to delete this job?"
+                    onConfirm={handleDeleteJob}
+                    onConfirmMessage="Job deleted successfully"
+                    onCancelMessage="Job deletion cancelled"
+                    okText="Yes"
+                    cancelText="No"
+                  />
                 </div>
-              ))}
+                <div>
+                  <EditOutlined
+                    onClick={() => setIsEditOpen(true)}
+                    className="text-blue-500 cursor-pointer text-lg"
+                  />
+                </div>
+              </div>
+            )}
             {loginDetails().user.role === "employer" && (
               <AddOpportunitiesForm
                 onCancel={handleCancel}
