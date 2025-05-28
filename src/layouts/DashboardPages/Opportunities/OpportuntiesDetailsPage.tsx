@@ -51,6 +51,7 @@ const OpportunitiesDetailsPage = () => {
     skip: !user_id,
   });
 
+
   const { data: hasAppliedData, refetch } = useHasUserAppliedQuery(
     jobId ?? skipToken,
     user_id

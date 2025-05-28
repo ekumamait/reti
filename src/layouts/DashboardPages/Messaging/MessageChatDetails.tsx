@@ -64,6 +64,7 @@ const MessagingChatDetails = ({
       (msg: Message) => Number(msg.senderId) === userId
     )?.receiverId;
 
+
   const handleSendMessage = () => {
     if (newMessage.trim() === "") return;
     const message = {

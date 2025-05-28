@@ -109,6 +109,7 @@ export default function Chat({ receiverId }: { receiverId?: number }) {
     setSelectedConversation(conversation);
   };
 
+
   useEffect(() => {
     if (receiverId) {
       const conversation = conversations.find((conv) =>
@@ -135,10 +136,12 @@ export default function Chat({ receiverId }: { receiverId?: number }) {
   const lastMessage =
     selectedConversation?.messages[selectedConversation?.messages.length - 1];
 
-  const determinedReceiverId =
-    lastMessage?.senderId === userId
-      ? lastMessage?.receiverId
-      : lastMessage?.senderId;
+  const determinedReceiverId = lastMessage
+    ? lastMessage.senderId === userId
+      ? lastMessage.receiverId
+      : lastMessage.senderId
+    : selectedConversation?.receiverId || receiverId;
+
 
   return (
     <div className="sm:flex items-start justify-between gap-2">
