@@ -26,7 +26,12 @@
     "strictFunctionTypes": false,
     "strictBindCallApply": false,
     "noImplicitAny": false,
+    "forceConsistentCasingInFileNames": true
   },
-  "include": ["src", "store.ts" 
-]
+  "include": ["src", "store.ts"],
+  "watchOptions": {
+    "watchFile": "useFsEvents",
+    "watchDirectory": "useFsEvents",
+    "fallbackPolling": "dynamicPriority"
+  }
 }
