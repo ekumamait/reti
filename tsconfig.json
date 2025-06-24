@@ -28,7 +28,14 @@
     "noImplicitAny": false,
     "forceConsistentCasingInFileNames": true
   },
-  "include": ["src", "store.ts"],
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "store.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ],
   "watchOptions": {
     "watchFile": "useFsEvents",
     "watchDirectory": "useFsEvents",
