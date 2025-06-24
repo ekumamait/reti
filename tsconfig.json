@@ -15,6 +15,10 @@
     "noEmit": true,
     "jsx": "react-jsx",
     "composite": true,
+    "baseUrl": ".",
+    "paths": {
+      "*": ["src/*"]
+    },
     
     /* Linting */
     "strict": false,
@@ -31,7 +35,9 @@
   "include": [
     "src/**/*.ts",
     "src/**/*.tsx",
-    "store.ts"
+    "store.ts",
+    "src/layouts/**/*.tsx",
+    "src/layouts/Authentication/*.page.tsx"
   ],
   "exclude": [
     "node_modules"
