@@ -1,0 +1,45 @@
+name: Deploy Dev (retivate)
+
+on:
+  push:
+    branches:
+      - dev
+
+# Cancel an in-progress deploy if a new push to dev comes in
+concurrency:
+  group: deploy-dev
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    # Runs on the self-hosted runner registered to ekumamait/reti
+    # (labeled "retivate" during ./config.sh)
+    runs-on: [self-hosted, retivate]
+
+    steps:
+      - name: Checkout dev
+        uses: actions/checkout@v4
+        with:
+          ref: dev
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      # Vite inlines env vars at build time, so .env must exist before build.
+      # Reuse the canonical env file kept on the server.
+      - name: Inject env
+        run: cp ~/reti/.env .env
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      # nginx serves static files from /var/www/retivate (see sites-enabled/retivate).
+      # --delete clears out stale hashed assets from previous builds.
+      - name: Publish to nginx web root
+        run: rsync -a --delete dist/ /var/www/retivate/
