@@ -14,7 +14,7 @@ jobs:
   deploy:
     # Runs on the self-hosted runner registered to ekumamait/reti
     # (labeled "retivate" during ./config.sh)
-    runs-on: [self-hosted, retivate]
+    runs-on: self-hosted
 
     steps:
       - name: Checkout dev
