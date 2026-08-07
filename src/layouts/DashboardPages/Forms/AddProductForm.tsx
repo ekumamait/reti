@@ -46,7 +46,7 @@ const AddProductForm = ({
       form.resetFields();
       onOk();
     } catch (error) {
-      toast.error(`Failed to create product ${error.data?.message}`);
+      toast.error(`Failed to create product: ${error?.data?.message || "Unknown error"}`);
     }
   };
 

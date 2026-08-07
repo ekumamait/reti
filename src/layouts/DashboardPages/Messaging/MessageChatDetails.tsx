@@ -88,14 +88,18 @@ const MessagingChatDetails = ({
     const markConversationAsRead = async () => {
       if (!conversation?.id || !userId) return;
       const convoId = conversation.id;
-      const response = await markMessageAsRead(convoId).unwrap();
-      if (response) {
-        setMessages((prev) =>
-          prev.map((msg) => ({
-            ...msg,
-            isRead: Number(msg.receiverId) === userId ? msg.isRead : true,
-          }))
-        );
+      try {
+        const response = await markMessageAsRead(convoId).unwrap();
+        if (response) {
+          setMessages((prev) =>
+            prev.map((msg) => ({
+              ...msg,
+              isRead: Number(msg.receiverId) === userId ? msg.isRead : true,
+            }))
+          );
+        }
+      } catch (error) {
+        console.error("Failed to mark conversation as read:", error);
       }
     };
 

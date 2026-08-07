@@ -29,7 +29,7 @@ const LoginForm = () => {
             const fullPhoneNumber = `+256${values.phoneNumber.replace(/^0/, '')}`;
             await login({ phoneNumber: fullPhoneNumber, password: values.password }).unwrap();
         } catch (error) {
-            toast.error(error.data.message);
+            toast.error(error?.data?.message || "Unable to log in. Please try again.");
         }
     }
     const onFinishFailed = (errorInfo: any) => {

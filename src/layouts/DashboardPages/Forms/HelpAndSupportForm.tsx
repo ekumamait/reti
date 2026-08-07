@@ -18,7 +18,7 @@ const HelpandsupportForm = ({ onOk, onCancel, open, loading }) => {
             toast.success(response.message);
             onOk();
         } catch (err) {
-            toast.error('Support request failed:', err);
+            toast.error(err?.data?.message || 'Support request failed. Please try again.');
         }
     };
 

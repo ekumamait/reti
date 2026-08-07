@@ -55,8 +55,8 @@ async function loginLoader() {
   const loginDetails = localStorage.getItem("loginDetails");
   if (loginDetails) {
     // Check if token is expired
-    const token = JSON.parse(loginDetails).access_token;
     try {
+      const token = JSON.parse(loginDetails).access_token;
       const [, payload] = token.split(".");
       const decodedPayload = JSON.parse(atob(payload));
       const isExpired = Date.now() >= decodedPayload.exp * 1000;

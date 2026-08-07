@@ -100,6 +100,10 @@ const MentorshipCalendar = () => {
   };
 
   const handleCreateSession = async (values: any) => {
+    if (!selectedDate) {
+      toast.error('Please select a session date');
+      return;
+    }
     try {
       const [startTime, endTime] = values.duration;
       const sessionData = {

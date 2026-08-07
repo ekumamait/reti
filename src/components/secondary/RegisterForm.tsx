@@ -26,13 +26,11 @@ const RegisterForm = () => {
                     lastName: values.lastName
                 } as RegisterUserDto).unwrap();
         } catch (e) {
-            if (e) {
-                toast.error(`${e.data.message}`);
-            }
+            toast.error(e?.data?.message || "Unable to create account. Please try again.");
         }
     }
-    const onFinishFailed = (error: any) => {
-        toast.error("Something went wrong", error)
+    const onFinishFailed = () => {
+        toast.error("Please fill in all required fields correctly.");
     };
 
     useEffect(() => {

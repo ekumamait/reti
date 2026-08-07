@@ -13,6 +13,7 @@ import Pagination from "../../../components/secondary/Pagination";
 import { useGetAllProfilesQuery } from "../../../services/profiles.ts";
 import { loginDetails } from "../../../utils.ts";
 import { handleDownloadBulkData } from "../../../utils.ts";
+import { getApiErrorMessage } from "../../../utils/apiError.ts";
 
 const { Search } = Input;
 const { Option } = Select;
@@ -65,7 +66,7 @@ const UsersPage = () => {
       await deleteUser(userId).unwrap();
       toast.success("User deleted successfully");
     } catch (error) {
-      toast.error(`Failed to delete user ${error.data?.message}`);
+      toast.error(`Failed to delete user: ${getApiErrorMessage(error, "Unknown error")}`);
     }
   };
 
@@ -216,17 +217,19 @@ const UsersPage = () => {
             >
               See Details
             </a>
-            <DeletePopconfirm
-              title="Delete User"
-              description="Are you sure you want to delete this user?"
-              onConfirm={() => handleDeleteUser(record.id)}
-              onConfirmMessage="User deleted successfully"
-              onCancelMessage="User deletion cancelled"
-              okText="Yes"
-              cancelText="No"
-            >
-              <DeleteOutlined className="text-red-500 cursor-pointer" />
-            </DeletePopconfirm>
+            {loggedInUserRole === "super" && (
+              <DeletePopconfirm
+                title="Delete User"
+                description="Are you sure you want to delete this user?"
+                onConfirm={() => handleDeleteUser(record.id)}
+                onConfirmMessage="User deleted successfully"
+                onCancelMessage="User deletion cancelled"
+                okText="Yes"
+                cancelText="No"
+              >
+                <DeleteOutlined className="text-red-500 cursor-pointer" />
+              </DeletePopconfirm>
+            )}
           </Space>
         );
       },

@@ -201,6 +201,31 @@ export interface ProductDetailsResponseType {
   data: ProductDto;
 }
 
+export interface WelcomeImageDto {
+  id: number;
+  imageUrl: string;
+  order: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateWelcomeImageDto {
+  imageUrl: string;
+  order?: number;
+}
+
+export interface WelcomeImagesResponseType {
+  status: number;
+  message: string;
+  data: WelcomeImageDto[];
+}
+
+export interface WelcomeImageResponseType {
+  status: number;
+  message: string;
+  data: WelcomeImageDto;
+}
+
 export interface ProductType {
   id: number;
   title: string;

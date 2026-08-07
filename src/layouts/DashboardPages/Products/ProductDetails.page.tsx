@@ -61,7 +61,7 @@ const ProductDetailsPage = () => {
       toast.success("Product deleted successfully");
       navigate("/products");
     } catch (error) {
-      toast.error(`Failed to delete product ${error.message}`);
+      toast.error(`Failed to delete product: ${error?.data?.message || error?.message || "Unknown error"}`);
     }
   };
 

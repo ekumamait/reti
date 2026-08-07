@@ -245,7 +245,7 @@ export default function Chat({ receiverId }: { receiverId?: number }) {
                                 )}
                               </span>
                             )}
-                            {lastMessage.content}
+                            {lastMessage?.content}
                           </div>
                         </div>
                       </li>

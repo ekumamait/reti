@@ -71,8 +71,8 @@ const DashboardPage = () => {
         await markAsRead(notificationId).unwrap();
       }
       return;
-    } catch (error) {
-      toast.error("Failed to mark notification as read:", error);
+    } catch {
+      toast.error("Failed to mark notification as read");
     }
   };
 
@@ -253,7 +253,7 @@ const DashboardPage = () => {
           {/* Recent Notifications */}
           <Card title="Notifications" className="shadow-sm">
             <>
-              {paginatedNotifications && paginatedNotifications?.length < 0 ? (
+              {paginatedNotifications && paginatedNotifications?.length === 0 ? (
                 <div className="mt-6">
                   <Empty />
                 </div>
@@ -389,7 +389,7 @@ const DashboardPage = () => {
           {/* Recent Inspirations */}
           <Card title="Posts" className="shadow-sm">
             <>
-              {paginatedInspirations && paginatedInspirations?.length < 0 ? (
+              {paginatedInspirations && paginatedInspirations?.length === 0 ? (
                 <div className="mt-6">
                   <Empty />
                 </div>

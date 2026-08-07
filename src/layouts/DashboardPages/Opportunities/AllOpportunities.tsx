@@ -49,8 +49,7 @@ const AllOpportunitiesPage = ({
     currentPage * pageSize
   );
 
-  const canDelete = loginDetails().user.role === 'admin' ||
-    loginDetails().user.id === opportunities?.data?.find(o => o.id === opportunities.id)?.employer?.id;
+  const currentUser = loginDetails().user;
 
   const handleDeleteOpportunity = async (id: number) => {
     try {
@@ -75,7 +74,11 @@ const AllOpportunitiesPage = ({
             (
               <div>
                 <div className="mt-8 grid grid-cols-1 gap-x-4 gap-y-4 sm:grid-cols-2 lg:grid-cols-3">
-                  {paginatedOpportunities?.map((opportunity) => (
+                  {paginatedOpportunities?.map((opportunity) => {
+                    const canDelete =
+                      currentUser.role === 'admin' ||
+                      currentUser.id === opportunity?.employer?.id;
+                    return (
                     <div
                       key={opportunity.id}
                       onClick={() => navigate(`/opportunities/${opportunity.id}`)}
@@ -151,7 +154,8 @@ const AllOpportunitiesPage = ({
                         />
                       )}
                     </div>
-                  ))}
+                    );
+                  })}
                 </div>
 
                 {filteredOpportunities && filteredOpportunities.length > pageSize && (

@@ -54,11 +54,23 @@ export const formatDistanceToNow = (date) => {
   return `${Math.floor(seconds)} seconds ago`;
 };
 
-export const loginDetails = () =>
-  JSON.parse(localStorage.getItem("loginDetails") || "null");
+export const loginDetails = () => {
+  try {
+    return JSON.parse(localStorage.getItem("loginDetails") || "null");
+  } catch {
+    localStorage.removeItem("loginDetails");
+    return null;
+  }
+};
 
-export const userDetails = () =>
-  JSON.parse(localStorage.getItem("userDetails") || "null");
+export const userDetails = () => {
+  try {
+    return JSON.parse(localStorage.getItem("userDetails") || "null");
+  } catch {
+    localStorage.removeItem("userDetails");
+    return null;
+  }
+};
 
 export const getAccessToken = () => {
   const details = loginDetails();

@@ -10,6 +10,7 @@ import { productApi } from './src/services/products.ts'
 import { mentorshipApi } from './src/services/mentorship.ts'
 import { supportApi } from './src/services/support.ts'
 import { jobEmailApi } from './src/services/jobEmail.ts'
+import { welcomeImagesApi } from './src/services/welcomeImages.ts'
 
 export const store = configureStore({
     reducer: {
@@ -22,7 +23,8 @@ export const store = configureStore({
         [productApi.reducerPath]: productApi.reducer,
         [mentorshipApi.reducerPath]: mentorshipApi.reducer,
         [supportApi.reducerPath]: supportApi.reducer,
-        [jobEmailApi.reducerPath]: jobEmailApi.reducer
+        [jobEmailApi.reducerPath]: jobEmailApi.reducer,
+        [welcomeImagesApi.reducerPath]: welcomeImagesApi.reducer
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware().concat(
@@ -35,7 +37,8 @@ export const store = configureStore({
             productApi.middleware,
             mentorshipApi.middleware,
             supportApi.middleware,
-            jobEmailApi.middleware
+            jobEmailApi.middleware,
+            welcomeImagesApi.middleware
         ),
 })
 

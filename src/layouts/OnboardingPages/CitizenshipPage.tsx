@@ -53,16 +53,6 @@ const CitizenshipPage = ({ form, formData, setFormData }) => {
                     len: 14,
                     message: "NIN must be exactly 14 characters",
                   },
-                  {
-                    validator: (_, value) => {
-                      if (!value) return Promise.resolve();
-                      const firstTwoChars = value.substring(0, 2).toUpperCase();
-                      if (firstTwoChars !== "CM" && firstTwoChars !== "CF") {
-                        return Promise.reject("NIN must start with CM or CF");
-                      }
-                      return Promise.resolve();
-                    },
-                  },
                 ]
               : []
           }
@@ -73,7 +63,7 @@ const CitizenshipPage = ({ form, formData, setFormData }) => {
         >
           <Input
             size="large"
-            placeholder="Enter your NIN (e.g., CM12345678901XE)"
+            placeholder="Enter your NIN (e.g., CM1234567890AB)"
             maxLength={14}
             style={{ textTransform: "uppercase" }}
           />

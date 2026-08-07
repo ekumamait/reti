@@ -68,7 +68,7 @@ const OpportunitiesDetailsPage = () => {
       toast.success("Job deleted successfully!");
       navigate("/opportunities");
     } catch (error) {
-      toast.error("Failed to delete job: " + error.message);
+      toast.error("Failed to delete job: " + (error?.data?.message || error?.message || "Unknown error"));
     }
   };
 
@@ -119,7 +119,7 @@ const OpportunitiesDetailsPage = () => {
       toast.success("Your Application has been submitted");
       refetch();
     } catch (error) {
-      toast.error("Failed to send application: " + error.message);
+      toast.error("Failed to send application: " + (error?.data?.message || error?.message || "Unknown error"));
     } finally {
       setIsApplying(false);
     }
