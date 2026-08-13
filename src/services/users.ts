@@ -29,7 +29,10 @@ const baseQuery = fetchBaseQuery({
 const baseQueryWithReauth = async (args, api, extraOptions) => {
     let result = await baseQuery(args, api, extraOptions);
 
-    if (result.error && result.error.status === 401) {
+    // A 401 from the login endpoint itself means "wrong credentials", not an expired
+    // session — don't treat it as a reauth trigger or it'll force a logout/reload
+    // before the user ever sees the error toast.
+    if (result.error && result.error.status === 401 && api.endpoint !== 'login') {
         // Try to get a new token
         const refreshToken = getRefreshToken();
         if (!refreshToken) {
