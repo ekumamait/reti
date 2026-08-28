@@ -213,6 +213,12 @@ const PersonalDetailsSettings = () => {
                     label="Phone number"
                     name="phoneNumber"
                     labelCol={{ className: "text-sm font-medium text-gray-600" }}
+                    rules={[
+                        {
+                            pattern: /^\+2567[0-9]{8}$/,
+                            message: 'Enter a valid Uganda mobile number, e.g. +256790000000'
+                        }
+                    ]}
                   >
                     <Input bordered size="large" className="rounded-md" />
                   </Form.Item>

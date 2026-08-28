@@ -66,8 +66,8 @@ const LoginForm = () => {
                     rules={[
                         { required: true, message: 'Please enter your phone number!' },
                         {
-                            pattern: /^[0-9]{9}$/,
-                            message: 'Phone number must be exactly 9 digits!'
+                            pattern: /^7[0-9]{8}$/,
+                            message: 'Enter a valid Uganda mobile number (9 digits, starting with 7)'
                         }
                     ]}>
                     <Input

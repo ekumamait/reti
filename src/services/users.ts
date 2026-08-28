@@ -15,6 +15,10 @@ interface User {
     password: any;
 }
 
+interface MessageResponse {
+    message: string;
+}
+
 const baseQuery = fetchBaseQuery({
     baseUrl: `${import.meta.env.VITE_BASE_URL}/v1/`,
     prepareHeaders: (headers) => {
@@ -120,7 +124,21 @@ export const userApi = createApi({
                 body: data,
                 headers: getHeaders(),
             }),
-            invalidatesTags: ['Users'], 
+            invalidatesTags: ['Users'],
+        }),
+        forgotPassword: mutation<MessageResponse, { email: string }>({
+            query: (data) => ({
+                url: 'auth/forgot-password',
+                method: 'POST',
+                body: data,
+            }),
+        }),
+        resetPassword: mutation<MessageResponse, { token: string; newPassword: string }>({
+            query: (data) => ({
+                url: 'auth/reset-password',
+                method: 'POST',
+                body: data,
+            }),
         }),
     })
 })
@@ -130,5 +148,7 @@ export const {
     useRegisterMutation,
     useGetAllUsersQuery,
     useDeleteUserMutation,
-    useUpdateUserMutation
+    useUpdateUserMutation,
+    useForgotPasswordMutation,
+    useResetPasswordMutation
 } = userApi

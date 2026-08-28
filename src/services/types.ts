@@ -302,6 +302,7 @@ export interface RegisterUserDto {
   password: string;
   firstName: string;
   lastName: string;
+  acceptedTerms: boolean;
 }
 
 export const partners = [
