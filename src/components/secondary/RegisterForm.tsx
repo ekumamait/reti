@@ -23,16 +23,15 @@ const RegisterForm = () => {
                     phoneNumber: fullPhoneNumber,
                     password: values.password,
                     firstName: values.firstName,
-                    lastName: values.lastName
+                    lastName: values.lastName,
+                    acceptedTerms: !!values.consent
                 } as RegisterUserDto).unwrap();
         } catch (e) {
-            if (e) {
-                toast.error(`${e.data.message}`);
-            }
+            toast.error(e?.data?.message || "Unable to create account. Please try again.");
         }
     }
-    const onFinishFailed = (error: any) => {
-        toast.error("Something went wrong", error)
+    const onFinishFailed = () => {
+        toast.error("Please fill in all required fields correctly.");
     };
 
     useEffect(() => {
@@ -71,8 +70,8 @@ const RegisterForm = () => {
                     rules={[
                         { required: true, message: 'Please enter your phone number!' },
                         {
-                            pattern: /^[0-9]{9}$/,
-                            message: 'Phone number must be exactly 9 digits!'
+                            pattern: /^7[0-9]{8}$/,
+                            message: 'Enter a valid Uganda mobile number (9 digits, starting with 7)'
                         }
                     ]}>
                     <Input
@@ -82,7 +81,15 @@ const RegisterForm = () => {
                         prefix={<span>+256</span>}
                     />
                 </Form.Item>
-                <Form.Item label="Password" name="password">
+                <Form.Item
+                    label="Password"
+                    name="password"
+                    rules={[
+                        { required: true, message: 'Please enter a password!' },
+                        { min: 8, message: 'Password must be at least 8 characters!' }
+                    ]}
+                    hasFeedback
+                >
                     <Input
                         size='large'
                         placeholder="Enter password"
@@ -98,7 +105,23 @@ const RegisterForm = () => {
                         }
                     />
                 </Form.Item>
-                <Form.Item label="Confirm password">
+                <Form.Item
+                    label="Confirm password"
+                    name="confirmPassword"
+                    dependencies={['password']}
+                    hasFeedback
+                    rules={[
+                        { required: true, message: 'Please confirm your password!' },
+                        ({ getFieldValue }) => ({
+                            validator(_, value) {
+                                if (!value || getFieldValue('password') === value) {
+                                    return Promise.resolve();
+                                }
+                                return Promise.reject(new Error('Passwords do not match!'));
+                            },
+                        }),
+                    ]}
+                >
                     <Input
                         size='large'
                         placeholder="Confirm password"

@@ -15,6 +15,10 @@ interface User {
     password: any;
 }
 
+interface MessageResponse {
+    message: string;
+}
+
 const baseQuery = fetchBaseQuery({
     baseUrl: `${import.meta.env.VITE_BASE_URL}/v1/`,
     prepareHeaders: (headers) => {
@@ -29,7 +33,10 @@ const baseQuery = fetchBaseQuery({
 const baseQueryWithReauth = async (args, api, extraOptions) => {
     let result = await baseQuery(args, api, extraOptions);
 
-    if (result.error && result.error.status === 401) {
+    // A 401 from the login endpoint itself means "wrong credentials", not an expired
+    // session — don't treat it as a reauth trigger or it'll force a logout/reload
+    // before the user ever sees the error toast.
+    if (result.error && result.error.status === 401 && api.endpoint !== 'login') {
         // Try to get a new token
         const refreshToken = getRefreshToken();
         if (!refreshToken) {
@@ -117,7 +124,21 @@ export const userApi = createApi({
                 body: data,
                 headers: getHeaders(),
             }),
-            invalidatesTags: ['Users'], 
+            invalidatesTags: ['Users'],
+        }),
+        forgotPassword: mutation<MessageResponse, { email: string }>({
+            query: (data) => ({
+                url: 'auth/forgot-password',
+                method: 'POST',
+                body: data,
+            }),
+        }),
+        resetPassword: mutation<MessageResponse, { token: string; newPassword: string }>({
+            query: (data) => ({
+                url: 'auth/reset-password',
+                method: 'POST',
+                body: data,
+            }),
         }),
     })
 })
@@ -127,5 +148,7 @@ export const {
     useRegisterMutation,
     useGetAllUsersQuery,
     useDeleteUserMutation,
-    useUpdateUserMutation
+    useUpdateUserMutation,
+    useForgotPasswordMutation,
+    useResetPasswordMutation
 } = userApi

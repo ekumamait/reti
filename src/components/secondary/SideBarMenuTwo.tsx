@@ -13,7 +13,6 @@ import {
   UserOutlined,
 } from "@ant-design/icons";
 import { handleLogout, loginDetails } from "../../utils.ts";
-import HelpandsupportForm from "../../layouts/DashboardPages/Forms/HelpAndSupportForm.tsx";
 import { ShoppingOutlined } from "@ant-design/icons";
 import { useGetUserProfileQuery } from "../../services/profiles.ts";
 
@@ -33,21 +32,6 @@ const SiderTwo = ({ closeDrawer }) => {
 
   const handleMenuClick = (e) => {
     setSelectedKey(e.key); // Update the selected key when an item is clicked
-  };
-
-  const [loading] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const showModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const handleOk = () => {
-    setIsModalOpen(false);
-  };
-
-  const handleCancel = () => {
-    setIsModalOpen(false);
   };
 
   // Function to generate menu items
@@ -96,15 +80,28 @@ const SiderTwo = ({ closeDrawer }) => {
       user?.user?.role === "staff" ||
       user?.user?.role === "admin"
     ) {
-      menuItems.splice(3, 0, {
-        key: "Profiles",
-        icon: <UsergroupAddOutlined />,
-        label: (
-          <Link to="/users" onClick={closeDrawer}>
-            Profiles
-          </Link>
-        ),
-      });
+      menuItems.splice(
+        3,
+        0,
+        {
+          key: "Profiles",
+          icon: <UsergroupAddOutlined />,
+          label: (
+            <Link to="/users" onClick={closeDrawer}>
+              Profiles
+            </Link>
+          ),
+        },
+        {
+          key: "support-requests",
+          icon: <QuestionCircleOutlined />,
+          label: (
+            <Link to="/support-requests" onClick={closeDrawer}>
+              Support Requests
+            </Link>
+          ),
+        }
+      );
     } else {
       menuItems.splice(
         3,
@@ -112,7 +109,11 @@ const SiderTwo = ({ closeDrawer }) => {
         {
           key: "help-support",
           icon: <QuestionCircleOutlined />,
-          label: <span onClick={showModal}>Help & Support</span>,
+          label: (
+            <Link to="/support" onClick={closeDrawer}>
+              Help & Support
+            </Link>
+          ),
         },
         {
           key: "settings",
@@ -177,14 +178,6 @@ const SiderTwo = ({ closeDrawer }) => {
           </div>
         </div>
       </div>
-
-      {/* help and support modal */}
-      <HelpandsupportForm
-        open={isModalOpen}
-        onOk={handleOk}
-        onCancel={handleCancel}
-        loading={loading}
-      />
     </Sider>
   );
 };

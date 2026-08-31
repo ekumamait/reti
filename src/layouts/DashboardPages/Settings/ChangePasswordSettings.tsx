@@ -25,12 +25,12 @@ const ChangePasswordSettings = () => {
             await refetch();
         } catch (e) {
             let message = "Try again";
-            if (typeof e.data.message === "string") {
+            if (typeof e?.data?.message === "string") {
                 message = e.data.message;
-            } else {
+            } else if (e?.data?.message?.[0]) {
                 message = e.data.message[0];
             }
-            toast.error(`Something went wrong ${message}`);
+            toast.error(`Something went wrong: ${message}`);
         }
     };
 
@@ -45,9 +45,9 @@ const ChangePasswordSettings = () => {
             await refetch();
         } catch (e) {
             let message = "Try again";
-            if (typeof e.data.message === "string") {
+            if (typeof e?.data?.message === "string") {
                 message = e.data.message;
-            } else {
+            } else if (e?.data?.message?.[0]) {
                 message = e.data.message[0];
             }
             toast.error(`Password update failed: ${message}`);

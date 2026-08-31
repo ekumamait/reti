@@ -29,7 +29,7 @@ const AddMentorshipSessionForm: React.FC<MentorshipSessionDetailsProps> = ({
       toast.success('Session deleted successfully');
       onClose();
     } catch (error) {
-      toast.error('Failed to delete session:', error);
+      toast.error(error?.data?.message || 'Failed to delete session');
     }
   };
 

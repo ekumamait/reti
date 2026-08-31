@@ -1,4 +1,4 @@
-import { Form, Input, Button, Modal } from 'antd';
+import { Form, Input, Button, Modal, Select } from 'antd';
 import 'antd/dist/reset.css';
 import { useSendSupportRequestMutation } from "../../../services/support"
 import { toast } from 'react-toastify';
@@ -13,12 +13,14 @@ const HelpandsupportForm = ({ onOk, onCancel, open, loading }) => {
             const values = await form.validateFields();
             const response = await sendSupportRequest({
                 contact: values.contact,
-                description: values.description
+                description: values.description,
+                category: values.category,
             }).unwrap();
             toast.success(response.message);
+            form.resetFields();
             onOk();
         } catch (err) {
-            toast.error('Support request failed:', err);
+            toast.error(err?.data?.message || 'Support request failed. Please try again.');
         }
     };
 
@@ -33,7 +35,7 @@ const HelpandsupportForm = ({ onOk, onCancel, open, loading }) => {
                     <div>
                         <h2 className="text-lg font-semibold">Help & Support</h2>
                         <p className="text-sm font-normal text-gray-500">
-                            Contact us at support@example.com <br />
+                            Contact us at retivate@muni.ac.ug <br />
                         </p>
                     </div>
                 }
@@ -50,7 +52,21 @@ const HelpandsupportForm = ({ onOk, onCancel, open, loading }) => {
                     <Form
                         form={form}
                         layout="vertical"
+                        initialValues={{ category: 'general' }}
                     >
+                        <Form.Item
+                            label="What do you need help with?"
+                            name="category"
+                            rules={[{ required: true, message: 'Please select a category' }]}
+                        >
+                            <Select size="large">
+                                <Select.Option value="technical_issue">Technical issue</Select.Option>
+                                <Select.Option value="account_recovery">Account recovery</Select.Option>
+                                <Select.Option value="guidance">Guidance</Select.Option>
+                                <Select.Option value="general">General</Select.Option>
+                            </Select>
+                        </Form.Item>
+
                         <Form.Item
                             label="Contact"
                             name="contact"
@@ -59,7 +75,6 @@ const HelpandsupportForm = ({ onOk, onCancel, open, loading }) => {
                             <Input placeholder="e.g. 0705999239" size='large' />
                         </Form.Item>
 
-                        {/* Job Description */}
                         <Form.Item
                             label="Description"
                             name="description"

@@ -29,7 +29,7 @@ const LoginForm = () => {
             const fullPhoneNumber = `+256${values.phoneNumber.replace(/^0/, '')}`;
             await login({ phoneNumber: fullPhoneNumber, password: values.password }).unwrap();
         } catch (error) {
-            toast.error(error.data.message);
+            toast.error(error?.data?.message || "Unable to log in. Please try again.");
         }
     }
     const onFinishFailed = (errorInfo: any) => {
@@ -66,8 +66,8 @@ const LoginForm = () => {
                     rules={[
                         { required: true, message: 'Please enter your phone number!' },
                         {
-                            pattern: /^[0-9]{9}$/,
-                            message: 'Phone number must be exactly 9 digits!'
+                            pattern: /^7[0-9]{8}$/,
+                            message: 'Enter a valid Uganda mobile number (9 digits, starting with 7)'
                         }
                     ]}>
                     <Input

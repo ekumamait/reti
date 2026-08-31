@@ -67,8 +67,8 @@ const AddOpportunitiesForm = ({
       const uploadedUrl = await uploadImage(file);
       setImageUrl(uploadedUrl);
       form.setFieldsValue({ imageUrl: uploadedUrl });
-    } catch (error) {
-      console.error('Image upload failed:', error);
+    } catch {
+      toast.error('Failed to upload image');
     } finally {
       setIsUploading(false);
     }
@@ -99,7 +99,7 @@ const AddOpportunitiesForm = ({
       setImageUrl('');
       onOk();
     } catch (error) {
-      toast.error(`Operation failed ${error?.data?.message}`);
+      toast.error(`Operation failed: ${error?.data?.message || "Unknown error"}`);
     }
   };
 

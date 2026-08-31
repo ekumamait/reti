@@ -9,6 +9,7 @@ import { useCreateProfileMutation } from "../../services/profiles.ts";
 import { userDetails } from "../../utils.ts";
 import OnboardSuccessPage from "./OnboardSuccessPage";
 import moment from "moment";
+import { toast } from "react-toastify";
 
 const Onboarding: React.FC = () => {
   const [form] = Form.useForm();
@@ -107,12 +108,17 @@ const Onboarding: React.FC = () => {
         profilePayload.retiPartner = finalValues.retiPartner;
       }
 
-      await updateUser({
-        profile: profilePayload,
-        profileId: userDetails()?.user.id,
-      }).unwrap();
-      setSubmissionStatus("success");
-      localStorage.removeItem("userDetails");
+      try {
+        await updateUser({
+          profile: profilePayload,
+          profileId: userDetails()?.user.id,
+        }).unwrap();
+        setSubmissionStatus("success");
+        localStorage.removeItem("userDetails");
+      } catch (error) {
+        setSubmissionStatus("error");
+        toast.error(error?.data?.message || "Failed to submit your profile. Please try again.");
+      }
     }
   };
 

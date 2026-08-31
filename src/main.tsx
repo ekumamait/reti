@@ -29,6 +29,10 @@ import OpportunitiesDetailsPage from "./layouts/DashboardPages/Opportunities/Opp
 import UsersPage from "./layouts/DashboardPages/Users/UsersTable.tsx";
 import ProductsPage from "./layouts/DashboardPages/Products/Products.page.tsx";
 import ProductDetailsPage from "./layouts/DashboardPages/Products/ProductDetails.page.tsx";
+import SupportPage from "./layouts/DashboardPages/Support/Support.page.tsx";
+import SupportRequestsPage from "./layouts/DashboardPages/Support/SupportRequestsTable.tsx";
+import TermsPage from "./layouts/Authentication/terms.page.tsx";
+import PrivacyPage from "./layouts/Authentication/privacy.page.tsx";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ProfileSettings from "./layouts/DashboardPages/Settings/Profile.tsx";
@@ -55,8 +59,8 @@ async function loginLoader() {
   const loginDetails = localStorage.getItem("loginDetails");
   if (loginDetails) {
     // Check if token is expired
-    const token = JSON.parse(loginDetails).access_token;
     try {
+      const token = JSON.parse(loginDetails).access_token;
       const [, payload] = token.split(".");
       const decodedPayload = JSON.parse(atob(payload));
       const isExpired = Date.now() >= decodedPayload.exp * 1000;
@@ -188,6 +192,38 @@ const router = createBrowserRouter([
       </CustomAppLayout>
     ),
     errorElement: <ErrorPage />,
+  },
+  {
+    path: "/support",
+    loader: protectedLoader,
+    element: (
+      <CustomAppLayout>
+        <SupportPage />
+      </CustomAppLayout>
+    ),
+    errorElement: <ErrorPage />,
+    children: [],
+  },
+  {
+    path: "/support-requests",
+    loader: protectedLoader,
+    element: (
+      <CustomAppLayout>
+        <SupportRequestsPage />
+      </CustomAppLayout>
+    ),
+    errorElement: <ErrorPage />,
+    children: [],
+  },
+  {
+    path: "/terms",
+    errorElement: <ErrorPage />,
+    element: <TermsPage />,
+  },
+  {
+    path: "/privacy",
+    errorElement: <ErrorPage />,
+    element: <PrivacyPage />,
   },
   {
     path: "/forgot-password",

@@ -5,8 +5,13 @@ import Header from "../../../components/secondary/Header";
 import CustomDashboardLayout from "../../../components/secondary/CustomDashboardPagesLayout";
 import ProfileSettings from "./Profile";
 import PersonalDetailsSettings from "./PersonalDetails";
+import WelcomeImagesSettings from "./WelcomeImagesSettings";
+import { loginDetails } from "../../../utils.ts";
 
 const SettingsPage = () => {
+  const user = loginDetails();
+  const loggedInUserRole = user?.user?.role || "";
+
   const items: TabsProps["items"] = [
     {
       key: "1",
@@ -32,6 +37,18 @@ const SettingsPage = () => {
       ),
     },
   ];
+
+  if (loggedInUserRole === "super") {
+    items.push({
+      key: "4",
+      label: "Welcome Page",
+      children: (
+        <div className="w-full md:w-[75%]">
+          <WelcomeImagesSettings />
+        </div>
+      ),
+    });
+  }
 
   return (
     <>
