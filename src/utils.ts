@@ -243,13 +243,6 @@ export const handleDownloadBulkData = (
     "skillsAndTraining.trainingDuration": "Training Duration",
     "skillsAndTraining.trainingLocation": "Training Location",
 
-    "artisanDetails.nameOfHost": "Name of Host",
-    "artisanDetails.hostContact": "Host Contact",
-    "artisanDetails.villageOfArtisan": "Village of Artisan",
-    "artisanDetails.categoryOfArtisan": "Category of Artisan",
-    "artisanDetails.subcountyOfArtisan": "Subcounty of Artisan",
-    "artisanDetails.centerRefugeeSettlement": "Center Refugee Settlement",
-
     "geoLocationDetails.region": "Region",
     "geoLocationDetails.village": "Village",
     "geoLocationDetails.district": "District",
@@ -636,59 +629,6 @@ export const handleDownloadData = (
     if (userProfile.skills.length % maxTabsPerRow !== 0) {
       leftColY += 8;
     }
-    leftColY += 8;
-  }
-
-  if (userProfile?.artisanDetails) {
-    leftColY = addSectionHeader("ARTISAN DETAILS", margin, leftColY);
-    leftColY -= 6;
-
-    if (userProfile.artisanDetails.categoryOfArtisan) {
-      leftColY = addLabelValue(
-        "Category",
-        userProfile.artisanDetails.categoryOfArtisan,
-        margin,
-        leftColY + 3,
-        leftColWidth - 5
-      );
-    }
-    if (userProfile.artisanDetails.nameOfHost) {
-      leftColY = addLabelValue(
-        "Host Name",
-        userProfile.artisanDetails.nameOfHost,
-        margin,
-        leftColY + 3,
-        leftColWidth - 5
-      );
-    }
-    if (userProfile.artisanDetails.villageOfArtisan) {
-      leftColY = addLabelValue(
-        "Village",
-        userProfile.artisanDetails.villageOfArtisan,
-        margin,
-        leftColY + 3,
-        leftColWidth - 5
-      );
-    }
-    if (userProfile.artisanDetails.subcountyOfArtisan) {
-      leftColY = addLabelValue(
-        "Subcounty",
-        userProfile.artisanDetails.subcountyOfArtisan,
-        margin,
-        leftColY + 3,
-        leftColWidth - 5
-      );
-    }
-    if (userProfile.artisanDetails.centerRefugeeSettlement) {
-      leftColY = addLabelValue(
-        "Settlement",
-        userProfile.artisanDetails.centerRefugeeSettlement,
-        margin,
-        leftColY + 3,
-        leftColWidth - 5
-      );
-    }
-
     leftColY += 8;
   }
 
